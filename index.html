@@ -221,7 +221,7 @@
     <div class="card">
       <div class="eyebrow" data-i18n="s2b_eyebrow">Penyatuan Hutang</div>
       <p class="question" data-i18n="s2b_question">Adakah anda ingin selesaikan hutang sedia ada?</p>
-      <p class="helptext" data-i18n="s2b_help">Anda boleh guna sebahagian daripada pinjaman baharu untuk terus selesaikan hutang sedia ada dengan institusi kewangan/koperasi lain — baki bersih akan diselaraskan.</p>
+      <p class="helptext" data-i18n="s2b_help">Jika anda memilih untuk buat penyatuan hutang, semakan DSR tidak diperlukan dan anda akan terus ke keputusan awal — wakil BSN akan menyemak butiran hutang sedia ada secara terperinci semasa permohonan.</p>
 
       <div class="option-cards cols-2" id="debtConsolCards">
         <div class="option-card" data-val="yes" onclick="selectDebtConsolidation(true)">
@@ -230,7 +230,7 @@
         </div>
         <div class="option-card selected" data-val="no" onclick="selectDebtConsolidation(false)">
           <h3 data-i18n="chip_no">Tidak</h3>
-          <p data-i18n="s2b_no_desc">Terima tunai sepenuhnya</p>
+          <p data-i18n="s2b_no_desc">Permohonan pinjaman baharu</p>
         </div>
       </div>
 
@@ -421,7 +421,7 @@ const I18N = {
     s2b_question: "Adakah anda ingin selesaikan hutang sedia ada?",
     s2b_help: "Jika anda memilih untuk buat penyatuan hutang, semakan DSR tidak diperlukan dan anda akan terus ke keputusan awal — wakil BSN akan menyemak butiran hutang sedia ada secara terperinci semasa permohonan.",
     s2b_yes_desc: "Selesaikan hutang sedia ada",
-    s2b_no_desc: "Terima tunai sepenuhnya",
+    s2b_no_desc: "Permohonan pinjaman baharu",
     debt_consol_wa_line: `\nPenyatuan Hutang: Ya`,
     cta_debt_remark: "Nota: Anda telah memilih untuk membuat penyatuan hutang. Wakil BSN akan berbincang butiran lanjut semasa proses permohonan.",
     result_sub_debt_consol: "Anggaran pra-kelayakan awal — wakil BSN akan menyemak butiran hutang sedia ada dan kelayakan sebenar semasa permohonan.",
@@ -524,7 +524,7 @@ const I18N = {
     s2b_question: "Would you like to settle any existing debts?",
     s2b_help: "If you choose debt consolidation, the DSR check is skipped and you'll go straight to the preliminary result — a BSN representative will review your existing debt details during the application.",
     s2b_yes_desc: "Settle existing debts",
-    s2b_no_desc: "Receive full cash amount",
+    s2b_no_desc: "New loan application",
     debt_consol_wa_line: `\nDebt Consolidation: Yes`,
     cta_debt_remark: "Note: You've chosen debt consolidation. A BSN representative will discuss further details during the application process.",
     result_sub_debt_consol: "Preliminary pre-qualification estimate — a BSN representative will review your existing debt details and actual eligibility during the application.",
