@@ -147,6 +147,9 @@
   .fallout-icon svg{width:100%;height:100%;}
 
   .disclaimer{text-align:center;color:var(--muted);font-size:.72rem;max-width:640px;margin:20px auto 0;padding:0 20px;}
+  .disclaimer:last-of-type{margin-top:6px;}
+  .terms-link{color:var(--accent);font-weight:700;text-decoration:none;}
+  .terms-link:hover{color:var(--accent-dark);text-decoration:underline;}
 </style>
 </head>
 <body>
@@ -412,6 +415,7 @@
 </div>
 
 <p class="disclaimer" data-i18n="disclaimer">Alat berpandu ini hanya menyediakan unjuran ilustrasi untuk tujuan perbincangan dengan wakil BSN. Ia tidak membentuk nasihat kewangan atau tawaran pinjaman rasmi. Kadar dan syarat tertakluk kepada penilaian dan kelulusan pihak Bank.</p>
+<p class="disclaimer"><a class="terms-link" href="terms.html" data-i18n="terms_link">Terma Perkhidmatan &amp; Dasar Privasi</a></p>
 
 <script>
 const I18N = {
@@ -483,6 +487,7 @@ const I18N = {
     btn_whatsapp: "Chat di WhatsApp",
     btn_edit: "Edit Maklumat",
     disclaimer: "Alat berpandu ini hanya menyediakan unjuran ilustrasi untuk tujuan perbincangan dengan wakil BSN. Ia tidak membentuk nasihat kewangan atau tawaran pinjaman rasmi. Kadar dan syarat tertakluk kepada penilaian dan kelulusan pihak Bank.",
+    terms_link: "Terma Perkhidmatan &amp; Dasar Privasi",
     // dynamic
     progress_start: "Bermula",
     progress_result: "Keputusan",
@@ -586,6 +591,7 @@ const I18N = {
     btn_whatsapp: "Chat on WhatsApp",
     btn_edit: "Edit Details",
     disclaimer: "This guided tool provides illustrative projections only, for discussion purposes with a BSN representative. It does not constitute financial advice or a formal loan offer. Rates and terms are subject to the Bank's assessment and approval.",
+    terms_link: "Terms of Service &amp; Privacy Policy",
     // dynamic
     progress_start: "Getting Started",
     progress_result: "Result",

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terma Perkhidmatan & Dasar Privasi — BSN Pinjaman Peribadi & Kad Kredit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#faf6ee; --panel:#ffffff; --border:#00A1B1;
+    --text:#1a1a1a; --muted:#6b6355; --accent:#00A1B1; --accent-dark:#008895;
+    --panel2:#f0ece1;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:'Nunito',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    min-height:100vh;
+  }
+  .topbar{background:var(--bg);padding:16px 20px;display:flex;align-items:center;gap:12px;}
+  .logo-img{height:36px;width:auto;border-radius:6px;flex-shrink:0;}
+  .topbar-title{font-weight:700;font-size:1rem;}
+  .topbar-sub{color:var(--muted);font-size:.78rem;}
+  .lang-switch{margin-left:auto;display:flex;gap:6px;flex-shrink:0;}
+  .lang-btn{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--text);font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;}
+  .lang-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+  .stage{max-width:720px;margin:0 auto;padding:12px 20px 80px;}
+  .back-link{display:inline-block;color:var(--accent);font-weight:700;font-size:.85rem;text-decoration:none;margin-bottom:16px;}
+  .back-link:hover{color:var(--accent-dark);}
+  .card{background:var(--panel);border:2px solid var(--border);border-radius:16px;padding:32px 28px;box-shadow:0 2px 14px rgba(0,0,0,.05);}
+  h1{font-size:1.5rem;font-weight:800;color:var(--accent);margin:0 0 6px;}
+  .subtitle{color:var(--muted);font-size:.85rem;margin:0 0 28px;}
+  h2{font-size:1.05rem;font-weight:800;color:var(--accent);margin:26px 0 10px;display:flex;align-items:center;gap:8px;}
+  h2:first-of-type{margin-top:0;}
+  p{font-size:.94rem;line-height:1.7;color:var(--text);margin:0 0 12px;}
+  ul{margin:0 0 12px;padding-left:20px;}
+  li{font-size:.94rem;line-height:1.7;color:var(--text);margin-bottom:8px;}
+  strong{color:var(--accent-dark);font-weight:800;}
+  .footer-note{text-align:center;color:var(--muted);font-size:.72rem;margin-top:24px;}
+  [data-lang]{display:none;}
+  [data-lang].active{display:block;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <img src="bsn-logo.svg" alt="BSN" class="logo-img">
+  <div>
+    <div class="topbar-title">BSN Pinjaman Peribadi &amp; Kad Kredit</div>
+    <div class="topbar-sub">Guided Calculator</div>
+  </div>
+  <div class="lang-switch">
+    <button type="button" class="lang-btn active" id="btnMs" onclick="setLang('ms')">BM</button>
+    <button type="button" class="lang-btn" id="btnEn" onclick="setLang('en')">EN</button>
+  </div>
+</div>
+
+<div class="stage">
+  <a class="back-link" href="index.html" id="backLink">&larr; Kembali ke Kalkulator</a>
+
+  <div class="card">
+
+    <!-- Bahasa Melayu -->
+    <div data-lang="ms" class="active">
+      <h1>Terma Perkhidmatan &amp; Dasar Privasi</h1>
+      <p class="subtitle">Sila baca notis ini dengan teliti sebelum menggunakan Kalkulator Panduan BSN Pinjaman Peribadi &amp; Kad Kredit.</p>
+
+      <h2>📄 Terma Perkhidmatan</h2>
+      <ul>
+        <li>Laman web ini <strong>bukan laman web rasmi</strong> Bank Simpanan Nasional (BSN). Ia adalah alat bantu pihak ketiga yang dibangunkan semata-mata untuk tujuan ilustrasi dan pendidikan, dan tidak mewakili, dimiliki, atau dikendalikan secara rasmi oleh BSN.</li>
+        <li>Sebarang anggaran, pengiraan Debt Service Ratio (DSR), kadar faedah/keuntungan, had pinjaman, atau petunjuk kelayakan yang dipaparkan adalah <strong>unjuran ilustrasi semata-mata</strong> berdasarkan input yang anda berikan. Ia <strong>tidak bermaksud atau menjamin</strong> bahawa permohonan pinjaman atau kad kredit anda akan diluluskan.</li>
+        <li>Sebarang kelulusan sebenar adalah tertakluk sepenuhnya kepada penilaian kredit, semakan rekod kewangan (termasuk CCRIS/CTOS), dokumen sokongan yang lengkap, dasar dalaman, dan budi bicara mutlak pihak BSN. Keputusan akhir hanya dibuat oleh pihak Bank selepas permohonan rasmi dihantar dan disemak.</li>
+        <li>Kandungan di laman ini <strong>tidak membentuk nasihat kewangan profesional</strong>. Anda dinasihatkan untuk berbincang dengan wakil BSN yang sah sebelum membuat sebarang keputusan kewangan.</li>
+      </ul>
+
+      <h2>🔒 Dasar Privasi</h2>
+      <ul>
+        <li>Laman web ini <strong>tidak menyimpan, memproses di pelayan (server), atau menghantar</strong> sebarang data peribadi yang anda masukkan ke dalam kalkulator ini (contohnya pendapatan, komitmen bulanan, jumlah pinjaman). Semua pengiraan berlaku sepenuhnya di dalam pelayar (browser) anda sendiri.</li>
+        <li>Laman ini berfungsi sebagai <strong>"guided web funnel"</strong> — iaitu alat panduan untuk memudahkan pengurusan proses semakan awal anda, sebelum diteruskan kepada saluran permohonan rasmi.</li>
+        <li>Sekiranya anda berminat untuk meneruskan permohonan, anda akan diminta memberi <strong>persetujuan (consent) secara eksplisit</strong> terlebih dahulu sebelum sebarang butiran anda (nama, nombor telefon, e-mel, dan lain-lain) dikongsi. Selepas persetujuan diberikan, satu pautan/saluran permohonan yang berasingan (contohnya WhatsApp rasmi) akan dipaparkan untuk anda meneruskan proses bersama wakil BSN.</li>
+        <li>Sebarang data peribadi yang anda kongsikan semasa proses permohonan selepas ini adalah tertakluk sepenuhnya kepada <strong>Akta Perlindungan Data Peribadi 2010 (PDPA)</strong> dan dasar privasi rasmi Bank Simpanan Nasional (BSN).</li>
+      </ul>
+    </div>
+
+    <!-- English -->
+    <div data-lang="en">
+      <h1>Terms of Service &amp; Privacy Policy</h1>
+      <p class="subtitle">Please read this notice carefully before using the BSN Personal Loan &amp; Credit Card Guided Calculator.</p>
+
+      <h2>📄 Terms of Service</h2>
+      <ul>
+        <li>This website is <strong>not the official website</strong> of Bank Simpanan Nasional (BSN). It is a third-party tool built solely for illustrative and educational purposes, and is not officially affiliated with, owned, or operated by BSN.</li>
+        <li>Any estimate, Debt Service Ratio (DSR) calculation, profit/interest rate, loan limit, or eligibility indicator shown is an <strong>illustrative projection only</strong>, based purely on the information you provide. It <strong>does not mean or guarantee</strong> that your loan or credit card application will be approved.</li>
+        <li>Any actual approval is entirely subject to credit assessment, financial record checks (including CCRIS/CTOS), complete supporting documents, internal policy, and the sole discretion of BSN. The final decision is made only by the Bank after a formal application has been submitted and reviewed.</li>
+        <li>Content on this site <strong>does not constitute professional financial advice</strong>. You are advised to consult an authorized BSN representative before making any financial decision.</li>
+      </ul>
+
+      <h2>🔒 Privacy Policy</h2>
+      <ul>
+        <li>This website does <strong>not store, server-process, or transmit</strong> any personal data you enter into this calculator (e.g. income, monthly commitments, loan amount). All calculations run entirely within your own browser.</li>
+        <li>This site functions as a <strong>guided web funnel</strong> — a tool designed to simplify and guide your preliminary pre-qualification process, before directing you to the official application channel.</li>
+        <li>If you're interested in proceeding, you will first be asked to give <strong>explicit consent</strong> before any of your details (name, phone number, email, etc.) are shared. Once consent is given, a separate application link/channel (e.g. an official WhatsApp channel) will be provided so you can continue the process with a BSN representative.</li>
+        <li>Any personal data you share during the subsequent application process is fully subject to the <strong>Personal Data Protection Act 2010 (PDPA)</strong> and the official privacy policy of Bank Simpanan Nasional (BSN).</li>
+      </ul>
+    </div>
+
+  </div>
+  <div class="footer-note" id="footerNote">BSN Pinjaman Peribadi &amp; Kad Kredit — Kalkulator Berpandu</div>
+</div>
+
+<script>
+function setLang(l){
+  document.querySelectorAll('[data-lang]').forEach(el=>el.classList.toggle('active', el.dataset.lang===l));
+  document.getElementById('btnMs').classList.toggle('active', l==='ms');
+  document.getElementById('btnEn').classList.toggle('active', l==='en');
+  document.getElementById('backLink').textContent = l==='ms' ? '← Kembali ke Kalkulator' : '← Back to Calculator';
+  document.getElementById('footerNote').textContent = l==='ms'
+    ? 'BSN Pinjaman Peribadi & Kad Kredit — Kalkulator Berpandu'
+    : 'BSN Personal Loan & Credit Card — Guided Calculator';
+  document.documentElement.lang = l;
+}
+</script>
+
+</body>
+</html>
