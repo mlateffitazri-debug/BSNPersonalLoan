@@ -44,6 +44,24 @@
   @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
   .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:28px 24px;box-shadow:0 2px 14px rgba(0,0,0,.05);}
+
+  .hero-banner{position:relative;width:100%;height:clamp(320px, 62vh, 480px);border-radius:16px;overflow:hidden;display:flex;align-items:flex-end;}
+  @media (max-width:480px){
+    .hero-banner{height:clamp(460px, 84vh, 620px);}
+  }
+  .hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 20%;}
+  .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,20,25,0) 0%, rgba(0,20,25,.3) 45%, rgba(0,22,26,.94) 100%);}
+  .hero-text{position:relative;z-index:1;width:100%;padding:20px;color:#fff;}
+  .hero-eyebrow{color:#8fe6e0;font-weight:700;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+  .hero-title{font-size:1.25rem;font-weight:800;line-height:1.28;margin:0 0 6px;color:#fff;}
+  .hero-help{color:rgba(255,255,255,.88);font-size:.82rem;line-height:1.45;margin:0 0 14px;}
+  @media (min-width:400px){
+    .hero-text{padding:28px 24px;}
+    .hero-eyebrow{font-size:.72rem;margin-bottom:8px;}
+    .hero-title{font-size:1.5rem;margin:0 0 8px;}
+    .hero-help{font-size:.9rem;margin:0 0 20px;}
+  }
+
   .eyebrow{color:var(--accent);font-weight:700;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
   .question{font-size:1.35rem;font-weight:800;line-height:1.3;margin:0 0 8px;color:var(--accent);}
   .helptext{color:var(--muted);font-size:.9rem;line-height:1.5;margin:0 0 22px;}
@@ -154,12 +172,14 @@
 
   <!-- Step 0: Welcome -->
   <div class="step active" data-step="0">
-    <div class="card">
-      <div class="eyebrow" data-i18n="s0_eyebrow">Selamat Datang</div>
-      <p class="question" data-i18n="s0_question">Cari produk kewangan yang sesuai untuk anda.</p>
-      <p class="helptext" data-i18n="s0_help">Kami akan bantu anda membuat semakan pra-kelayakan dan mohon Pinjaman Peribadi MyRinggit-i atau Kad Kredit Al-Aiman dengan pantas — kurang dari 10 minit, dan <strong>PERCUMA</strong>. Jika anda tidak memenuhi syarat pinjaman, kami akan cadangkan Kad Kredit sebagai alternatif.</p>
-      <div class="nav-row">
-        <button class="btn-primary" data-i18n="btn_start" onclick="goTo(1)">Mulakan</button>
+    <div class="hero-banner">
+      <img src="hero.png" alt="BSN Pinjaman Peribadi & Kad Kredit" class="hero-bg">
+      <div class="hero-overlay"></div>
+      <div class="hero-text">
+        <div class="hero-eyebrow" data-i18n="s0_eyebrow">Selamat Datang</div>
+        <p class="hero-title" data-i18n="s0_question">Cari produk kewangan yang sesuai untuk anda.</p>
+        <p class="hero-help" data-i18n="s0_help">Kami akan bantu anda membuat semakan pra-kelayakan dan mohon Pinjaman Peribadi MyRinggit-i atau Kad Kredit Al-Aiman dengan pantas — kurang dari 10 minit, dan <strong>PERCUMA</strong>. Jika anda tidak memenuhi syarat pinjaman, kami akan cadangkan Kad Kredit sebagai alternatif.</p>
+        <button type="button" class="btn-primary" style="width:100%;padding:16px;font-size:1rem;border-radius:10px;" data-i18n="btn_start" onclick="goTo(1)">Mulakan</button>
       </div>
     </div>
   </div>
