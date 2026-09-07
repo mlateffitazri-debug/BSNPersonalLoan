@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BSN Pinjaman Peribadi & Kad Kredit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#faf6ee; --panel:#ffffff; --panel2:#f0ece1; --border:#00A1B1;
+    --text:#1a1a1a; --muted:#6b6355; --accent:#00A1B1; --accent-dark:#008895;
+    --accent2:#0d7a52; --danger:#c0392b; --warnbg:#fdf0e8; --input-bg:#ffffff;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:'Nunito',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    min-height:100vh;
+  }
+  .topbar{background:var(--bg);padding:12px 16px;display:flex;align-items:center;gap:10px;}
+  .logo-img{height:30px;width:auto;border-radius:6px;flex-shrink:0;}
+  .topbar-title{font-weight:700;font-size:.9rem;white-space:nowrap;}
+  .topbar-sub{color:var(--muted);font-size:.72rem;white-space:nowrap;}
+  .lang-switch{margin-left:auto;display:flex;gap:6px;flex-shrink:0;}
+  .lang-btn{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--text);font-size:.75rem;font-weight:700;cursor:pointer;}
+  .lang-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  @media (min-width:400px){
+    .topbar{padding:16px 20px;gap:12px;}
+    .logo-img{height:36px;}
+    .topbar-title{font-size:1rem;}
+    .topbar-sub{font-size:.78rem;}
+  }
+
+  .progress-wrap{max-width:640px;margin:0 auto;padding:18px 20px 0;}
+  .progress-track{height:6px;background:var(--panel2);border-radius:4px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .35s ease;}
+  .progress-label{display:flex;justify-content:space-between;color:var(--muted);font-size:.75rem;margin-top:6px;}
+
+  .stage{max-width:640px;margin:0 auto;padding:28px 20px 80px;}
+  .step{display:none;animation:fadeIn .3s ease;}
+  .step.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:28px 24px;box-shadow:0 2px 14px rgba(0,0,0,.05);}
+  .eyebrow{color:var(--accent);font-weight:700;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
+  .question{font-size:1.35rem;font-weight:800;line-height:1.3;margin:0 0 8px;color:var(--accent);}
+  .helptext{color:var(--muted);font-size:.9rem;line-height:1.5;margin:0 0 22px;}
+  .field-label{display:block;font-weight:700;font-size:.85rem;margin-bottom:8px;}
+
+  .input-big{position:relative;margin-bottom:18px;}
+  .input-big .prefix{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:600;}
+  .input-big .suffix{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:600;}
+  .input-big input{
+    width:100%;padding:16px 16px;font-size:1.3rem;font-weight:700;
+    border:2px solid var(--border);border-radius:12px;background:var(--input-bg);color:var(--text);
+    text-align:center;
+  }
+  .input-big.has-prefix input{padding-left:44px;}
+  .input-big.has-suffix input{padding-right:44px;}
+  .input-big.no-center input{text-align:left;font-size:1rem;font-weight:600;padding:14px 16px;}
+  .input-big.no-center input::placeholder{color:#b8b2a5;font-weight:400;}
+  .input-big input:focus{outline:none;border-color:var(--accent);}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
+  .chip{padding:8px 14px;border-radius:20px;border:1px solid var(--border);background:var(--panel2);color:var(--text);font-size:.82rem;font-weight:600;cursor:pointer;user-select:none;}
+  .chip:hover{border-color:var(--accent);}
+  .chip.selected{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+  .option-cards{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:6px;}
+  @media (min-width:480px){.option-cards.cols-2{grid-template-columns:1fr 1fr;} .option-cards.cols-3{grid-template-columns:1fr 1fr 1fr;}}
+  .option-card{border:2px solid var(--border);border-radius:12px;padding:18px 16px;cursor:pointer;}
+  .option-card.selected{border-color:var(--accent);background:#effaf9;}
+  .option-card .oc-icon{width:40px;height:40px;color:var(--accent);margin-bottom:10px;}
+  .option-card .oc-icon svg{width:100%;height:100%;}
+  .option-card h3{margin:0 0 6px;font-size:.98rem;}
+  .option-card p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.4;}
+  .option-card .rate-tag{display:inline-block;margin-top:8px;font-size:.75rem;font-weight:700;color:var(--accent-dark);background:#e3f5f3;padding:3px 8px;border-radius:6px;}
+
+  .warn-box{background:var(--warnbg);border:1px solid #eccdb4;border-radius:10px;padding:12px 14px;font-size:.82rem;color:#8a4a1f;margin-bottom:16px;line-height:1.5;}
+  .info-box{background:#eef7f6;border:1px solid #c9e9e6;border-radius:10px;padding:12px 14px;font-size:.82rem;color:var(--accent-dark);margin-bottom:16px;line-height:1.5;}
+  .consent-row{display:flex;align-items:flex-start;gap:10px;font-size:.85rem;line-height:1.5;color:var(--text);cursor:pointer;margin-bottom:8px;}
+  .consent-row input[type=checkbox]{width:20px;height:20px;flex-shrink:0;accent-color:var(--accent);margin-top:1px;cursor:pointer;}
+
+  .nav-row{display:flex;gap:10px;margin-top:24px;}
+  button{cursor:pointer;border:none;border-radius:10px;font-weight:700;font-size:.95rem;padding:14px;font-family:inherit;}
+  .btn-primary{flex:1;background:var(--accent);color:#fff;}
+  .btn-primary:hover{background:var(--accent-dark);}
+  .btn-primary:disabled{background:#cfcabf;cursor:not-allowed;}
+  .btn-back{background:var(--panel2);color:var(--text);border:1px solid var(--border);padding:14px 18px;}
+  .btn-back:hover{background:#e5ded0;}
+  .btn-sm{flex:none;padding:8px 14px;font-size:.8rem;}
+  .btn-cta{width:100%;background:var(--accent);color:#fff;padding:16px;font-size:1rem;font-weight:800;border-radius:10px;margin-top:18px;box-shadow:0 4px 14px rgba(0,161,177,.35);}
+  .btn-cta:hover{background:var(--accent-dark);}
+  .btn-whatsapp{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#25D366;color:#fff;padding:16px;font-size:1rem;font-weight:800;border-radius:10px;text-decoration:none;margin-top:8px;}
+  .btn-whatsapp:hover{background:#1ebe5a;}
+  .btn-whatsapp svg{width:22px;height:22px;flex-shrink:0;}
+  .restart-row{display:flex;justify-content:center;gap:10px;margin-top:14px;}
+
+  .headline{text-align:center;margin-bottom:22px;}
+  .headline .label{color:var(--muted);font-size:.85rem;margin-bottom:4px;}
+  .headline .value{font-size:1.6rem;font-weight:800;color:var(--accent);}
+  .headline .sub{color:var(--muted);font-size:.85rem;margin-top:4px;}
+
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+  .stat{background:var(--panel2);border-radius:12px;padding:14px;}
+  .stat .stat-label{color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;}
+  .stat .stat-value{font-size:1rem;font-weight:800;}
+
+  details{border:1px solid var(--border);border-radius:12px;padding:4px 16px;margin-top:8px;}
+  summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:.88rem;color:var(--accent-dark);}
+  .result-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px dashed var(--border);font-size:.86rem;}
+  .result-item:last-child{border-bottom:none;padding-bottom:16px;}
+  .result-label{color:var(--muted);}
+  .result-value{font-weight:700;text-align:right;}
+  .positive{color:var(--accent2);}
+  .negative{color:var(--danger);}
+  .note{font-size:.75rem;color:var(--muted);margin-top:14px;text-align:center;}
+
+  .doc-list{list-style:none;margin:0 0 16px;padding:0;}
+  .doc-list li{display:flex;gap:8px;padding:7px 0;font-size:.85rem;border-bottom:1px dashed var(--border);}
+  .doc-list li:last-child{border-bottom:none;}
+  .doc-list li::before{content:"\2611";color:var(--accent-dark);flex-shrink:0;}
+  .doc-group-title{font-weight:800;font-size:.85rem;margin:14px 0 4px;}
+  .doc-group-title:first-child{margin-top:0;}
+
+  .fallout-icon{width:64px;height:64px;margin:0 auto 16px;color:var(--danger);}
+  .fallout-icon svg{width:100%;height:100%;}
+
+  .disclaimer{text-align:center;color:var(--muted);font-size:.72rem;max-width:640px;margin:20px auto 0;padding:0 20px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <img src="bsn-logo.svg" alt="BSN" class="logo-img">
+  <div>
+    <div class="topbar-title">BSN Pinjaman Peribadi</div>
+    <div class="topbar-sub" data-i18n="topbarSub">&amp; Kad Kredit</div>
+  </div>
+  <div class="lang-switch">
+    <div class="lang-btn active" data-lang="ms" onclick="setLanguage('ms')">BM</div>
+    <div class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</div>
+  </div>
+</div>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="progress-label"><span id="progressStepLabel">Bermula</span><span id="progressPct">0%</span></div>
+</div>
+
+<div class="stage">
+
+  <!-- Step 0: Welcome -->
+  <div class="step active" data-step="0">
+    <div class="card">
+      <div class="eyebrow" data-i18n="s0_eyebrow">Selamat Datang</div>
+      <p class="question" data-i18n="s0_question">Cari produk kewangan yang sesuai untuk anda.</p>
+      <p class="helptext" data-i18n="s0_help">Kami akan bantu anda membuat semakan pra-kelayakan dan mohon Pinjaman Peribadi MyRinggit-i atau Kad Kredit Al-Aiman dengan pantas — kurang dari 10 minit, dan <strong>PERCUMA</strong>. Jika anda tidak memenuhi syarat pinjaman, kami akan cadangkan Kad Kredit sebagai alternatif.</p>
+      <div class="nav-row">
+        <button class="btn-primary" data-i18n="btn_start" onclick="goTo(1)">Mulakan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 1: Pilih Sektor -->
+  <div class="step" data-step="1">
+    <div class="card">
+      <div class="eyebrow" data-i18n="s1_eyebrow">Soalan 1 daripada 4</div>
+      <p class="question" data-i18n="s1_question">Pilih sektor pekerjaan anda</p>
+      <p class="helptext" data-i18n="s1_help">Ini membantu kami tentukan produk dan syarat yang paling sesuai untuk anda.</p>
+
+      <div class="option-cards cols-2" id="sectorCards">
+        <div class="option-card" data-val="kerajaan" onclick="selectSector('kerajaan')">
+          <div class="oc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7v2h20V7L12 2zM4 11v8H2v2h20v-2h-2v-8h-2v8h-3v-8h-2v8h-3v-8H8v8H6v-8H4z"/></svg></div>
+          <h3 data-i18n="sector_kerajaan_title">Kerajaan</h3>
+          <p data-i18n="sector_kerajaan_desc">Penjawat Awam, Guru, Polis dan Tentera</p>
+        </div>
+        <div class="option-card" data-val="swasta" onclick="selectSector('swasta')">
+          <div class="oc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 100 10 5 5 0 000-10zm0 12c-4.42 0-8 2.24-8 5v3h16v-3c0-2.76-3.58-5-8-5z"/></svg></div>
+          <h3 data-i18n="sector_swasta_title">Sektor Swasta</h3>
+          <p data-i18n="sector_swasta_desc">Pekerja swasta dan profesional</p>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo(0)">Kembali</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: Pilih Produk -->
+  <div class="step" data-step="2">
+    <div class="card">
+      <div class="eyebrow" data-i18n="s2_eyebrow">Soalan 2 daripada 4</div>
+      <p class="question" data-i18n="s2_question">Pilih produk yang anda perlukan</p>
+      <p class="helptext" data-i18n="s2_help">Tak pasti mana nak pilih? Pilih Pinjaman Peribadi — jika tidak layak, kami akan cadangkan Kad Kredit secara automatik.</p>
+
+      <div class="option-cards cols-2" id="productCards">
+        <div class="option-card" data-val="pinjaman" onclick="selectProduct('pinjaman')">
+          <div class="oc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg></div>
+          <h3 data-i18n="product_loan_title">Pinjaman Peribadi</h3>
+          <p data-i18n="product_loan_desc">MyRinggit-i — pembiayaan tunai sekali gus</p>
+        </div>
+        <div class="option-card" data-val="kredit" onclick="selectProduct('kredit')">
+          <div class="oc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg></div>
+          <h3 data-i18n="product_card_title">Kad Kredit</h3>
+          <p data-i18n="product_card_desc">Al-Aiman — had kredit fleksibel untuk perbelanjaan</p>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo(1)">Kembali</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2b: Debt Consolidation -->
+  <div class="step" data-step="2b">
+    <div class="card">
+      <div class="eyebrow" data-i18n="s2b_eyebrow">Penyatuan Hutang</div>
+      <p class="question" data-i18n="s2b_question">Adakah anda ingin selesaikan hutang sedia ada?</p>
+      <p class="helptext" data-i18n="s2b_help">Anda boleh guna sebahagian daripada pinjaman baharu untuk terus selesaikan hutang sedia ada dengan institusi kewangan/koperasi lain — baki bersih akan diselaraskan.</p>
+
+      <div class="option-cards cols-2" id="debtConsolCards">
+        <div class="option-card" data-val="yes" onclick="selectDebtConsolidation(true)">
+          <h3 data-i18n="chip_yes">Ya</h3>
+          <p data-i18n="s2b_yes_desc">Selesaikan hutang sedia ada</p>
+        </div>
+        <div class="option-card selected" data-val="no" onclick="selectDebtConsolidation(false)">
+          <h3 data-i18n="chip_no">Tidak</h3>
+          <p data-i18n="s2b_no_desc">Terima tunai sepenuhnya</p>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo(2)">Kembali</button>
+        <button class="btn-primary" data-i18n="btn_continue" onclick="confirmDebtConsolidation()">Teruskan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: DSR Calculator -->
+  <div class="step" data-step="3">
+    <div class="card">
+      <div class="eyebrow" data-i18n="s3_eyebrow">Soalan 3 daripada 4</div>
+      <p class="question" data-i18n="s3_question">Semakan Debt Service Ratio (DSR)</p>
+      <p class="helptext" data-i18n="s3_help">Masukkan pendapatan dan komitmen bulanan anda untuk semakan pra-kelayakan pantas.</p>
+
+      <label class="field-label" data-i18n="lbl_grossIncome">Pendapatan kasar bulanan (RM)</label>
+      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_grossIncome" min="0" step="100" placeholder="0.00"></div>
+
+      <label class="field-label" data-i18n="lbl_netIncome">Gaji bersih dalam payslip selepas potongan (RM)</label>
+      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_netIncome" min="0" step="100" placeholder="0.00"></div>
+
+      <label class="field-label" data-i18n="lbl_commitments">Jumlah komitmen bulanan sedia ada (RM)</label>
+      <p class="helptext" style="margin-bottom:10px;" data-i18n="lbl_commitments_help">Contoh: bayaran pinjaman kereta, pinjaman peribadi lain, minimum kad kredit, PTPTN, dll.</p>
+      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_commitment1" min="0" step="50" data-i18n-ph="ph_commitment1" placeholder="Komitmen 1"></div>
+      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_commitment2" min="0" step="50" data-i18n-ph="ph_commitment2" placeholder="Komitmen 2"></div>
+      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_commitment3" min="0" step="50" data-i18n-ph="ph_commitment3" placeholder="Komitmen 3"></div>
+      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_commitment4" min="0" step="50" data-i18n-ph="ph_commitment4" placeholder="Komitmen 4"></div>
+
+      <label class="field-label" data-i18n="lbl_loanAmount">Jumlah pinjaman yang dipohon (RM)</label>
+      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_loanAmount" min="0" step="1000" placeholder="0.00"></div>
+
+      <label class="field-label" data-i18n="lbl_loanTenure">Tempoh pinjaman dipohon (tahun)</label>
+      <div class="input-big has-suffix"><input type="number" id="q_loanTenure" min="1" max="10" step="1" placeholder="0"><span class="suffix" data-i18n="unit_years">tahun</span></div>
+
+      <div id="dsrWarning"></div>
+
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo(2)">Kembali</button>
+        <button class="btn-primary" data-i18n="btn_check" onclick="checkDSR()">SEMAK</button>
+      </div>
+      <p class="note" data-i18n="s3_note">*Kalkulator ini adalah anggaran sahaja untuk tujuan ilustrasi. Keputusan sebenar tertakluk kepada penilaian pihak Bank.</p>
+    </div>
+  </div>
+
+  <!-- Step 3b: DSR Fallout -->
+  <div class="step" data-step="3b">
+    <div class="card">
+      <div class="fallout-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></div>
+      <p class="question" style="text-align:center;" data-i18n="s3b_question">Maafkan Saya</p>
+      <p class="helptext" style="text-align:center;" id="falloutHelpText"></p>
+      <p class="helptext" style="text-align:center;" data-i18n="s3b_help2">Adakah anda berminat untuk memohon Kad Kredit Al-Aiman sebagai alternatif?</p>
+      <div class="nav-row" style="flex-direction:column;">
+        <button class="btn-primary" data-i18n="btn_yes_creditcard" onclick="proceedToCreditCardFallback()">Ya, Kad Kredit Al-Aiman</button>
+        <button class="btn-back" data-i18n="btn_recheck" onclick="goTo(3)">Semak Semula</button>
+        <button class="btn-back" data-i18n="btn_not_interested" onclick="restart()">Saya tidak berminat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4: Result (Loan or Credit Card) -->
+  <div class="step" data-step="4">
+    <div class="card">
+      <div class="eyebrow" id="resultEyebrow">Keputusan</div>
+      <div class="headline">
+        <div class="label" id="resultLabel">Anda layak memohon</div>
+        <div class="value" id="resultValue">-</div>
+        <div class="sub" id="resultSub"></div>
+      </div>
+
+      <div class="stat-grid" id="resultStatGrid"></div>
+
+      <details>
+        <summary data-i18n="res_eligibility">Kelayakan</summary>
+        <div id="eligibilityBox"></div>
+      </details>
+
+      <details>
+        <summary data-i18n="res_docs">Dokumen yang Diperlukan</summary>
+        <div id="docsBox"></div>
+      </details>
+
+      <details id="benefitsDetails" style="display:none;">
+        <summary data-i18n="res_benefits">Manfaat Kad</summary>
+        <div id="benefitsBox"></div>
+      </details>
+
+      <div class="note" id="resultNote"></div>
+
+      <div id="ctaDebtRemark"></div>
+
+      <button class="btn-cta" data-i18n="btn_apply_now" onclick="goToLeadForm()">Mohon Sekarang</button>
+
+      <div class="restart-row">
+        <button class="btn-back btn-sm" data-i18n="btn_restart" onclick="restart()">Mula Semula</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 5: Lead capture -->
+  <div class="step" data-step="5">
+    <div class="card">
+      <div class="eyebrow" data-i18n="s5_eyebrow">Mohon Sekarang</div>
+      <p class="question" data-i18n="s5_question">Mari kita mulakan.</p>
+      <p class="helptext" data-i18n="s5_help">Kongsikan maklumat anda dan wakil BSN akan menghubungi anda untuk bantu proses permohonan.</p>
+
+      <label class="field-label" data-i18n="lbl_leadName">Nama Penuh</label>
+      <div class="input-big no-center"><input type="text" id="q_leadName" data-i18n-ph="ph_leadName" placeholder="cth. Ahmad bin Ali" autocomplete="name"></div>
+
+      <label class="field-label" data-i18n="lbl_leadProfession">Jenis Pekerjaan / Profesion</label>
+      <div class="input-big no-center"><input type="text" id="q_leadProfession" data-i18n-ph="ph_leadProfession" placeholder="cth. Jururawat, Peniaga, Jurutera" autocomplete="organization-title"></div>
+
+      <label class="field-label" data-i18n="lbl_leadPhone">Nombor Telefon Bimbit</label>
+      <div class="input-big no-center"><input type="tel" id="q_leadPhone" data-i18n-ph="ph_leadPhone" placeholder="cth. 012-3456789" autocomplete="tel"></div>
+
+      <label class="field-label" data-i18n="lbl_leadEmail">Emel</label>
+      <div class="input-big no-center"><input type="email" id="q_leadEmail" data-i18n-ph="ph_leadEmail" placeholder="cth. ahmad@email.com" autocomplete="email"></div>
+
+      <label class="consent-row" style="opacity:.8;">
+        <input type="checkbox" checked disabled>
+        <span id="leadSectorConfirm"></span>
+      </label>
+
+      <label class="consent-row">
+        <input type="checkbox" id="q_leadConsent">
+        <span data-i18n="lead_consent">Saya bersetuju untuk data saya digunakan untuk membuat permohonan ini.</span>
+      </label>
+
+      <div id="leadWarning"></div>
+
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo(4)">Kembali</button>
+        <button class="btn-primary" data-i18n="btn_continue" onclick="validateLead()">Teruskan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 6: WhatsApp handoff -->
+  <div class="step" data-step="6">
+    <div class="card">
+      <div class="eyebrow" data-i18n="s6_eyebrow">Hampir Selesai</div>
+      <p class="question" data-i18n="s6_question">Anda sudah bersedia!</p>
+      <p class="helptext" data-i18n="s6_help">Ketik butang di bawah untuk hantar maklumat anda kepada wakil BSN melalui WhatsApp.</p>
+
+      <div id="leadSummaryBox" class="info-box" style="background:var(--panel2);color:var(--text);border-color:var(--border);"></div>
+
+      <a id="waButton" class="btn-whatsapp" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4C7.14 4 3.13 8 3.13 12.9c0 1.6.42 3.14 1.2 4.5L3 21l3.7-1.3a8.9 8.9 0 0 0 4.35 1.14h.01c4.91 0 8.92-4 8.92-8.9a8.84 8.84 0 0 0-2.38-6.62zM12.06 19.4h-.01a7.4 7.4 0 0 1-3.77-1.03l-.27-.16-2.8.97.94-2.72-.18-.28a7.36 7.36 0 0 1-1.14-3.94c0-4.08 3.33-7.4 7.44-7.4a7.4 7.4 0 0 1 5.26 2.17 7.32 7.32 0 0 1 2.17 5.23c0 4.08-3.33 7.4-7.44 7.4zm4.08-5.54c-.22-.11-1.32-.65-1.53-.72-.2-.08-.35-.11-.5.11-.15.22-.58.72-.7.87-.13.15-.26.16-.48.05-.22-.11-.94-.35-1.79-1.11-.66-.59-1.11-1.32-1.24-1.54-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.38.11-.13.15-.22.22-.37.07-.15.04-.28-.02-.39-.06-.11-.5-1.2-.68-1.65-.18-.43-.36-.37-.5-.38h-.43c-.15 0-.39.06-.59.28-.2.22-.77.75-.77 1.84s.79 2.13.9 2.28c.11.15 1.55 2.36 3.75 3.31.52.22.93.36 1.25.46.53.17 1.01.14 1.39.09.42-.06 1.32-.54 1.51-1.06.19-.52.19-.96.13-1.06-.06-.09-.2-.15-.42-.26z"/></svg>
+        <span data-i18n="btn_whatsapp">Chat di WhatsApp</span>
+      </a>
+
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_edit" onclick="goTo(5)">Edit Maklumat</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="disclaimer" data-i18n="disclaimer">Alat berpandu ini hanya menyediakan unjuran ilustrasi untuk tujuan perbincangan dengan wakil BSN. Ia tidak membentuk nasihat kewangan atau tawaran pinjaman rasmi. Kadar dan syarat tertakluk kepada penilaian dan kelulusan pihak Bank.</p>
+
+<script>
+const I18N = {
+  ms: {
+    topbarSub: "&amp; Kad Kredit",
+    s0_eyebrow: "Selamat Datang",
+    s0_question: "Cari produk kewangan yang sesuai untuk anda.",
+    s0_help: "Kami akan bantu anda membuat semakan pra-kelayakan dan mohon Pinjaman Peribadi MyRinggit-i atau Kad Kredit Al-Aiman dengan pantas — kurang dari 10 minit, dan <strong>PERCUMA</strong>. Jika anda tidak memenuhi syarat pinjaman, kami akan cadangkan Kad Kredit sebagai alternatif.",
+    btn_start: "Mulakan",
+    s1_eyebrow: "Soalan 1 daripada 4",
+    s1_question: "Pilih sektor pekerjaan anda",
+    s1_help: "Ini membantu kami tentukan produk dan syarat yang paling sesuai untuk anda.",
+    sector_kerajaan_title: "Kerajaan",
+    sector_kerajaan_desc: "Penjawat Awam, Guru, Polis dan Tentera",
+    sector_swasta_title: "Sektor Swasta",
+    sector_swasta_desc: "Pekerja swasta dan profesional",
+    btn_back: "Kembali",
+    s2_eyebrow: "Soalan 2 daripada 4",
+    s2_question: "Pilih produk yang anda perlukan",
+    s2_help: "Tak pasti mana nak pilih? Pilih Pinjaman Peribadi — jika tidak layak, kami akan cadangkan Kad Kredit secara automatik.",
+    product_loan_title: "Pinjaman Peribadi",
+    product_loan_desc: "MyRinggit-i — pembiayaan tunai sekali gus",
+    product_card_title: "Kad Kredit",
+    product_card_desc: "Al-Aiman — had kredit fleksibel untuk perbelanjaan",
+    chip_yes: "Ya", chip_no: "Tidak",
+    s2b_eyebrow: "Penyatuan Hutang",
+    s2b_question: "Adakah anda ingin selesaikan hutang sedia ada?",
+    s2b_help: "Jika anda memilih untuk buat penyatuan hutang, semakan DSR tidak diperlukan dan anda akan terus ke keputusan awal — wakil BSN akan menyemak butiran hutang sedia ada secara terperinci semasa permohonan.",
+    s2b_yes_desc: "Selesaikan hutang sedia ada",
+    s2b_no_desc: "Terima tunai sepenuhnya",
+    debt_consol_wa_line: `\nPenyatuan Hutang: Ya`,
+    cta_debt_remark: "Nota: Anda telah memilih untuk membuat penyatuan hutang. Wakil BSN akan berbincang butiran lanjut semasa proses permohonan.",
+    result_sub_debt_consol: "Anggaran pra-kelayakan awal — wakil BSN akan menyemak butiran hutang sedia ada dan kelayakan sebenar semasa permohonan.",
+    s3_eyebrow: "Soalan 3 daripada 4",
+    s3_question: "Semakan Debt Service Ratio (DSR)",
+    s3_help: "Masukkan pendapatan dan komitmen bulanan anda untuk semakan pra-kelayakan pantas.",
+    lbl_grossIncome: "Pendapatan kasar bulanan (RM)",
+    lbl_netIncome: "Gaji bersih dalam payslip selepas potongan (RM)",
+    lbl_commitments: "Jumlah komitmen bulanan sedia ada (RM)",
+    lbl_commitments_help: "Contoh: bayaran pinjaman kereta, pinjaman peribadi lain, minimum kad kredit, PTPTN, dll.",
+    ph_commitment1: "Komitmen 1", ph_commitment2: "Komitmen 2", ph_commitment3: "Komitmen 3", ph_commitment4: "Komitmen 4",
+    lbl_loanAmount: "Jumlah pinjaman yang dipohon (RM)",
+    lbl_loanTenure: "Tempoh pinjaman dipohon (tahun)",
+    unit_years: "tahun",
+    btn_check: "SEMAK",
+    s3_note: "*Kalkulator ini adalah anggaran sahaja untuk tujuan ilustrasi. Keputusan sebenar tertakluk kepada penilaian pihak Bank.",
+    s3b_question: "Maafkan Saya",
+    s3b_help2: "Adakah anda berminat untuk memohon Kad Kredit Al-Aiman sebagai alternatif?",
+    btn_yes_creditcard: "Ya, Kad Kredit Al-Aiman",
+    btn_recheck: "Semak Semula",
+    btn_not_interested: "Saya tidak berminat",
+    res_eligibility: "Kelayakan",
+    res_docs: "Dokumen yang Diperlukan",
+    res_benefits: "Manfaat Kad",
+    btn_apply_now: "Mohon Sekarang",
+    btn_restart: "Mula Semula",
+    s5_eyebrow: "Mohon Sekarang",
+    s5_question: "Mari kita mulakan.",
+    s5_help: "Kongsikan maklumat anda dan wakil BSN akan menghubungi anda untuk bantu proses permohonan.",
+    lbl_leadName: "Nama Penuh", ph_leadName: "cth. Ahmad bin Ali",
+    lbl_leadProfession: "Jenis Pekerjaan / Profesion", ph_leadProfession: "cth. Jururawat, Peniaga, Jurutera",
+    lbl_leadPhone: "Nombor Telefon Bimbit", ph_leadPhone: "cth. 012-3456789",
+    lbl_leadEmail: "Emel", ph_leadEmail: "cth. ahmad@email.com",
+    lead_consent: "Saya bersetuju untuk data saya digunakan untuk membuat permohonan ini.",
+    btn_continue: "Teruskan",
+    s6_eyebrow: "Hampir Selesai",
+    s6_question: "Anda sudah bersedia!",
+    s6_help: "Ketik butang di bawah untuk hantar maklumat anda kepada wakil BSN melalui WhatsApp.",
+    btn_whatsapp: "Chat di WhatsApp",
+    btn_edit: "Edit Maklumat",
+    disclaimer: "Alat berpandu ini hanya menyediakan unjuran ilustrasi untuk tujuan perbincangan dengan wakil BSN. Ia tidak membentuk nasihat kewangan atau tawaran pinjaman rasmi. Kadar dan syarat tertakluk kepada penilaian dan kelulusan pihak Bank.",
+    // dynamic
+    progress_start: "Bermula",
+    progress_result: "Keputusan",
+    progress_step: (n,m)=>`Soalan ${n} daripada ${m}`,
+    warn_fill_income: "Sila isi pendapatan kasar dan gaji bersih anda.",
+    warn_fill_loan: "Sila isi jumlah pinjaman dan tempoh yang dipohon.",
+    warn_consent_required: "Sila tandakan kotak persetujuan untuk teruskan.",
+    warn_fill_lead: "Sila isi semua medan dengan lengkap dan sah untuk teruskan.",
+    fallout_help: (pct)=>`Semakan mendapati peratus DSR anggaran anda (<strong>${pct}</strong>%) telah <strong>melebihi</strong> had yang ditetapkan, jadi permohonan Pinjaman Peribadi mungkin tidak berjaya.`,
+    result_eyebrow_loan: (label)=>`Pinjaman Peribadi · ${label}`,
+    result_label_loan: "Anda layak untuk mohon",
+    result_sub_loan: (dsr,threshold)=>`DSR anggaran anda: ${dsr}% (had ${threshold}%)`,
+    stat_instalment: "Anggaran Ansuran Bulanan",
+    stat_floatrate_used: "Kadar Terapung Digunakan",
+    stat_amount_tenure: "Jumlah Dipohon / Tempoh",
+    stat_amount_range: "Julat Amaun Produk",
+    amount_range_between: (min,max)=>`${min} - ${max}`,
+    amount_range_max: (max)=>`Maksimum ${max}`,
+    result_note_loan: "Kadar tanpa Takaful: tambahan 1% dari kadar di atas. Caj Bayaran Lewat (LPC): 1% setahun ke atas baki tertunggak. Kadar tertakluk kepada Kadar Asas Standard (SBR) semasa dan penilaian pihak Bank.",
+    result_eyebrow_cc_fallback: "Cadangan Alternatif",
+    result_eyebrow_cc: (label)=>`Kad Kredit · ${label}`,
+    result_label_cc: "Kad dicadangkan untuk anda",
+    result_sub_cc: (amt)=>`Kelayakan pendapatan: ${amt}/tahun ke atas`,
+    stat_profit_rate: "Kadar Keuntungan",
+    stat_annual_fee: "Fi Tahunan",
+    stat_none: "Tiada",
+    result_note_cc: "Kadar keuntungan rendah (11%/13.5%) tertakluk pembayaran minimum tepat pada masa selama 12 bulan berturut-turut. *Tertakluk sekurang-kurangnya 1 transaksi dalam 6 bulan dari tarikh kad diluluskan.",
+    wa_message: (product,name,profession,phone,email,sector)=>
+      `Assalamualaikum/Salam, saya berminat memohon ${product}.\n\nNama: ${name}\nProfesion: ${profession}\nNo. Telefon: ${phone}\nEmel: ${email}\nSektor: ${sector}`,
+    lead_summary_name: "Nama", lead_summary_profession: "Profesion", lead_summary_phone: "No. Telefon",
+    lead_summary_email: "Emel", lead_summary_product: "Produk", lead_summary_sector: "Sektor",
+    lead_sector_confirm: (sector)=>`Sektor: ${sector}`,
+    default_loan_product: "Pinjaman Peribadi MyRinggit-i",
+    credit_card_product: "Kad Kredit Al-Aiman",
+  },
+  en: {
+    topbarSub: "&amp; Credit Card",
+    s0_eyebrow: "Welcome",
+    s0_question: "Find the right financial product for you.",
+    s0_help: "We'll help you check your pre-qualification and apply for a MyRinggit-i Personal Loan or Al-Aiman Credit Card quickly — under 10 minutes, and <strong>FREE</strong>. If you don't meet the loan requirements, we'll suggest a Credit Card as an alternative.",
+    btn_start: "Get Started",
+    s1_eyebrow: "Question 1 of 4",
+    s1_question: "Choose your employment sector",
+    s1_help: "This helps us determine the most suitable product and terms for you.",
+    sector_kerajaan_title: "Government",
+    sector_kerajaan_desc: "Civil Servants, Teachers, Police and Armed Forces",
+    sector_swasta_title: "Private Sector",
+    sector_swasta_desc: "Private sector employees and professionals",
+    btn_back: "Back",
+    s2_eyebrow: "Question 2 of 4",
+    s2_question: "Choose the product you need",
+    s2_help: "Not sure which to pick? Choose Personal Loan — if you don't qualify, we'll suggest a Credit Card automatically.",
+    product_loan_title: "Personal Loan",
+    product_loan_desc: "MyRinggit-i — lump-sum cash financing",
+    product_card_title: "Credit Card",
+    product_card_desc: "Al-Aiman — flexible credit limit for spending",
+    chip_yes: "Yes", chip_no: "No",
+    s2b_eyebrow: "Debt Consolidation",
+    s2b_question: "Would you like to settle any existing debts?",
+    s2b_help: "If you choose debt consolidation, the DSR check is skipped and you'll go straight to the preliminary result — a BSN representative will review your existing debt details during the application.",
+    s2b_yes_desc: "Settle existing debts",
+    s2b_no_desc: "Receive full cash amount",
+    debt_consol_wa_line: `\nDebt Consolidation: Yes`,
+    cta_debt_remark: "Note: You've chosen debt consolidation. A BSN representative will discuss further details during the application process.",
+    result_sub_debt_consol: "Preliminary pre-qualification estimate — a BSN representative will review your existing debt details and actual eligibility during the application.",
+    s3_eyebrow: "Question 3 of 4",
+    s3_question: "Debt Service Ratio (DSR) Check",
+    s3_help: "Enter your income and monthly commitments for a quick pre-qualification check.",
+    lbl_grossIncome: "Monthly gross income (RM)",
+    lbl_netIncome: "Net salary on payslip after deductions (RM)",
+    lbl_commitments: "Total existing monthly commitments (RM)",
+    lbl_commitments_help: "e.g. car loan payment, other personal loans, credit card minimum, PTPTN, etc.",
+    ph_commitment1: "Commitment 1", ph_commitment2: "Commitment 2", ph_commitment3: "Commitment 3", ph_commitment4: "Commitment 4",
+    lbl_loanAmount: "Loan amount applied for (RM)",
+    lbl_loanTenure: "Loan tenure applied for (years)",
+    unit_years: "years",
+    btn_check: "CHECK",
+    s3_note: "*This calculator is an estimate only, for illustration purposes. The actual decision is subject to the Bank's assessment.",
+    s3b_question: "I'm Sorry",
+    s3b_help2: "Would you be interested in applying for an Al-Aiman Credit Card as an alternative?",
+    btn_yes_creditcard: "Yes, Al-Aiman Credit Card",
+    btn_recheck: "Recheck",
+    btn_not_interested: "I'm not interested",
+    res_eligibility: "Eligibility",
+    res_docs: "Documents Required",
+    res_benefits: "Card Benefits",
+    btn_apply_now: "Apply Now",
+    btn_restart: "Start Over",
+    s5_eyebrow: "Apply Now",
+    s5_question: "Let's get started.",
+    s5_help: "Share your details and a BSN representative will contact you to help with your application.",
+    lbl_leadName: "Full Name", ph_leadName: "e.g. Ahmad bin Ali",
+    lbl_leadProfession: "Occupation / Profession", ph_leadProfession: "e.g. Nurse, Business Owner, Engineer",
+    lbl_leadPhone: "Mobile Number", ph_leadPhone: "e.g. 012-3456789",
+    lbl_leadEmail: "Email", ph_leadEmail: "e.g. ahmad@email.com",
+    lead_consent: "I agree for my data to be used to process this application.",
+    btn_continue: "Continue",
+    s6_eyebrow: "Almost Done",
+    s6_question: "You're all set!",
+    s6_help: "Tap the button below to send your details to a BSN representative on WhatsApp.",
+    btn_whatsapp: "Chat on WhatsApp",
+    btn_edit: "Edit Details",
+    disclaimer: "This guided tool provides illustrative projections only, for discussion purposes with a BSN representative. It does not constitute financial advice or a formal loan offer. Rates and terms are subject to the Bank's assessment and approval.",
+    // dynamic
+    progress_start: "Getting Started",
+    progress_result: "Result",
+    progress_step: (n,m)=>`Question ${n} of ${m}`,
+    warn_fill_income: "Please fill in your gross income and net salary.",
+    warn_fill_loan: "Please fill in the loan amount and tenure applied for.",
+    warn_consent_required: "Please tick the consent checkbox to continue.",
+    warn_fill_lead: "Please fill in all fields completely and validly to continue.",
+    fallout_help: (pct)=>`The check found your estimated DSR (<strong>${pct}</strong>%) has <strong>exceeded</strong> the set limit, so your Personal Loan application may not be successful.`,
+    result_eyebrow_loan: (label)=>`Personal Loan · ${label}`,
+    result_label_loan: "You are eligible to apply",
+    result_sub_loan: (dsr,threshold)=>`Your estimated DSR: ${dsr}% (limit ${threshold}%)`,
+    stat_instalment: "Estimated Monthly Instalment",
+    stat_floatrate_used: "Floating Rate Used",
+    stat_amount_tenure: "Amount Applied / Tenure",
+    stat_amount_range: "Product Amount Range",
+    amount_range_between: (min,max)=>`${min} - ${max}`,
+    amount_range_max: (max)=>`Maximum ${max}`,
+    result_note_loan: "Rate without Takaful: additional 1% from the rate above. Late Payment Charge (LPC): 1% p.a. on outstanding balance. Rate is subject to the current Standardised Base Rate (SBR) and the Bank's assessment.",
+    result_eyebrow_cc_fallback: "Alternative Suggestion",
+    result_eyebrow_cc: (label)=>`Credit Card · ${label}`,
+    result_label_cc: "Card suggested for you",
+    result_sub_cc: (amt)=>`Income eligibility: ${amt}/year and above`,
+    stat_profit_rate: "Profit Rate",
+    stat_annual_fee: "Annual Fee",
+    stat_none: "None",
+    result_note_cc: "Low profit rate (11%/13.5%) is subject to timely minimum payments for 12 consecutive months. *Subject to at least 1 transaction within 6 months from card approval date.",
+    wa_message: (product,name,profession,phone,email,sector)=>
+      `Hi, I'm interested in applying for ${product}.\n\nName: ${name}\nProfession: ${profession}\nMobile: ${phone}\nEmail: ${email}\nSector: ${sector}`,
+    lead_summary_name: "Name", lead_summary_profession: "Profession", lead_summary_phone: "Mobile",
+    lead_summary_email: "Email", lead_summary_product: "Product", lead_summary_sector: "Sector",
+    lead_sector_confirm: (sector)=>`Sector: ${sector}`,
+    default_loan_product: "MyRinggit-i Personal Loan",
+    credit_card_product: "Al-Aiman Credit Card",
+  }
+};
+
+let lang = 'ms';
+function T(){ return I18N[lang]; }
+
+function setLanguage(l){
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active', b.dataset.lang===l));
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    if (T()[key] !== undefined) el.innerHTML = T()[key];
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+    const key = el.getAttribute('data-i18n-ph');
+    if (T()[key] !== undefined) el.setAttribute('placeholder', T()[key]);
+  });
+  updateProgress();
+  // Re-render dynamic content if currently visible
+  if (currentStep === '3b' && state.dsrPercent !== null){
+    document.getElementById('falloutHelpText').innerHTML = T().fallout_help(state.dsrPercent);
+  }
+  if (currentStep === 4 && state.resultMode){
+    if (state.resultMode === 'pinjaman') renderLoanResult();
+    else renderCreditCardResult();
+  }
+  if (currentStep === 5 && state.sector){
+    document.getElementById('leadSectorConfirm').textContent = T().lead_sector_confirm(SECTOR_LOAN_DATA[state.sector]?.label[lang] || '-');
+  }
+}
+
+const WA_NUMBER = '601154160187';
+const round2 = n => Math.round((n + Number.EPSILON) * 100) / 100;
+const fmtRM = n => 'RM ' + n.toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+let state = {
+  sector: null, product: null,
+  debtConsolidation: false,
+  grossIncome: 0, netIncome: 0, commitments: [0,0,0,0],
+  dsrPercent: null, dsrPass: null,
+  resultMode: null // 'pinjaman' | 'kredit' | 'kredit-fallback'
+};
+let currentStep = 0;
+const TOTAL_STEPS = 4;
+
+// ---- Reference data (verified against official bsn.com.my pages, 2026) ----
+const SBR = 2.75; // Standardised Base Rate, effective per BSN official rate card
+const SECTOR_LOAN_DATA = {
+  kerajaan: {
+    label: {ms:'Kerajaan', en:'Government'},
+    productName: 'MyRinggit-i Sektor Awam',
+    flatRate: '4.60% p.a', floatRate: 'SBR + 2.05% p.a', floatRateNum: SBR + 2.05,
+    minAmount: 5000, maxAmount: 400000,
+    minTenure: 1, maxTenure: 10,
+    eligibility: {
+      ms: [
+        'Warganegara Malaysia berumur 18 tahun hingga 55/60 tahun (tertakluk kepada umur persaraan semasa tamat pembiayaan)',
+        'Bekerja di sektor kerajaan / agensi kerajaan / GLC / organisasi dengan kemudahan potongan gaji BPA',
+        'Pendapatan minimum RM1,500 sebulan',
+        'Kakitangan tetap: berkhidmat 3 bulan dan ke atas',
+        'Kakitangan kontrak/sementara: berkhidmat 12 bulan dan ke atas',
+        'Pemegang akaun BSN GIRO/i',
+      ],
+      en: [
+        'Malaysian citizen aged 18 to 55/60 years old (subject to retirement age at the end of the financing tenure)',
+        'Works in the government sector / government agency / GLC / organisation with BPA salary deduction facility',
+        'Minimum income of RM1,500 per month',
+        'Permanent staff: employed for 3 months and above',
+        'Contract/temporary staff: employed for 12 months and above',
+        'BSN GIRO/i account holder',
+      ],
+    },
+    docs: {
+      ms: [
+        'Salinan Kad Pengenalan (depan & belakang)',
+        'Surat Pengesahan Majikan',
+        'Salinan slip gaji 2 bulan terkini',
+        'Lain-lain dokumen sokongan yang diperlukan oleh pihak Pelulus',
+      ],
+      en: [
+        'Copy of NRIC (front & back)',
+        'Employer Confirmation Letter',
+        'Copy of latest 2 months salary slip',
+        'Any other supporting documents required by the Approving Authority',
+      ],
+    },
+  },
+  swasta: {
+    label: {ms:'Sektor Swasta', en:'Private Sector'},
+    productName: 'MyRinggit-i Eksekutif-1',
+    flatRate: '6.00% - 8.50% p.a', floatRate: 'SBR + 5.85% p.a', floatRateNum: SBR + 5.85,
+    minAmount: null, maxAmount: 200000,
+    minTenure: 2, maxTenure: 10,
+    amountNote: {
+      ms: 'Amaun ikut pendapatan kasar: RM3k-5k = 5x gaji, >RM5k-10k = 7x gaji, >RM10k = 10x gaji (maksimum RM200,000, ikut mana rendah)',
+      en: 'Amount is based on gross income: RM3k-5k = 5x salary, >RM5k-10k = 7x salary, >RM10k = 10x salary (maximum RM200,000, whichever is lower)',
+    },
+    eligibility: {
+      ms: [
+        'Warganegara Malaysia berumur 21 tahun hingga 55/60 tahun (tertakluk kepada umur persaraan semasa tamat pembiayaan)',
+        'Kakitangan tetap & kontrak dengan minimum 1 tahun pengalaman bekerja',
+        'Pendapatan kasar minimum RM3,000 sebulan (tetap) / RM10,000 sebulan (kontrak)',
+        'Pemegang akaun BSN GIRO/i',
+        'Terhad kepada pekerja syarikat panel BSN terpilih (Hospital Swasta, Telekomunikasi, MNC, PETRONAS, GLC, dll.) dan Profesional',
+      ],
+      en: [
+        'Malaysian citizen aged 21 to 55/60 years old (subject to retirement age at the end of the financing tenure)',
+        'Permanent & contract staff with a minimum of 1 year working experience',
+        'Minimum gross income of RM3,000/month (permanent) / RM10,000/month (contract)',
+        'BSN GIRO/i account holder',
+        'Limited to employees of selected BSN panel companies (Private Hospitals, Telecommunications, MNCs, PETRONAS, GLCs, etc.) and Professionals',
+      ],
+    },
+    docs: {
+      ms: [
+        'Salinan Kad Pengenalan',
+        'Salinan slip gaji 3 bulan terkini',
+        'Penyata KWSP terkini',
+        'Salinan penyata bank 3 bulan terkini (akaun kredit gaji)',
+        'Surat Pengesahan Majikan (nama, No. KP, jawatan, gaji bulanan, tarikh mula bekerja)',
+      ],
+      en: [
+        'Copy of NRIC',
+        'Copy of latest 3 months salary slip',
+        'Latest EPF statement',
+        'Copy of latest 3 months bank statement (salary crediting account)',
+        'Employer Confirmation Letter (name, IC no., designation, monthly salary, date of employment)',
+      ],
+    },
+  },
+};
+
+const CREDIT_CARD_TIERS = [
+  {name:'BSN Al-Aiman Klasik', minIncome:24000},
+  {name:'BSN Al-Aiman Gold', minIncome:36000},
+  {name:'BSN Al-Aiman Platinum', minIncome:48000},
+];
+
+const CREDIT_CARD_DOCS = {
+  kerajaan: {
+    title: {ms:'Penjawat Awam (Bergaji Tetap)', en:'Civil Servant (Fixed Salary)'},
+    list: {
+      ms: [
+        'Salinan Kad Pengenalan (depan & belakang), termasuk Pemohon Tambahan (jika ada)',
+        'Salinan penyata gaji 1 bulan terkini ATAU Surat Pengesahan Majikan',
+      ],
+      en: [
+        'Copy of NRIC (front & back), including Supplementary Applicant (if any)',
+        'Copy of latest 1 month salary slip OR Employer Confirmation Letter',
+      ],
+    },
+  },
+  swasta: {
+    title: {ms:'Pekerja Swasta (Bergaji Tetap)', en:'Private Sector Employee (Fixed Salary)'},
+    list: {
+      ms: [
+        'Salinan Kad Pengenalan (depan & belakang), termasuk Pemohon Tambahan (jika ada)',
+        'Salinan penyata gaji 3 bulan terkini / Penyata KWSP terkini / Borang EA / Borang BE',
+      ],
+      en: [
+        'Copy of NRIC (front & back), including Supplementary Applicant (if any)',
+        'Copy of latest 3 months salary slip / Latest EPF statement / Form EA / Form BE',
+      ],
+    },
+  },
+};
+
+const CREDIT_CARD_ELIGIBILITY = {
+  ms: [
+    'Pendapatan Minimum (swasta): RM24,000 setahun atau RM2,000 sebulan',
+    'Pendapatan Minimum (awam): RM18,000 setahun atau RM1,500 sebulan',
+    'Umur Minimum: Kad Utama 21 tahun / Kad Tambahan 18 tahun',
+    'Kerakyatan: Warganegara Malaysia',
+  ],
+  en: [
+    'Minimum Income (private): RM24,000 per year or RM2,000 per month',
+    'Minimum Income (public): RM18,000 per year or RM1,500 per month',
+    'Minimum Age: Principal Card 21 years old / Supplementary Card 18 years old',
+    'Citizenship: Malaysian',
+  ],
+};
+
+const CREDIT_CARD_BENEFITS = {
+  ms: [
+    'Tiada Fi Tahunan (Kad Utama & Tambahan)',
+    'Kadar Keuntungan serendah 11% p.a. (Penjawat Awam) / 13.5% p.a. (Swasta) — tertakluk pembayaran minimum tepat pada masa selama 12 bulan berturut-turut',
+    'Penerimaan di lebih 29 juta premis rakan niaga dan 1 juta ATM di seluruh dunia',
+    'Kad Tambahan sehingga maksimum 5 keping (pasangan/anak/keluarga 18 tahun ke atas)',
+    'Program Pindahan Baki, Pelan EasyCash, Pelan 0% EasyPay (sehingga 36 bulan), Pelan Instalment-Pay',
+    'Program Penukaran Baki Automatik pada kadar 13% setahun',
+    'Program Happy Rewards & Autobilling BSN',
+    'RM25 Rebat Cukai Perkhidmatan untuk Ahli Kad baharu (tahun pertama)*',
+  ],
+  en: [
+    'No Annual Fee (Principal & Supplementary Card)',
+    'Profit Rate as low as 11% p.a. (Civil Servants) / 13.5% p.a. (Private Sector) — subject to timely minimum payment for 12 consecutive months',
+    'Accepted at over 29 million merchant outlets and 1 million ATMs worldwide',
+    'Supplementary Cards up to a maximum of 5 (spouse/children/family 18 years old and above)',
+    'Balance Transfer Programme, EasyCash Plan, 0% EasyPay Plan (up to 36 months), Instalment-Pay Plan',
+    'Auto Balance Conversion Programme at a rate of 13% per year',
+    'Happy Rewards Programme & BSN Autobilling',
+    'RM25 Service Tax Rebate for new Cardmembers (first year)*',
+  ],
+};
+
+// ---- Navigation ----
+function goTo(step){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.querySelector(`.step[data-step="${step}"]`).classList.add('active');
+  currentStep = step;
+  updateProgress();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function updateProgress(){
+  const stepMap = {0:0, 1:1, 2:2, '2b':2, 3:3, '3b':3, 4:4, 5:4, 6:4};
+  const shown = stepMap[currentStep] ?? 0;
+  const pct = currentStep===0 ? 0 : Math.round((shown/TOTAL_STEPS)*100);
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressPct').textContent = pct+'%';
+  document.getElementById('progressStepLabel').textContent =
+    currentStep===0 ? T().progress_start : (shown>=4 ? T().progress_result : T().progress_step(shown, TOTAL_STEPS));
+}
+
+function selectSector(val){
+  state.sector = val;
+  document.querySelectorAll('#sectorCards .option-card').forEach(c=>c.classList.toggle('selected', c.dataset.val===val));
+  setTimeout(()=>goTo(2), 150);
+}
+
+function selectProduct(val){
+  state.product = val;
+  document.querySelectorAll('#productCards .option-card').forEach(c=>c.classList.toggle('selected', c.dataset.val===val));
+  setTimeout(()=>{
+    if (val === 'pinjaman'){
+      goTo('2b');
+    } else {
+      state.resultMode = 'kredit';
+      renderCreditCardResult();
+      goTo(4);
+    }
+  }, 150);
+}
+
+// ---- Step 2b: Debt Consolidation ----
+function selectDebtConsolidation(val){
+  state.debtConsolidation = val;
+  document.querySelectorAll('#debtConsolCards .option-card').forEach(c=>c.classList.toggle('selected', (c.dataset.val==='yes')===val));
+}
+
+function confirmDebtConsolidation(){
+  if (state.debtConsolidation){
+    state.resultMode = 'pinjaman';
+    renderLoanResult();
+    goTo(4);
+  } else {
+    goTo(3);
+  }
+}
+
+// ---- Step 3: DSR (Debt Service Ratio) check ----
+//
+// BSN's actual internal underwriting (per the bank's SPD master workbook) assesses
+// affordability using a full Net Disposable Income (NDI) model per Bank Negara
+// Malaysia's Responsible Financing framework: it stress-tests NDI against a minimum
+// expenditure floor that varies by household size, area (urban/sub-urban), and even
+// projects household growth (marriage/dependents) across the loan tenure. That model
+// depends on internal reference tables and is not something a public pre-qualification
+// tool can (or should) reproduce exactly — the real decision is always made by the Bank.
+//
+// This calculator instead uses the simpler, standard industry DSR ratio as an
+// ILLUSTRATIVE pre-qualification estimate, matching the base ratio structure seen in
+// that same internal workbook (total monthly commitments, including the new loan's
+// own instalment, divided by gross monthly income):
+//
+//   DSR % = (existing monthly commitments + new loan's monthly instalment) / gross monthly income * 100
+//
+// Threshold: 60% (confirmed with user) — approximates the boundary illustrated by the
+// reference case in the internal workbook. Actual approval always depends on the
+// Bank's full assessment.
+function monthlyPayment(P, annualRatePct, tenureYears){
+  const r = (annualRatePct/100)/12;
+  const n = tenureYears*12;
+  if (r === 0) return round2(P/n);
+  const M = P*r*Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
+  return round2(M);
+}
+
+const DSR_THRESHOLD = 60; // % — see note above
+
+function checkDSR(){
+  const gross = parseFloat(document.getElementById('q_grossIncome').value) || 0;
+  const net = parseFloat(document.getElementById('q_netIncome').value) || 0;
+  const c1 = parseFloat(document.getElementById('q_commitment1').value) || 0;
+  const c2 = parseFloat(document.getElementById('q_commitment2').value) || 0;
+  const c3 = parseFloat(document.getElementById('q_commitment3').value) || 0;
+  const c4 = parseFloat(document.getElementById('q_commitment4').value) || 0;
+  const loanAmount = parseFloat(document.getElementById('q_loanAmount').value) || 0;
+  const loanTenure = parseFloat(document.getElementById('q_loanTenure').value) || 0;
+
+  if (gross<=0 || net<=0){
+    document.getElementById('dsrWarning').innerHTML = `<div class="warn-box">${T().warn_fill_income}</div>`;
+    return;
+  }
+  if (loanAmount<=0 || loanTenure<=0){
+    document.getElementById('dsrWarning').innerHTML = `<div class="warn-box">${T().warn_fill_loan}</div>`;
+    return;
+  }
+  document.getElementById('dsrWarning').innerHTML = '';
+
+  const sectorData = SECTOR_LOAN_DATA[state.sector];
+  const clampedTenure = Math.min(Math.max(loanTenure, sectorData.minTenure), sectorData.maxTenure);
+  const newInstalment = monthlyPayment(loanAmount, sectorData.floatRateNum, clampedTenure);
+
+  state.grossIncome = gross;
+  state.netIncome = net;
+  state.commitments = [c1,c2,c3,c4];
+  state.loanAmount = loanAmount;
+  state.loanTenure = clampedTenure;
+  state.newInstalment = newInstalment;
+
+  const totalCommitment = c1+c2+c3+c4+newInstalment;
+  const dsr = (totalCommitment/gross)*100;
+  state.dsrPercent = round2(dsr);
+  state.dsrPass = dsr <= DSR_THRESHOLD;
+
+  if (state.dsrPass){
+    state.resultMode = 'pinjaman';
+    renderLoanResult();
+    goTo(4);
+  } else {
+    document.getElementById('falloutHelpText').innerHTML = T().fallout_help(state.dsrPercent);
+    goTo('3b');
+  }
+}
+
+function proceedToCreditCardFallback(){
+  state.resultMode = 'kredit-fallback';
+  renderCreditCardResult();
+  goTo(4);
+}
+
+// ---- Result rendering ----
+function renderRows(rows){
+  return rows.map(([label,value])=>
+    `<div class="result-item"><span class="result-label">${label}</span><span class="result-value">${value}</span></div>`
+  ).join('');
+}
+function renderDocList(items){
+  return `<ul class="doc-list">${items.map(d=>`<li>${d}</li>`).join('')}</ul>`;
+}
+
+function renderLoanResult(){
+  const data = SECTOR_LOAN_DATA[state.sector];
+  document.getElementById('resultEyebrow').textContent = T().result_eyebrow_loan(data.label[lang]);
+  document.getElementById('resultLabel').textContent = T().result_label_loan;
+  document.getElementById('resultValue').textContent = data.productName;
+
+  const amountText = data.minAmount
+    ? T().amount_range_between(fmtRM(data.minAmount), fmtRM(data.maxAmount))
+    : T().amount_range_max(fmtRM(data.maxAmount));
+
+  if (state.debtConsolidation){
+    document.getElementById('resultSub').textContent = T().result_sub_debt_consol;
+    document.getElementById('resultStatGrid').innerHTML = `
+      <div class="stat"><div class="stat-label">${T().stat_floatrate_used}</div><div class="stat-value">${data.floatRate}</div></div>
+      <div class="stat"><div class="stat-label">${T().stat_amount_range}</div><div class="stat-value">${amountText}</div></div>
+    `;
+  } else {
+    document.getElementById('resultSub').textContent = T().result_sub_loan(state.dsrPercent, DSR_THRESHOLD);
+    document.getElementById('resultStatGrid').innerHTML = `
+      <div class="stat"><div class="stat-label">${T().stat_instalment}</div><div class="stat-value">${fmtRM(state.newInstalment)}</div></div>
+      <div class="stat"><div class="stat-label">${T().stat_floatrate_used}</div><div class="stat-value">${data.floatRate}</div></div>
+      <div class="stat"><div class="stat-label">${T().stat_amount_tenure}</div><div class="stat-value">${fmtRM(state.loanAmount)} · ${state.loanTenure} ${T().unit_years}</div></div>
+      <div class="stat"><div class="stat-label">${T().stat_amount_range}</div><div class="stat-value">${amountText}</div></div>
+    `;
+  }
+  document.getElementById('eligibilityBox').innerHTML = renderDocList(data.eligibility[lang]);
+  document.getElementById('docsBox').innerHTML = renderDocList(data.docs[lang]);
+  document.getElementById('benefitsDetails').style.display = 'none';
+
+  document.getElementById('resultNote').textContent =
+    (data.amountNote ? data.amountNote[lang] + ' — ' : '') + T().result_note_loan;
+
+  document.getElementById('ctaDebtRemark').innerHTML =
+    state.debtConsolidation ? `<p class="note" style="margin-top:14px;">${T().cta_debt_remark}</p>` : '';
+}
+
+function renderCreditCardResult(){
+  const gross = state.grossIncome || 0;
+  let tier = CREDIT_CARD_TIERS[0];
+  for (const t of CREDIT_CARD_TIERS){ if (gross >= t.minIncome/12 || gross === 0) tier = t; }
+  if (gross === 0) tier = CREDIT_CARD_TIERS[0];
+
+  document.getElementById('resultEyebrow').textContent =
+    state.resultMode === 'kredit-fallback' ? T().result_eyebrow_cc_fallback : T().result_eyebrow_cc(SECTOR_LOAN_DATA[state.sector]?.label[lang] || '');
+  document.getElementById('resultLabel').textContent = T().result_label_cc;
+  document.getElementById('resultValue').textContent = tier.name;
+  document.getElementById('resultSub').textContent = T().result_sub_cc(fmtRM(tier.minIncome));
+
+  document.getElementById('resultStatGrid').innerHTML = `
+    <div class="stat"><div class="stat-label">${T().stat_profit_rate}</div><div class="stat-value">11% - 13.5% p.a</div></div>
+    <div class="stat"><div class="stat-label">${T().stat_annual_fee}</div><div class="stat-value">${T().stat_none}</div></div>
+  `;
+  document.getElementById('eligibilityBox').innerHTML = renderDocList(CREDIT_CARD_ELIGIBILITY[lang]);
+  const docSet = CREDIT_CARD_DOCS[state.sector] || CREDIT_CARD_DOCS.swasta;
+  document.getElementById('docsBox').innerHTML =
+    `<div class="doc-group-title">${docSet.title[lang]}</div>` + renderDocList(docSet.list[lang]);
+  document.getElementById('benefitsDetails').style.display = 'block';
+  document.getElementById('benefitsBox').innerHTML = renderDocList(CREDIT_CARD_BENEFITS[lang]);
+  document.getElementById('resultNote').textContent = T().result_note_cc;
+  document.getElementById('ctaDebtRemark').innerHTML = '';
+}
+
+// ---- Step 5: Lead capture ----
+function goToLeadForm(){
+  const sectorLabel = SECTOR_LOAN_DATA[state.sector]?.label[lang] || '-';
+  document.getElementById('leadSectorConfirm').textContent = T().lead_sector_confirm(sectorLabel);
+  goTo(5);
+}
+
+function validateLead(){
+  const name = document.getElementById('q_leadName').value.trim();
+  const profession = document.getElementById('q_leadProfession').value.trim();
+  const phoneRaw = document.getElementById('q_leadPhone').value.trim();
+  const email = document.getElementById('q_leadEmail').value.trim();
+  const consent = document.getElementById('q_leadConsent').checked;
+  const phoneDigits = phoneRaw.replace(/\D/g,'');
+
+  const warnBox = document.getElementById('leadWarning');
+  if (!consent){
+    warnBox.innerHTML = `<div class="warn-box">${T().warn_consent_required}</div>`;
+    return;
+  }
+  if (!name || !profession || phoneDigits.length<9 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    warnBox.innerHTML = `<div class="warn-box">${T().warn_fill_lead}</div>`;
+    return;
+  }
+  warnBox.innerHTML = '';
+
+  state.leadName = name; state.leadProfession = profession; state.leadPhone = phoneRaw; state.leadEmail = email;
+
+  const productLabel = state.resultMode === 'pinjaman'
+    ? (SECTOR_LOAN_DATA[state.sector]?.productName || T().default_loan_product)
+    : T().credit_card_product;
+
+  let message = T().wa_message(productLabel, name, profession, phoneRaw, email, SECTOR_LOAN_DATA[state.sector]?.label[lang] || '-');
+  if (state.resultMode === 'pinjaman' && state.debtConsolidation){
+    message += T().debt_consol_wa_line;
+  }
+  document.getElementById('waButton').href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;
+
+  document.getElementById('leadSummaryBox').innerHTML = renderRows([
+    [T().lead_summary_name, name],
+    [T().lead_summary_profession, profession],
+    [T().lead_summary_phone, phoneRaw],
+    [T().lead_summary_email, email],
+    [T().lead_summary_sector, SECTOR_LOAN_DATA[state.sector]?.label[lang] || '-'],
+    [T().lead_summary_product, productLabel],
+  ]);
+
+  goTo(6);
+}
+
+function restart(){
+  state = {
+    sector: null, product: null,
+    debtConsolidation: false,
+    grossIncome: 0, netIncome: 0, commitments: [0,0,0,0],
+    dsrPercent: null, dsrPass: null,
+    resultMode: null,
+  };
+  document.querySelectorAll('.option-card').forEach(c=>c.classList.remove('selected'));
+  document.querySelector('#debtConsolCards .option-card[data-val="no"]').classList.add('selected');
+  ['q_grossIncome','q_netIncome','q_commitment1','q_commitment2','q_commitment3','q_commitment4',
+   'q_loanAmount','q_loanTenure',
+   'q_leadName','q_leadProfession','q_leadPhone','q_leadEmail'].forEach(id=>{
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.getElementById('q_leadConsent').checked = false;
+  document.getElementById('dsrWarning').innerHTML = '';
+  document.getElementById('leadWarning').innerHTML = '';
+  goTo(0);
+}
+
+updateProgress();
+</script>
+</body>
+</html>
