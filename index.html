@@ -196,7 +196,7 @@
       <p class="question" data-i18n="s1_question">Pilih sektor pekerjaan anda</p>
       <p class="helptext" data-i18n="s1_help">Ini membantu kami tentukan produk dan syarat yang paling sesuai untuk anda.</p>
 
-      <div class="option-cards cols-2" id="sectorCards">
+      <div class="option-cards cols-3" id="sectorCards">
         <div class="option-card" data-val="kerajaan" onclick="selectSector('kerajaan')">
           <div class="oc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7v2h20V7L12 2zM4 11v8H2v2h20v-2h-2v-8h-2v8h-3v-8h-2v8h-3v-8H8v8H6v-8H4z"/></svg></div>
           <h3 data-i18n="sector_kerajaan_title">Kerajaan</h3>
@@ -205,7 +205,12 @@
         <div class="option-card" data-val="swasta" onclick="selectSector('swasta')">
           <div class="oc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 100 10 5 5 0 000-10zm0 12c-4.42 0-8 2.24-8 5v3h16v-3c0-2.76-3.58-5-8-5z"/></svg></div>
           <h3 data-i18n="sector_swasta_title">Sektor Swasta</h3>
-          <p data-i18n="sector_swasta_desc">Pekerja swasta dan profesional</p>
+          <p data-i18n="sector_swasta_desc">Pekerja syarikat panel BSN terpilih</p>
+        </div>
+        <div class="option-card" data-val="profesional" onclick="selectSector('profesional')">
+          <div class="oc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4.63L12 21l7-3.19v-4.63L12 17l-7-3.82z"/></svg></div>
+          <h3 data-i18n="sector_profesional_title">Profesional</h3>
+          <p data-i18n="sector_profesional_desc">Doktor, Jurutera, Akauntan dan profesion berdaftar lain</p>
         </div>
       </div>
 
@@ -434,7 +439,9 @@ const I18N = {
     sector_kerajaan_title: "Kerajaan",
     sector_kerajaan_desc: "Penjawat Awam, Guru, Polis dan Tentera",
     sector_swasta_title: "Sektor Swasta",
-    sector_swasta_desc: "Pekerja swasta dan profesional",
+    sector_swasta_desc: "Pekerja syarikat panel BSN terpilih",
+    sector_profesional_title: "Profesional",
+    sector_profesional_desc: "Doktor, Jurutera, Akauntan dan profesion berdaftar lain",
     btn_back: "Kembali",
     s2_eyebrow: "Soalan 2 daripada 4",
     s2_question: "Pilih produk yang anda perlukan",
@@ -539,7 +546,9 @@ const I18N = {
     sector_kerajaan_title: "Government",
     sector_kerajaan_desc: "Civil Servants, Teachers, Police and Armed Forces",
     sector_swasta_title: "Private Sector",
-    sector_swasta_desc: "Private sector employees and professionals",
+    sector_swasta_desc: "Employees of selected BSN panel companies",
+    sector_profesional_title: "Professional",
+    sector_profesional_desc: "Doctors, Engineers, Accountants and other registered professions",
     btn_back: "Back",
     s2_eyebrow: "Question 2 of 4",
     s2_question: "Choose the product you need",
@@ -734,14 +743,14 @@ const SECTOR_LOAN_DATA = {
         'Kakitangan tetap & kontrak dengan minimum 1 tahun pengalaman bekerja',
         'Pendapatan kasar minimum RM3,000 sebulan (tetap) / RM10,000 sebulan (kontrak)',
         'Pemegang akaun BSN GIRO/i',
-        'Terhad kepada pekerja syarikat panel BSN terpilih (Hospital Swasta, Telekomunikasi, MNC, PETRONAS, GLC, dll.) dan Profesional',
+        'Terhad kepada pekerja syarikat panel BSN terpilih (Hospital Swasta, Telekomunikasi, MNC, PETRONAS, GLC, dll.)',
       ],
       en: [
         'Malaysian citizen aged 21 to 55/60 years old (subject to retirement age at the end of the financing tenure)',
         'Permanent & contract staff with a minimum of 1 year working experience',
         'Minimum gross income of RM3,000/month (permanent) / RM10,000/month (contract)',
         'BSN GIRO/i account holder',
-        'Limited to employees of selected BSN panel companies (Private Hospitals, Telecommunications, MNCs, PETRONAS, GLCs, etc.) and Professionals',
+        'Limited to employees of selected BSN panel companies (Private Hospitals, Telecommunications, MNCs, PETRONAS, GLCs, etc.)',
       ],
     },
     docs: {
@@ -758,6 +767,55 @@ const SECTOR_LOAN_DATA = {
         'Latest EPF statement',
         'Copy of latest 3 months bank statement (salary crediting account)',
         'Employer Confirmation Letter (name, IC no., designation, monthly salary, date of employment)',
+      ],
+    },
+  },
+  profesional: {
+    label: {ms:'Profesional', en:'Professional'},
+    productName: 'MyRinggit-i Professional',
+    // Source slide states "Serendah KAS + 2.82% setahun" — KAS (Kadar Asas Standard) is the
+    // Malay name for the same SBR benchmark used elsewhere in this file (currently 2.75%).
+    floatRate: 'SBR + 2.82% p.a', floatRateNum: SBR + 2.82,
+    minAmount: 10000, maxAmount: 400000,
+    minTenure: 1, maxTenure: 10,
+    amountNote: {
+      ms: 'Kaedah pembayaran melalui Arahan Tetap BSN atau Potongan Gaji. Tidak perlu penjamin.',
+      en: 'Payment method via BSN Standing Instruction or Salary Deduction. No guarantor required.',
+    },
+    eligibility: {
+      ms: [
+        'Warganegara Malaysia',
+        'Berumur 18 tahun hingga 55/60 tahun (tertakluk kepada umur persaraan semasa tamat pembiayaan)',
+        'Berpendapatan tetap dengan minimum pendapatan kasar RM3,000 sebulan',
+        'Kakitangan tetap: berkhidmat 3 bulan dan ke atas',
+        'Kakitangan kontrak: berkhidmat 6 bulan dan ke atas',
+        'Milikan Tunggal/Perkongsian: perniagaan telah dikendalikan sekurang-kurangnya 2 tahun',
+        'Layak untuk profesion: Doktor Perubatan, Doktor Gigi, Akauntan & Juruaudit, Pensyarah, Jurutera, Arkitek, Ahli Farmasi, Juruukur Bahan, Veterinar, Pakar Optik/Optometri, Aktuari, Ahli Geologi, C-Level',
+      ],
+      en: [
+        'Malaysian citizen',
+        'Aged 18 to 55/60 years old (subject to retirement age at the end of the financing tenure)',
+        'Fixed income earner with minimum gross income of RM3,000/month',
+        'Permanent staff: employed for 3 months and above',
+        'Contract staff: employed for 6 months and above',
+        'Sole Proprietorship/Partnership: business operating for at least 2 years',
+        'Eligible professions: Medical Doctor, Dentist, Accountant & Auditor, Lecturer, Engineer, Architect, Pharmacist, Quantity Surveyor, Veterinarian, Optician/Optometrist, Actuary, Geologist, C-Level',
+      ],
+    },
+    docs: {
+      ms: [
+        'Salinan Kad Pengenalan',
+        'Slip gaji 2 bulan terkini dan Surat Pengesahan Majikan (berpendapatan tetap)',
+        'Bukti pensijilan/pendaftaran dengan Lembaga Perakuan/Institusi serta Pendaftaran Keahlian mengikut profesion',
+        'Sekurang-kurangnya satu: Penyata pendapatan terkini (Borang EA/EC atau e-B/e-BT), penyata bank 3 bulan terkini, atau penyata KWSP terkini',
+        '(Milikan Tunggal/Perkongsian) Pendaftaran perniagaan, penyata bank 6 bulan terkini, dan penyata kewangan 2 tahun terkini',
+      ],
+      en: [
+        'Copy of NRIC',
+        'Latest 2 months salary slip and Employer Confirmation Letter (fixed income earners)',
+        'Proof of certification/registration with the relevant Certification Board/Institution, plus membership registration for the profession',
+        'At least one of: latest income statement (Form EA/EC or e-B/e-BT), latest 3 months bank statement, or latest EPF statement',
+        '(Sole Proprietorship/Partnership) Business registration, latest 6 months bank statement, and latest 2 years financial statements',
       ],
     },
   },
