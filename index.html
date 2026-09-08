@@ -90,6 +90,23 @@
 
   .option-cards{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:6px;}
   @media (min-width:480px){.option-cards.cols-2{grid-template-columns:1fr 1fr;} .option-cards.cols-3{grid-template-columns:1fr 1fr 1fr;}}
+
+  .photo-cards{display:flex;flex-direction:column;gap:16px;margin-bottom:6px;}
+  .photo-card{position:relative;border:2px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;min-height:170px;background-size:cover;background-position:center;transition:transform .15s ease,box-shadow .15s ease;}
+  .photo-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.09);}
+  .photo-card.selected{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,161,177,.16);}
+  .photo-card-overlay{position:absolute;inset:0;background:linear-gradient(100deg, var(--panel) 0%, var(--panel) 36%, rgba(250,246,238,.7) 48%, transparent 66%);}
+  .photo-card-content{position:relative;z-index:1;padding:20px 22px;max-width:66%;}
+  .photo-card-content .oc-icon{width:38px;height:38px;color:var(--accent);margin-bottom:8px;}
+  .photo-card-content .oc-icon svg{width:100%;height:100%;}
+  .photo-card-content h3{margin:0 0 6px;font-size:1.15rem;font-weight:800;color:var(--text);}
+  .photo-card-content p{margin:0;color:var(--muted);font-size:.82rem;line-height:1.4;}
+  @media (min-width:480px){
+    .photo-card{min-height:210px;}
+    .photo-card-content{padding:26px 28px;}
+    .photo-card-content h3{font-size:1.35rem;}
+    .photo-card-content p{font-size:.85rem;}
+  }
   .option-card{border:2px solid var(--border);border-radius:12px;padding:18px 16px;cursor:pointer;}
   .option-card.selected{border-color:var(--accent);background:#effaf9;}
   .option-card .oc-icon{width:40px;height:40px;color:var(--accent);margin-bottom:10px;}
@@ -196,21 +213,30 @@
       <p class="question" data-i18n="s1_question">Pilih sektor pekerjaan anda</p>
       <p class="helptext" data-i18n="s1_help">Ini membantu kami tentukan produk dan syarat yang paling sesuai untuk anda.</p>
 
-      <div class="option-cards cols-3" id="sectorCards">
-        <div class="option-card" data-val="kerajaan" onclick="selectSector('kerajaan')">
-          <div class="oc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7v2h20V7L12 2zM4 11v8H2v2h20v-2h-2v-8h-2v8h-3v-8h-2v8h-3v-8H8v8H6v-8H4z"/></svg></div>
-          <h3 data-i18n="sector_kerajaan_title">Kerajaan</h3>
-          <p data-i18n="sector_kerajaan_desc">Penjawat Awam, Guru, Polis dan Tentera</p>
+      <div class="photo-cards" id="sectorCards">
+        <div class="photo-card" data-val="kerajaan" onclick="selectSector('kerajaan')" style="background-image:url('sector-kerajaan.png');">
+          <div class="photo-card-overlay"></div>
+          <div class="photo-card-content">
+            <div class="oc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7v2h20V7L12 2zM4 11v8H2v2h20v-2h-2v-8h-2v8h-3v-8h-2v8h-3v-8H8v8H6v-8H4z"/></svg></div>
+            <h3 data-i18n="sector_kerajaan_title">Kerajaan</h3>
+            <p data-i18n="sector_kerajaan_desc">Penjawat Awam, Guru, Polis dan Tentera</p>
+          </div>
         </div>
-        <div class="option-card" data-val="swasta" onclick="selectSector('swasta')">
-          <div class="oc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 100 10 5 5 0 000-10zm0 12c-4.42 0-8 2.24-8 5v3h16v-3c0-2.76-3.58-5-8-5z"/></svg></div>
-          <h3 data-i18n="sector_swasta_title">Sektor Swasta</h3>
-          <p data-i18n="sector_swasta_desc">Pekerja syarikat panel BSN terpilih</p>
+        <div class="photo-card" data-val="swasta" onclick="selectSector('swasta')" style="background-image:url('sector-swasta.png');">
+          <div class="photo-card-overlay"></div>
+          <div class="photo-card-content">
+            <div class="oc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 100 10 5 5 0 000-10zm0 12c-4.42 0-8 2.24-8 5v3h16v-3c0-2.76-3.58-5-8-5z"/></svg></div>
+            <h3 data-i18n="sector_swasta_title">Sektor Swasta</h3>
+            <p data-i18n="sector_swasta_desc">Pekerja syarikat panel BSN terpilih</p>
+          </div>
         </div>
-        <div class="option-card" data-val="profesional" onclick="selectSector('profesional')">
-          <div class="oc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4.63L12 21l7-3.19v-4.63L12 17l-7-3.82z"/></svg></div>
-          <h3 data-i18n="sector_profesional_title">Profesional</h3>
-          <p data-i18n="sector_profesional_desc">Doktor, Jurutera, Akauntan dan profesion berdaftar lain</p>
+        <div class="photo-card" data-val="profesional" onclick="selectSector('profesional')" style="background-image:url('sector-profesional.png');">
+          <div class="photo-card-overlay"></div>
+          <div class="photo-card-content">
+            <div class="oc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4.63L12 21l7-3.19v-4.63L12 17l-7-3.82z"/></svg></div>
+            <h3 data-i18n="sector_profesional_title">Profesional</h3>
+            <p data-i18n="sector_profesional_desc">Doktor, Jurutera, Akauntan dan profesion berdaftar lain</p>
+          </div>
         </div>
       </div>
 
@@ -915,7 +941,7 @@ function updateProgress(){
 
 function selectSector(val){
   state.sector = val;
-  document.querySelectorAll('#sectorCards .option-card').forEach(c=>c.classList.toggle('selected', c.dataset.val===val));
+  document.querySelectorAll('#sectorCards .photo-card').forEach(c=>c.classList.toggle('selected', c.dataset.val===val));
   setTimeout(()=>goTo(2), 150);
 }
 
@@ -1161,7 +1187,7 @@ function restart(){
     dsrPercent: null, dsrPass: null,
     resultMode: null,
   };
-  document.querySelectorAll('.option-card').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('.option-card, .photo-card').forEach(c=>c.classList.remove('selected'));
   document.querySelector('#debtConsolCards .option-card[data-val="no"]').classList.add('selected');
   ['q_grossIncome','q_netIncome','q_commitment1','q_commitment2','q_commitment3','q_commitment4',
    'q_loanAmount','q_loanTenure',
