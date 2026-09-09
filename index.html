@@ -729,7 +729,13 @@ const SECTOR_LOAN_DATA = {
   kerajaan: {
     label: {ms:'Kerajaan', en:'Government'},
     productName: 'MyRinggit-i Sektor Awam',
-    flatRate: '4.60% p.a', floatRate: 'SBR + 2.05% p.a', floatRateNum: SBR + 2.05,
+    flatRate: '4.60% p.a', floatRate: 'SBR + 2.05% - 2.40% p.a', floatRateNum: SBR + 2.05,
+    // Stepped rate per official MyRinggit-i SKAP/SCOP schedule: lower margin for
+    // shorter tenures, higher margin from year 4 onward. See jadual-pembayaran-awam.html.
+    floatRateTiers: [
+      {maxTenure: 3, margin: 2.05},
+      {maxTenure: 10, margin: 2.40},
+    ],
     minAmount: 5000, maxAmount: 400000,
     minTenure: 1, maxTenure: 10,
     eligibility: {
@@ -1017,6 +1023,18 @@ function monthlyPayment(P, annualRatePct, tenureYears){
 
 const DSR_THRESHOLD = 60; // % — see note above
 
+// Resolves the float rate to use for a given tenure — sectors with a stepped
+// rate (e.g. Kerajaan's floatRateTiers) use the margin for the tier the tenure
+// falls into; other sectors just use their single floatRateNum/floatRate.
+function resolveFloatRate(sectorData, tenure){
+  if (sectorData.floatRateTiers){
+    const tier = sectorData.floatRateTiers.find(t => tenure <= t.maxTenure)
+      || sectorData.floatRateTiers[sectorData.floatRateTiers.length - 1];
+    return { num: SBR + tier.margin, label: `SBR + ${tier.margin.toFixed(2)}% p.a` };
+  }
+  return { num: sectorData.floatRateNum, label: sectorData.floatRate };
+}
+
 function checkDSR(){
   const gross = parseFloat(document.getElementById('q_grossIncome').value) || 0;
   const net = parseFloat(document.getElementById('q_netIncome').value) || 0;
@@ -1039,7 +1057,8 @@ function checkDSR(){
 
   const sectorData = SECTOR_LOAN_DATA[state.sector];
   const clampedTenure = Math.min(Math.max(loanTenure, sectorData.minTenure), sectorData.maxTenure);
-  const newInstalment = monthlyPayment(loanAmount, sectorData.floatRateNum, clampedTenure);
+  const usedRate = resolveFloatRate(sectorData, clampedTenure);
+  const newInstalment = monthlyPayment(loanAmount, usedRate.num, clampedTenure);
 
   state.grossIncome = gross;
   state.netIncome = net;
@@ -1047,6 +1066,7 @@ function checkDSR(){
   state.loanAmount = loanAmount;
   state.loanTenure = clampedTenure;
   state.newInstalment = newInstalment;
+  state.floatRateLabelUsed = usedRate.label;
 
   const totalCommitment = c1+c2+c3+c4+newInstalment;
   const dsr = (totalCommitment/gross)*100;
@@ -1099,7 +1119,7 @@ function renderLoanResult(){
     document.getElementById('resultSub').textContent = T().result_sub_loan(state.dsrPercent, DSR_THRESHOLD);
     document.getElementById('resultStatGrid').innerHTML = `
       <div class="stat"><div class="stat-label">${T().stat_instalment}</div><div class="stat-value">${fmtRM(state.newInstalment)}</div></div>
-      <div class="stat"><div class="stat-label">${T().stat_floatrate_used}</div><div class="stat-value">${data.floatRate}</div></div>
+      <div class="stat"><div class="stat-label">${T().stat_floatrate_used}</div><div class="stat-value">${state.floatRateLabelUsed || data.floatRate}</div></div>
       <div class="stat"><div class="stat-label">${T().stat_amount_tenure}</div><div class="stat-value">${fmtRM(state.loanAmount)} · ${state.loanTenure} ${T().unit_years}</div></div>
       <div class="stat"><div class="stat-label">${T().stat_amount_range}</div><div class="stat-value">${amountText}</div></div>
     `;
