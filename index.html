@@ -383,6 +383,8 @@
 
       <div class="note" id="resultNote"></div>
 
+      <div id="scheduleLinkBox"></div>
+
       <div id="ctaDebtRemark"></div>
 
       <button class="btn-cta" data-i18n="btn_apply_now" onclick="goToLeadForm()">Mohon Sekarang</button>
@@ -550,6 +552,7 @@ const I18N = {
     amount_range_between: (min,max)=>`${min} - ${max}`,
     amount_range_max: (max)=>`Maksimum ${max}`,
     result_note_loan: "Kadar tanpa Takaful: tambahan 1% dari kadar di atas. Caj Bayaran Lewat (LPC): 1% setahun ke atas baki tertunggak. Kadar tertakluk kepada Kadar Asas Standard (SBR) semasa dan penilaian pihak Bank.",
+    view_schedule_link: "Lihat Jadual Pembayaran Bulanan Penuh &rarr;",
     result_eyebrow_cc_fallback: "Cadangan Alternatif",
     result_eyebrow_cc: (label)=>`Kad Kredit · ${label}`,
     result_label_cc: "Kad dicadangkan untuk anda",
@@ -657,6 +660,7 @@ const I18N = {
     amount_range_between: (min,max)=>`${min} - ${max}`,
     amount_range_max: (max)=>`Maximum ${max}`,
     result_note_loan: "Rate without Takaful: additional 1% from the rate above. Late Payment Charge (LPC): 1% p.a. on outstanding balance. Rate is subject to the current Standardised Base Rate (SBR) and the Bank's assessment.",
+    view_schedule_link: "View Full Monthly Payment Schedule &rarr;",
     result_eyebrow_cc_fallback: "Alternative Suggestion",
     result_eyebrow_cc: (label)=>`Credit Card · ${label}`,
     result_label_cc: "Card suggested for you",
@@ -1107,6 +1111,10 @@ function renderLoanResult(){
 
   document.getElementById('ctaDebtRemark').innerHTML =
     state.debtConsolidation ? `<p class="note" style="margin-top:14px;">${T().cta_debt_remark}</p>` : '';
+
+  document.getElementById('scheduleLinkBox').innerHTML = state.sector === 'profesional'
+    ? `<p class="note"><a class="terms-link" href="jadual-pembayaran.html">${T().view_schedule_link}</a></p>`
+    : '';
 }
 
 function renderCreditCardResult(){
@@ -1133,6 +1141,7 @@ function renderCreditCardResult(){
   document.getElementById('benefitsBox').innerHTML = renderDocList(CREDIT_CARD_BENEFITS[lang]);
   document.getElementById('resultNote').textContent = T().result_note_cc;
   document.getElementById('ctaDebtRemark').innerHTML = '';
+  document.getElementById('scheduleLinkBox').innerHTML = '';
 }
 
 // ---- Step 5: Lead capture ----

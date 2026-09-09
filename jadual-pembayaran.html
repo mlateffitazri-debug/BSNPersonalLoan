@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jadual Pembayaran Bulanan — MyRinggit-i Professional — BSN Pinjaman Peribadi &amp; Kad Kredit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#faf6ee; --panel:#ffffff; --border:#00A1B1;
+    --text:#1a1a1a; --muted:#6b6355; --accent:#00A1B1; --accent-dark:#008895;
+    --panel2:#f0ece1; --thead:#00A1B1; --row-alt:#f5f1e6;
+  }
+  *{box-sizing:border-box;}
+  input,button,select,textarea{font-family:inherit;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:'Nunito',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    min-height:100vh;
+  }
+  .topbar{background:var(--bg);padding:16px 20px;display:flex;align-items:center;gap:12px;}
+  .logo-img{height:36px;width:auto;border-radius:6px;flex-shrink:0;}
+  .topbar-title{font-weight:700;font-size:1rem;}
+  .topbar-sub{color:var(--muted);font-size:.78rem;}
+  .lang-switch{margin-left:auto;display:flex;gap:6px;flex-shrink:0;}
+  .lang-btn{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--text);font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;}
+  .lang-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+  .stage{max-width:640px;margin:0 auto;padding:12px 20px 80px;}
+  .back-link{display:inline-block;color:var(--accent);font-weight:700;font-size:.85rem;text-decoration:none;margin-bottom:16px;}
+  .back-link:hover{color:var(--accent-dark);}
+  .card{background:var(--panel);border:2px solid var(--border);border-radius:16px;padding:28px 24px;box-shadow:0 2px 14px rgba(0,0,0,.05);}
+  @media (min-width:600px){.card{padding:32px 28px;}}
+  h1{font-size:1.3rem;font-weight:800;color:var(--accent);margin:0 0 6px;}
+  @media (min-width:600px){h1{font-size:1.5rem;}}
+  .subtitle{color:var(--muted);font-size:.85rem;margin:0 0 20px;line-height:1.5;}
+
+  .rate-strip{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px;}
+  .rate-chip{background:var(--panel2);border-radius:10px;padding:8px 12px;font-size:.78rem;}
+  .rate-chip b{display:block;color:var(--accent-dark);font-size:.92rem;}
+
+  .field-label{display:block;font-weight:700;font-size:.85rem;margin-bottom:8px;}
+
+  .amount-value{font-size:1.4rem;font-weight:800;color:var(--accent);text-align:center;margin-bottom:10px;}
+  .amount-slider{
+    -webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:4px;
+    background:var(--panel2);outline:none;margin:0;accent-color:var(--accent);
+  }
+  .amount-slider::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:28px;height:28px;border-radius:50%;
+    background:var(--accent);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3);cursor:pointer;
+  }
+  .amount-slider::-moz-range-thumb{
+    width:28px;height:28px;border-radius:50%;background:var(--accent);border:3px solid #fff;
+    box-shadow:0 1px 4px rgba(0,0,0,.3);cursor:pointer;
+  }
+  .amount-minmax{display:flex;justify-content:space-between;color:var(--muted);font-size:.75rem;margin:6px 0 20px;}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;}
+  .chip{min-width:42px;text-align:center;padding:10px 12px;border-radius:20px;border:1px solid var(--border);background:var(--panel2);color:var(--text);font-size:.85rem;font-weight:700;cursor:pointer;user-select:none;}
+  .chip:hover{border-color:var(--accent);}
+  .chip.selected{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+  .result-panel{background:var(--panel2);border-radius:14px;padding:22px;text-align:center;margin-bottom:22px;}
+  .result-label{color:var(--muted);font-size:.8rem;margin-bottom:6px;}
+  .result-value{font-size:1.9rem;font-weight:800;color:var(--accent);}
+  .result-sub{color:var(--muted);font-size:.8rem;margin-top:8px;line-height:1.5;}
+
+  details{border:1px solid var(--border);border-radius:12px;padding:4px 16px;margin-bottom:20px;}
+  summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:.88rem;color:var(--accent-dark);}
+  details[open] summary{margin-bottom:4px;}
+
+  .table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);margin:4px 0 16px;-webkit-overflow-scrolling:touch;}
+  table{border-collapse:collapse;width:100%;min-width:760px;font-size:.8rem;}
+  thead th{background:var(--thead);color:#fff;font-weight:800;padding:10px 8px;text-align:center;white-space:nowrap;}
+  thead tr.tenure-row th{font-size:.78rem;padding:7px 8px;}
+  thead tr.rate-row th{background:#00909e;font-size:.72rem;font-weight:700;padding:6px 8px;}
+  tbody th{background:var(--accent);color:#fff;font-weight:800;padding:8px 10px;text-align:center;white-space:nowrap;position:sticky;left:0;}
+  tbody td{padding:7px 8px;text-align:center;white-space:nowrap;color:var(--text);}
+  tbody tr:nth-child(even){background:var(--row-alt);}
+  .corner-cell{background:var(--accent);}
+
+  ul.notes{margin:0 0 18px;padding-left:20px;}
+  ul.notes li{font-size:.82rem;line-height:1.6;color:var(--muted);margin-bottom:6px;}
+  ul.notes strong{color:var(--text);}
+
+  .info-box{background:#eef7f6;border:1px solid #c9e9e6;border-radius:10px;padding:14px 16px;font-size:.85rem;color:var(--accent-dark);line-height:1.6;}
+
+  .footer-note{text-align:center;color:var(--muted);font-size:.72rem;margin-top:24px;}
+  .terms-note{text-align:center;color:var(--muted);font-size:.72rem;margin-top:6px;}
+  [data-lang]{display:none;}
+  [data-lang].active{display:block;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <img src="bsn-logo.svg" alt="BSN" class="logo-img">
+  <div>
+    <div class="topbar-title">BSN Pinjaman Peribadi &amp; Kad Kredit</div>
+    <div class="topbar-sub">Guided Calculator</div>
+  </div>
+  <div class="lang-switch">
+    <button type="button" class="lang-btn active" id="btnMs" onclick="setLang('ms')">BM</button>
+    <button type="button" class="lang-btn" id="btnEn" onclick="setLang('en')">EN</button>
+  </div>
+</div>
+
+<div class="stage">
+  <a class="back-link" href="index.html" id="backLink">&larr; Kembali ke Kalkulator</a>
+
+  <div class="card">
+
+    <!-- Bahasa Melayu -->
+    <div data-lang="ms" class="active">
+      <h1>Jadual Pembayaran Bulanan</h1>
+      <p class="subtitle">MyRinggit-i Professional (tanpa tolakan gaji) — pilih amaun dan tempoh pembiayaan untuk anggaran ansuran bulanan mengikut Kadar Tetap.</p>
+
+      <div class="rate-strip">
+        <div class="rate-chip">Kadar Terapung (Asas Bulanan)<b>KAS + 3.25% = 6.00%</b></div>
+        <div class="rate-chip">Kadar Asas Standard (KAS) semasa<b>2.75% setahun</b></div>
+        <div class="rate-chip">Pembiayaan Min / Maks<b>RM5,000 — RM400,000</b></div>
+      </div>
+
+      <label class="field-label">Amaun Pembiayaan (RM)</label>
+      <div class="amount-value" id="amountValueMs">-</div>
+      <input type="range" class="amount-slider" id="rangeAmountMs" min="0" max="0" step="1" value="0">
+      <div class="amount-minmax"><span>RM5,000</span><span>RM400,000</span></div>
+
+      <label class="field-label">Tempoh (Tahun)</label>
+      <div class="chips" id="chipsMs"></div>
+
+      <div class="result-panel">
+        <div class="result-label">Anggaran Ansuran Bulanan</div>
+        <div class="result-value" id="resultValueMs">-</div>
+        <div class="result-sub" id="resultSubMs"></div>
+      </div>
+
+      <details>
+        <summary>Lihat Jadual Penuh (Semua Amaun &amp; Tempoh)</summary>
+        <div class="table-wrap">
+          <table id="tblMs"></table>
+        </div>
+      </details>
+
+      <ul class="notes">
+        <li>Jadual di atas adalah <strong>ilustrasi sahaja</strong> dan tertakluk kepada perubahan.</li>
+        <li>Kadar Asas Standard (KAS) BSN semasa: <strong>2.75% setahun</strong> (berkuat kuasa 17 Julai 2025).</li>
+        <li>Pembiayaan Minimum: <strong>RM5,000</strong> · Pembiayaan Maksimum: <strong>RM400,000</strong>.</li>
+        <li>Tambahan <strong>1.00% setahun</strong> daripada kadar di atas untuk pembiayaan tanpa Takaful.</li>
+      </ul>
+
+      <div class="info-box">SMS atau hubungi Eksekutif Kewangan kami untuk janji temu.</div>
+    </div>
+
+    <!-- English -->
+    <div data-lang="en">
+      <h1>Monthly Payment Schedule</h1>
+      <p class="subtitle">MyRinggit-i Professional (without salary deduction) — choose a financing amount and tenure for an instant estimate at the Fixed Rate.</p>
+
+      <div class="rate-strip">
+        <div class="rate-chip">Floating Rate (Monthly Rest)<b>SBR + 3.25% = 6.00%</b></div>
+        <div class="rate-chip">Current Standardised Base Rate (SBR)<b>2.75% p.a.</b></div>
+        <div class="rate-chip">Min / Max Financing<b>RM5,000 — RM400,000</b></div>
+      </div>
+
+      <label class="field-label">Financing Amount (RM)</label>
+      <div class="amount-value" id="amountValueEn">-</div>
+      <input type="range" class="amount-slider" id="rangeAmountEn" min="0" max="0" step="1" value="0">
+      <div class="amount-minmax"><span>RM5,000</span><span>RM400,000</span></div>
+
+      <label class="field-label">Tenure (Years)</label>
+      <div class="chips" id="chipsEn"></div>
+
+      <div class="result-panel">
+        <div class="result-label">Estimated Monthly Instalment</div>
+        <div class="result-value" id="resultValueEn">-</div>
+        <div class="result-sub" id="resultSubEn"></div>
+      </div>
+
+      <details>
+        <summary>View Full Table (All Amounts &amp; Tenures)</summary>
+        <div class="table-wrap">
+          <table id="tblEn"></table>
+        </div>
+      </details>
+
+      <ul class="notes">
+        <li>The table above is for <strong>illustration only</strong> and is subject to change.</li>
+        <li>Current BSN Standardised Base Rate (SBR): <strong>2.75% p.a.</strong> (effective 17 July 2025).</li>
+        <li>Minimum Financing: <strong>RM5,000</strong> · Maximum Financing: <strong>RM400,000</strong>.</li>
+        <li>An additional <strong>1.00% p.a.</strong> on top of the rates above applies for financing without Takaful.</li>
+      </ul>
+
+      <div class="info-box">SMS or contact our Financing Executive to make an appointment.</div>
+    </div>
+
+  </div>
+  <div class="footer-note" id="footerNote">BSN Pinjaman Peribadi &amp; Kad Kredit — Kalkulator Berpandu</div>
+  <div class="terms-note" id="termsNote">Tertakluk pada terma dan syarat</div>
+</div>
+
+<script>
+// Fixed-rate (Kadar Tetap) columns, tenure 1..10 years
+const FIXED_RATES = [3.28,3.18,3.17,3.18,3.20,3.22,3.25,3.27,3.30,3.32];
+
+// [Amaun Pembiayaan RM, [instalment for tenure 1..10]]
+const SCHEDULE = [
+  [5000,    [431,222,153,118,97,83,74,66,61,56]],
+  [10000,   [861,444,305,235,194,166,147,132,121,112]],
+  [20000,   [1722,887,609,470,387,332,293,263,241,223]],
+  [30000,   [2582,1330,913,705,580,498,439,395,361,334]],
+  [40000,   [3443,1773,1217,940,774,663,585,526,481,445]],
+  [50000,   [4304,2217,1522,1175,967,829,731,658,601,556]],
+  [60000,   [5164,2660,1826,1410,1160,995,877,789,721,667]],
+  [70000,   [6025,3103,2130,1644,1354,1161,1023,920,841,778]],
+  [80000,   [6886,3546,2434,1879,1547,1326,1169,1052,961,889]],
+  [90000,   [7746,3989,2738,2114,1740,1492,1315,1183,1081,1000]],
+  [100000,  [8607,4433,3043,2349,1934,1658,1461,1315,1201,1111]],
+  [110000,  [9468,4876,3347,2584,2127,1824,1607,1446,1321,1222]],
+  [120000,  [10328,5319,3651,2819,2320,1989,1754,1577,1441,1333]],
+  [130000,  [11189,5762,3955,3054,2514,2155,1900,1709,1561,1444]],
+  [140000,  [12050,6205,4260,3288,2707,2321,2046,1840,1681,1555]],
+  [150000,  [12910,6649,4564,3523,2900,2486,2192,1972,1801,1666]],
+  [160000,  [13771,7092,4868,3758,3094,2652,2338,2103,1921,1777]],
+  [170000,  [14632,7535,5172,3993,3287,2818,2484,2235,2041,1888]],
+  [180000,  [15492,7978,5476,4228,3480,2984,2630,2366,2162,1999]],
+  [190000,  [16353,8421,5781,4463,3674,3149,2776,2497,2282,2110]],
+  [200000,  [17214,8865,6085,4698,3867,3315,2922,2629,2402,2221]],
+  [210000,  [18074,9308,6389,4932,4060,3481,3068,2760,2522,2332]],
+  [220000,  [18935,9751,6693,5167,4254,3647,3214,2892,2642,2443]],
+  [230000,  [19796,10194,6998,5402,4447,3812,3360,3023,2762,2554]],
+  [240000,  [20656,10637,7302,5637,4640,3978,3507,3154,2882,2665]],
+  [250000,  [21517,11081,7606,5872,4834,4144,3653,3286,3002,2776]],
+  [260000,  [22378,11524,7910,6107,5027,4309,3799,3417,3122,2887]],
+  [270000,  [23238,11967,8214,6341,5220,4475,3945,3549,3242,2998]],
+  [280000,  [24099,12410,8519,6576,5414,4641,4091,3680,3362,3109]],
+  [290000,  [24960,12853,8823,6811,5607,4807,4237,3812,3482,3220]],
+  [300000,  [25820,13297,9127,7046,5800,4972,4383,3943,3602,3331]],
+  [310000,  [26681,13740,9431,7281,5994,5138,4529,4074,3722,3442]],
+  [320000,  [27542,14183,9736,7516,6187,5304,4675,4206,3842,3553]],
+  [330000,  [28402,14626,10040,7751,6380,5470,4821,4337,3962,3664]],
+  [340000,  [29263,15070,10344,7985,6574,5635,4967,4469,4082,3775]],
+  [350000,  [30124,15513,10648,8220,6767,5801,5113,4600,4203,3886]],
+  [360000,  [30984,15956,10952,8455,6960,5967,5260,4731,4323,3997]],
+  [370000,  [31845,16399,11257,8690,7154,6132,5406,4863,4443,4108]],
+  [380000,  [32706,16842,11561,8925,7347,6298,5552,4994,4563,4219]],
+  [390000,  [33566,17286,11865,9160,7540,6464,5698,5126,4683,4330]],
+  [400000,  [34427,17729,12169,9395,7734,6630,5844,5257,4803,4441]],
+];
+
+function fmtInt(n){ return n.toLocaleString('en-MY'); }
+function fmtRM(n){ return 'RM ' + n.toLocaleString('en-MY'); }
+
+function buildTable(el, colLabel, rowLabel){
+  let html = '<thead>';
+  html += `<tr><th class="corner-cell" rowspan="3">${rowLabel}</th><th colspan="10">${colLabel}</th></tr>`;
+  html += '<tr class="tenure-row">' + FIXED_RATES.map((_,i)=>`<th>${i+1}</th>`).join('') + '</tr>';
+  html += '<tr class="rate-row">' + FIXED_RATES.map(r=>`<th>${r.toFixed(2)}%</th>`).join('') + '</tr>';
+  html += '</thead><tbody>';
+  for (const [amount, row] of SCHEDULE){
+    html += `<tr><th>${fmtRM(amount)}</th>` + row.map(v=>`<td>${fmtInt(v)}</td>`).join('') + '</tr>';
+  }
+  html += '</tbody>';
+  el.innerHTML = html;
+}
+
+buildTable(document.getElementById('tblMs'), 'Tempoh (Tahun) / Kadar Tetap', 'Amaun Pembiayaan (RM)');
+buildTable(document.getElementById('tblEn'), 'Tenure (Years) / Fixed Rate', 'Financing Amount (RM)');
+
+const DEFAULT_AMOUNT = 50000;
+const DEFAULT_TENURE_IDX = 4; // 5 years
+
+const CALC_LABELS = {
+  ms: (rate, years, total) => `Kadar Tetap ${rate}% · ${years} tahun · Jumlah Bayaran ${total}`,
+  en: (rate, years, total) => `Fixed Rate ${rate}% · ${years} years · Total Payment ${total}`,
+};
+
+function setupCalculator(suffix, lang){
+  const range = document.getElementById('rangeAmount'+suffix);
+  range.min = 0;
+  range.max = SCHEDULE.length - 1;
+  range.value = SCHEDULE.findIndex(([a]) => a === DEFAULT_AMOUNT);
+
+  const chipsWrap = document.getElementById('chips'+suffix);
+  FIXED_RATES.forEach((rate, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'chip' + (i === DEFAULT_TENURE_IDX ? ' selected' : '');
+    chip.textContent = i + 1;
+    chip.dataset.idx = i;
+    chip.onclick = () => {
+      chipsWrap.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+      updateResult(suffix, lang);
+    };
+    chipsWrap.appendChild(chip);
+  });
+
+  range.addEventListener('input', () => updateResult(suffix, lang));
+  updateResult(suffix, lang);
+}
+
+function updateResult(suffix, lang){
+  const range = document.getElementById('rangeAmount'+suffix);
+  const [amount, row] = SCHEDULE[parseInt(range.value, 10)];
+  const activeChip = document.querySelector(`#chips${suffix} .chip.selected`);
+  const idx = activeChip ? parseInt(activeChip.dataset.idx, 10) : DEFAULT_TENURE_IDX;
+
+  const instalment = row[idx];
+  const rate = FIXED_RATES[idx];
+  const years = idx + 1;
+  const total = instalment * years * 12;
+
+  document.getElementById('amountValue'+suffix).textContent = fmtRM(amount);
+  document.getElementById('resultValue'+suffix).textContent = fmtRM(instalment);
+  document.getElementById('resultSub'+suffix).textContent = CALC_LABELS[lang](rate.toFixed(2), years, fmtRM(total));
+}
+
+setupCalculator('Ms', 'ms');
+setupCalculator('En', 'en');
+
+function setLang(l){
+  document.querySelectorAll('[data-lang]').forEach(el=>el.classList.toggle('active', el.dataset.lang===l));
+  document.getElementById('btnMs').classList.toggle('active', l==='ms');
+  document.getElementById('btnEn').classList.toggle('active', l==='en');
+  document.getElementById('backLink').textContent = l==='ms' ? '← Kembali ke Kalkulator' : '← Back to Calculator';
+  document.getElementById('footerNote').textContent = l==='ms'
+    ? 'BSN Pinjaman Peribadi & Kad Kredit — Kalkulator Berpandu'
+    : 'BSN Personal Loan & Credit Card — Guided Calculator';
+  document.getElementById('termsNote').textContent = l==='ms'
+    ? 'Tertakluk pada terma dan syarat'
+    : 'Subject to terms and conditions';
+  document.documentElement.lang = l;
+}
+</script>
+
+</body>
+</html>
