@@ -1165,7 +1165,7 @@ function renderLoanResult(){
     : state.sector === 'kerajaan' ? 'jadual-pembayaran-awam.html'
     : null;
   document.getElementById('scheduleLinkBox').innerHTML = scheduleBase
-    ? `<a class="schedule-link-box" href="${buildScheduleHref(scheduleBase)}" target="_blank" rel="noopener">${T().view_schedule_link}</a>`
+    ? `<a class="schedule-link-box" href="${buildScheduleHref(scheduleBase)}">${T().view_schedule_link}</a>`
     : '';
 }
 
