@@ -171,9 +171,30 @@
   .disclaimer:last-of-type{margin-top:6px;}
   .terms-link{color:var(--accent);font-weight:700;text-decoration:none;}
   .terms-link:hover{color:var(--accent-dark);text-decoration:underline;}
+
+  .notice-overlay{position:fixed;inset:0;background:rgba(0,20,25,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;}
+  .notice-overlay[hidden]{display:none;}
+  .notice-card{background:var(--panel);border-radius:16px;padding:26px 24px;max-width:480px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.25);}
+  .notice-title{color:var(--accent);font-weight:800;font-size:1.1rem;margin:0 0 12px;text-align:center;}
+  .notice-body p{font-size:.85rem;line-height:1.6;color:var(--text);margin:0 0 12px;}
+  .notice-body p:last-child{margin-bottom:0;}
+  .notice-btn{width:100%;background:var(--accent);color:#fff;padding:13px;font-size:.92rem;font-weight:800;border:none;border-radius:10px;cursor:pointer;margin-top:16px;}
+  .notice-btn:hover{background:var(--accent-dark);}
 </style>
 </head>
 <body>
+
+<div class="notice-overlay" id="noticeOverlay" hidden>
+  <div class="notice-card">
+    <div class="lang-switch" style="margin:0 0 10px;">
+      <div class="lang-btn active" data-lang="ms" onclick="setLanguage('ms')">BM</div>
+      <div class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</div>
+    </div>
+    <p class="notice-title" data-i18n="notice_title">PEMBERITAHUAN</p>
+    <div class="notice-body" data-i18n="notice_body"></div>
+    <button type="button" class="notice-btn" data-i18n="notice_btn" onclick="dismissNotice()">Saya Faham</button>
+  </div>
+</div>
 
 <div class="topbar">
   <img src="bsn-logo.svg" alt="BSN" class="logo-img">
@@ -535,6 +556,9 @@ const I18N = {
     btn_edit: "Edit Maklumat",
     disclaimer: "Alat berpandu ini hanya menyediakan unjuran ilustrasi untuk tujuan perbincangan dengan wakil BSN. Ia tidak membentuk nasihat kewangan atau tawaran pinjaman rasmi. Kadar dan syarat tertakluk kepada penilaian dan kelulusan pihak Bank.",
     terms_link: "Terma Perkhidmatan &amp; Dasar Privasi",
+    notice_title: "PEMBERITAHUAN",
+    notice_body: "<p>Laman web ini bukan merupakan laman web rasmi Bank Simpanan Nasional (BSN). Laman web ini dibangunkan oleh pegawai Perbankan Runcit Bank Simpanan Nasional (BSN) bagi memudahkan urusan pertanyaan, pengiraan anggaran serta pra-pendaftaran permohonan pembiayaan.</p><p>Sebarang pengiraan, simulasi atau maklumat yang dipaparkan melalui laman web ini adalah untuk tujuan anggaran dan rujukan sahaja, dan tidak boleh dianggap sebagai tawaran atau keputusan muktamad pembiayaan.</p><p>Kelulusan serta terma pembiayaan adalah tertakluk kepada penilaian dan kelulusan BSN, termasuk semakan rekod kewangan, kelayakan pemohon, dokumen sokongan serta faktor-faktor lain yang berkaitan.</p>",
+    notice_btn: "Saya Faham",
     // dynamic
     progress_start: "Bermula",
     progress_result: "Keputusan",
@@ -643,6 +667,9 @@ const I18N = {
     btn_edit: "Edit Details",
     disclaimer: "This guided tool provides illustrative projections only, for discussion purposes with a BSN representative. It does not constitute financial advice or a formal loan offer. Rates and terms are subject to the Bank's assessment and approval.",
     terms_link: "Terms of Service &amp; Privacy Policy",
+    notice_title: "NOTICE",
+    notice_body: "<p>This website is not the official website of Bank Simpanan Nasional (BSN). This website was developed by a Retail Banking officer of Bank Simpanan Nasional (BSN) to facilitate enquiries, estimate calculations, and pre-registration of financing applications.</p><p>Any calculation, simulation, or information displayed on this website is for estimation and reference purposes only, and should not be regarded as an offer or a final financing decision.</p><p>Approval and financing terms are subject to BSN's assessment and approval, including review of financial records, applicant eligibility, supporting documents, and other relevant factors.</p>",
+    notice_btn: "I Understand",
     // dynamic
     progress_start: "Getting Started",
     progress_result: "Result",
@@ -1302,6 +1329,19 @@ function restoreFromQuery(){
   return true;
 }
 
+const NOTICE_ACK_KEY = 'bsn_notice_ack_v1';
+function dismissNotice(){
+  localStorage.setItem(NOTICE_ACK_KEY, '1');
+  document.getElementById('noticeOverlay').hidden = true;
+}
+function showNoticeIfNeeded(){
+  if (localStorage.getItem(NOTICE_ACK_KEY) !== '1'){
+    document.getElementById('noticeOverlay').hidden = false;
+  }
+}
+
+setLanguage(lang);
+showNoticeIfNeeded();
 restoreFromQuery();
 updateProgress();
 </script>
