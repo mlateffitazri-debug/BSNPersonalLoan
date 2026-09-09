@@ -407,6 +407,7 @@
       <div class="note" id="resultNote"></div>
 
       <div id="scheduleLinkBox"></div>
+      <div id="panelLinkBox"></div>
 
       <div id="ctaDebtRemark"></div>
 
@@ -559,6 +560,7 @@ const I18N = {
     notice_title: "PEMBERITAHUAN",
     notice_body: "<p>Laman web ini bukan merupakan laman web rasmi Bank Simpanan Nasional (BSN). Laman web ini dibangunkan oleh pegawai Perbankan Runcit Bank Simpanan Nasional (BSN) bagi memudahkan urusan pertanyaan, pengiraan anggaran serta pra-pendaftaran permohonan pembiayaan.</p><p>Sebarang pengiraan, simulasi atau maklumat yang dipaparkan melalui laman web ini adalah untuk tujuan anggaran dan rujukan sahaja, dan tidak boleh dianggap sebagai tawaran atau keputusan muktamad pembiayaan.</p><p>Kelulusan serta terma pembiayaan adalah tertakluk kepada penilaian dan kelulusan BSN, termasuk semakan rekod kewangan, kelayakan pemohon, dokumen sokongan serta faktor-faktor lain yang berkaitan.</p>",
     notice_btn: "Saya Faham",
+    view_panel_link: "Lihat Senarai Syarikat Panel &rarr;",
     // dynamic
     progress_start: "Bermula",
     progress_result: "Keputusan",
@@ -670,6 +672,7 @@ const I18N = {
     notice_title: "NOTICE",
     notice_body: "<p>This website is not the official website of Bank Simpanan Nasional (BSN). This website was developed by a Retail Banking officer of Bank Simpanan Nasional (BSN) to facilitate enquiries, estimate calculations, and pre-registration of financing applications.</p><p>Any calculation, simulation, or information displayed on this website is for estimation and reference purposes only, and should not be regarded as an offer or a final financing decision.</p><p>Approval and financing terms are subject to BSN's assessment and approval, including review of financial records, applicant eligibility, supporting documents, and other relevant factors.</p>",
     notice_btn: "I Understand",
+    view_panel_link: "View Panel Company List &rarr;",
     // dynamic
     progress_start: "Getting Started",
     progress_result: "Result",
@@ -1167,6 +1170,10 @@ function renderLoanResult(){
   document.getElementById('scheduleLinkBox').innerHTML = scheduleBase
     ? `<a class="schedule-link-box" href="${buildScheduleHref(scheduleBase)}">${T().view_schedule_link}</a>`
     : '';
+
+  document.getElementById('panelLinkBox').innerHTML = state.sector === 'swasta'
+    ? `<a class="schedule-link-box" href="${buildScheduleHref('panel-syarikat.html')}">${T().view_panel_link}</a>`
+    : '';
 }
 
 // Builds a link to a schedule page carrying a `back` param that can restore this
@@ -1216,6 +1223,7 @@ function renderCreditCardResult(){
   document.getElementById('resultNote').textContent = T().result_note_cc;
   document.getElementById('ctaDebtRemark').innerHTML = '';
   document.getElementById('scheduleLinkBox').innerHTML = '';
+  document.getElementById('panelLinkBox').innerHTML = '';
 }
 
 // ---- Step 5: Lead capture ----
