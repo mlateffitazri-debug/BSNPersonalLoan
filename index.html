@@ -1112,8 +1112,11 @@ function renderLoanResult(){
   document.getElementById('ctaDebtRemark').innerHTML =
     state.debtConsolidation ? `<p class="note" style="margin-top:14px;">${T().cta_debt_remark}</p>` : '';
 
-  document.getElementById('scheduleLinkBox').innerHTML = state.sector === 'profesional'
-    ? `<p class="note"><a class="terms-link" href="jadual-pembayaran.html">${T().view_schedule_link}</a></p>`
+  const scheduleHref = state.sector === 'profesional' ? 'jadual-pembayaran.html'
+    : state.sector === 'kerajaan' ? 'jadual-pembayaran-awam.html'
+    : null;
+  document.getElementById('scheduleLinkBox').innerHTML = scheduleHref
+    ? `<p class="note"><a class="terms-link" href="${scheduleHref}">${T().view_schedule_link}</a></p>`
     : '';
 }
 
