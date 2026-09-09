@@ -86,8 +86,6 @@
   ul.notes li{font-size:.82rem;line-height:1.6;color:var(--muted);margin-bottom:6px;}
   ul.notes strong{color:var(--text);}
 
-  .info-box{background:#eef7f6;border:1px solid #c9e9e6;border-radius:10px;padding:14px 16px;font-size:.85rem;color:var(--accent-dark);line-height:1.6;}
-
   .footer-note{text-align:center;color:var(--muted);font-size:.72rem;margin-top:24px;}
   .terms-note{text-align:center;color:var(--muted);font-size:.72rem;margin-top:6px;}
   [data-lang]{display:none;}
@@ -151,8 +149,6 @@
         <li>Jadual kempen ini disiarkan untuk amaun <strong>RM5,000 — RM200,000</strong> dan tempoh <strong>4 — 10 tahun</strong> sahaja. Had produk am MyRinggit-i Sektor Awam ialah Pembiayaan Minimum RM5,000, Maksimum RM400,000, sehingga 10 tahun — hubungi wakil BSN untuk kadar amaun/tempoh di luar julat kempen ini.</li>
         <li>Tambahan <strong>1.00% setahun</strong> daripada kadar di atas untuk pembiayaan/pinjaman tanpa Takaful/Insurans.</li>
       </ul>
-
-      <div class="info-box">Hubungi Puan Lida di 011 5453 1809 untuk maklumat lanjut.</div>
     </div>
 
     <!-- English -->
@@ -193,8 +189,6 @@
         <li>This campaign table is published only for amounts <strong>RM5,000 — RM200,000</strong> and tenure <strong>4 — 10 years</strong>. The general MyRinggit-i Sektor Awam product range is Minimum Financing RM5,000, Maximum RM400,000, up to 10 years — contact a BSN representative for figures outside this campaign's range.</li>
         <li>An additional <strong>1.00% p.a.</strong> on top of the rates above applies for financing/loans without Takaful/Insurance.</li>
       </ul>
-
-      <div class="info-box">Contact Puan Lida at 011 5453 1809 for more information.</div>
     </div>
 
   </div>
@@ -301,6 +295,12 @@ function updateResult(suffix, lang){
 
 setupCalculator('Ms', 'ms');
 setupCalculator('En', 'en');
+
+// If we arrived via a result screen's schedule link, `back` carries a URL that
+// restores that exact result (see buildScheduleHref in index.html) — use it
+// instead of the plain index.html link so "back" doesn't reset the wizard.
+const backParam = new URLSearchParams(window.location.search).get('back');
+if (backParam) document.getElementById('backLink').href = backParam;
 
 function setLang(l){
   document.querySelectorAll('[data-lang]').forEach(el=>el.classList.toggle('active', el.dataset.lang===l));

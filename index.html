@@ -147,6 +147,8 @@
 
   details{border:1px solid var(--border);border-radius:12px;padding:4px 16px;margin-top:8px;}
   summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:.88rem;color:var(--accent-dark);}
+  .schedule-link-box{display:block;border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-top:8px;text-align:center;font-weight:700;font-size:.88rem;color:var(--accent-dark);text-decoration:none;}
+  .schedule-link-box:hover{background:#effaf9;}
   .result-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px dashed var(--border);font-size:.86rem;}
   .result-item:last-child{border-bottom:none;padding-bottom:16px;}
   .result-label{color:var(--muted);}
@@ -1112,12 +1114,34 @@ function renderLoanResult(){
   document.getElementById('ctaDebtRemark').innerHTML =
     state.debtConsolidation ? `<p class="note" style="margin-top:14px;">${T().cta_debt_remark}</p>` : '';
 
-  const scheduleHref = state.sector === 'profesional' ? 'jadual-pembayaran.html'
+  const scheduleBase = state.sector === 'profesional' ? 'jadual-pembayaran.html'
     : state.sector === 'kerajaan' ? 'jadual-pembayaran-awam.html'
     : null;
-  document.getElementById('scheduleLinkBox').innerHTML = scheduleHref
-    ? `<p class="note"><a class="terms-link" href="${scheduleHref}">${T().view_schedule_link}</a></p>`
+  document.getElementById('scheduleLinkBox').innerHTML = scheduleBase
+    ? `<a class="schedule-link-box" href="${buildScheduleHref(scheduleBase)}" target="_blank" rel="noopener">${T().view_schedule_link}</a>`
     : '';
+}
+
+// Builds a link to a schedule page carrying a `back` param that can restore this
+// exact result screen, so the schedule page's "back to calculator" link doesn't
+// dump the user at step 0 (a fresh tab has no browser history to go back to).
+function buildScheduleHref(base){
+  const p = new URLSearchParams();
+  p.set('restore', '1');
+  p.set('sector', state.sector);
+  p.set('debt', state.debtConsolidation ? '1' : '0');
+  if (!state.debtConsolidation){
+    p.set('gi', state.grossIncome);
+    p.set('ni', state.netIncome);
+    p.set('c1', state.commitments[0]);
+    p.set('c2', state.commitments[1]);
+    p.set('c3', state.commitments[2]);
+    p.set('c4', state.commitments[3]);
+    p.set('la', state.loanAmount);
+    p.set('lt', state.loanTenure);
+  }
+  const returnUrl = 'index.html?' + p.toString();
+  return `${base}?back=${encodeURIComponent(returnUrl)}`;
 }
 
 function renderCreditCardResult(){
@@ -1218,6 +1242,47 @@ function restart(){
   goTo(0);
 }
 
+// Restores the wizard straight to the result screen when arriving via a schedule
+// page's "back to calculator" link (see buildScheduleHref above).
+function restoreFromQuery(){
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('restore') !== '1') return false;
+  const sector = params.get('sector');
+  if (!sector || !SECTOR_LOAN_DATA[sector]) return false;
+
+  state.sector = sector;
+  state.product = 'pinjaman';
+  const debtConsol = params.get('debt') === '1';
+  state.debtConsolidation = debtConsol;
+  document.querySelectorAll('#debtConsolCards .option-card').forEach(c =>
+    c.classList.toggle('selected', (c.dataset.val === 'yes') === debtConsol));
+
+  if (debtConsol){
+    state.resultMode = 'pinjaman';
+    renderLoanResult();
+    goTo(4);
+    return true;
+  }
+
+  const gross = parseFloat(params.get('gi')) || 0;
+  const loanAmount = parseFloat(params.get('la')) || 0;
+  const loanTenure = parseFloat(params.get('lt')) || 0;
+  if (!gross || !loanAmount || !loanTenure) return false;
+
+  document.getElementById('q_grossIncome').value = gross;
+  document.getElementById('q_netIncome').value = parseFloat(params.get('ni')) || 0;
+  document.getElementById('q_commitment1').value = params.get('c1') || '';
+  document.getElementById('q_commitment2').value = params.get('c2') || '';
+  document.getElementById('q_commitment3').value = params.get('c3') || '';
+  document.getElementById('q_commitment4').value = params.get('c4') || '';
+  document.getElementById('q_loanAmount').value = loanAmount;
+  document.getElementById('q_loanTenure').value = loanTenure;
+
+  checkDSR();
+  return true;
+}
+
+restoreFromQuery();
 updateProgress();
 </script>
 </body>
