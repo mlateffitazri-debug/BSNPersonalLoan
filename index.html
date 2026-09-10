@@ -2110,6 +2110,26 @@ function validateLead(){
 
   state.leadName = name; state.leadProfession = profession; state.leadPhone = phoneRaw; state.leadEmail = email;
 
+  if (state.resultMode === 'kredit' || state.resultMode === 'kredit-fallback'){
+    const gross = state.grossIncome || 0;
+    let tier = CREDIT_CARD_TIERS[0];
+    for (const t of CREDIT_CARD_TIERS){ if (gross >= t.minIncome/12 || gross === 0) tier = t; }
+    if (gross === 0) tier = CREDIT_CARD_TIERS[0];
+    const cardCode = tier.name.split(' ').pop().toLowerCase();
+
+    const p = new URLSearchParams();
+    p.set('sector', state.sector || '');
+    p.set('name', name);
+    p.set('phone', phoneRaw);
+    p.set('email', email);
+    p.set('profession', profession);
+    p.set('card', cardCode);
+    p.set('income', Math.round(gross * 12));
+
+    window.location.href = `https://asb.lateffitazri.my/apply-credit-card.html?${p.toString()}`;
+    return;
+  }
+
   const productLabel = state.resultMode === 'pinjaman'
     ? (SECTOR_LOAN_DATA[state.sector]?.productName || T().default_loan_product)
     : T().credit_card_product;
