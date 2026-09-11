@@ -2109,11 +2109,30 @@ function renderCreditCardResult(){
   document.getElementById('scheduleLinkBox').innerHTML = '';
 }
 
-// ---- Step 5: Lead capture ----
+// ---- Step 5: Lead capture (loan only — credit card skips straight to card.lateffitazri.my) ----
 function goToLeadForm(){
+  if (state.resultMode === 'kredit' || state.resultMode === 'kredit-fallback'){
+    redirectToCreditCardSite();
+    return;
+  }
   const sectorLabel = SECTOR_LOAN_DATA[state.sector]?.label[lang] || '-';
   document.getElementById('leadSectorConfirm').textContent = T().lead_sector_confirm(sectorLabel);
   goTo(5);
+}
+
+function redirectToCreditCardSite(){
+  const gross = state.grossIncome || 0;
+  let tier = CREDIT_CARD_TIERS[0];
+  for (const t of CREDIT_CARD_TIERS){ if (gross >= t.minIncome/12 || gross === 0) tier = t; }
+  if (gross === 0) tier = CREDIT_CARD_TIERS[0];
+  const cardCode = tier.name.split(' ').pop().toLowerCase();
+
+  const p = new URLSearchParams();
+  p.set('sector', state.sector || '');
+  p.set('card', cardCode);
+  p.set('income', Math.round(gross * 12));
+
+  window.location.href = `https://card.lateffitazri.my/?${p.toString()}`;
 }
 
 function validateLead(){
