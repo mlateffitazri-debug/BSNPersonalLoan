@@ -159,6 +159,12 @@
   .btn-whatsapp:hover{background:#1ebe5a;}
   .btn-whatsapp svg{width:22px;height:22px;flex-shrink:0;}
   .restart-row{display:flex;justify-content:center;gap:10px;margin-top:14px;}
+  .banker-card{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:18px;margin:0 0 16px;text-align:left;}
+  .banker-card .banker-name{font-weight:800;font-size:1.05rem;color:var(--text);margin:0 0 2px;}
+  .banker-card .banker-title{color:var(--accent-dark);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;margin:0 0 14px;}
+  .banker-card .banker-addr{font-size:.85rem;line-height:1.6;color:var(--text);margin:0 0 10px;}
+  .banker-card .banker-row{display:flex;gap:8px;font-size:.85rem;line-height:1.6;color:var(--text);}
+  .banker-card .banker-label{color:var(--muted);min-width:34px;font-weight:700;}
 
   .headline{text-align:center;margin-bottom:22px;}
   .headline .label{color:var(--muted);font-size:.85rem;margin-bottom:4px;}
@@ -523,6 +529,24 @@
 
       <div id="leadSummaryBox" class="info-box" style="background:var(--panel2);color:var(--text);border-color:var(--border);"></div>
 
+      <p class="helptext" data-i18n="banker_heading" style="text-align:center;margin:0 0 8px;font-weight:700;">Permohonan Anda Akan Diuruskan Oleh</p>
+      <div class="banker-card">
+        <p class="banker-name">NORLIDA BINTI MOHD AZMAN</p>
+        <p class="banker-title">Financial Executive</p>
+        <p class="banker-addr">
+          Bank Simpanan Nasional<br>
+          Cawangan Pandan Indah<br>
+          No 8G, Jalan Perubatan 2<br>
+          Pandan Indah, 55100 Kuala Lumpur<br>
+          Malaysia
+        </p>
+        <div class="banker-row"><span class="banker-label">T</span><span>03 4296 0486</span></div>
+        <div class="banker-row"><span class="banker-label">M</span><span>013 7507106</span></div>
+        <div class="banker-row"><span class="banker-label">F</span><span>03 4296 0486</span></div>
+        <div class="banker-row"><span class="banker-label">E</span><span>norlida_azman@bsn.com.my</span></div>
+        <div class="banker-row"><span class="banker-label">W</span><span>www.bsn.com.my</span></div>
+      </div>
+
       <a id="waButton" class="btn-whatsapp" href="#" target="_blank" rel="noopener noreferrer">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4C7.14 4 3.13 8 3.13 12.9c0 1.6.42 3.14 1.2 4.5L3 21l3.7-1.3a8.9 8.9 0 0 0 4.35 1.14h.01c4.91 0 8.92-4 8.92-8.9a8.84 8.84 0 0 0-2.38-6.62zM12.06 19.4h-.01a7.4 7.4 0 0 1-3.77-1.03l-.27-.16-2.8.97.94-2.72-.18-.28a7.36 7.36 0 0 1-1.14-3.94c0-4.08 3.33-7.4 7.44-7.4a7.4 7.4 0 0 1 5.26 2.17 7.32 7.32 0 0 1 2.17 5.23c0 4.08-3.33 7.4-7.44 7.4zm4.08-5.54c-.22-.11-1.32-.65-1.53-.72-.2-.08-.35-.11-.5.11-.15.22-.58.72-.7.87-.13.15-.26.16-.48.05-.22-.11-.94-.35-1.79-1.11-.66-.59-1.11-1.32-1.24-1.54-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.38.11-.13.15-.22.22-.37.07-.15.04-.28-.02-.39-.06-.11-.5-1.2-.68-1.65-.18-.43-.36-.37-.5-.38h-.43c-.15 0-.39.06-.59.28-.2.22-.77.75-.77 1.84s.79 2.13.9 2.28c.11.15 1.55 2.36 3.75 3.31.52.22.93.36 1.25.46.53.17 1.01.14 1.39.09.42-.06 1.32-.54 1.51-1.06.19-.52.19-.96.13-1.06-.06-.09-.2-.15-.42-.26z"/></svg>
         <span data-i18n="btn_whatsapp">Chat di WhatsApp</span>
@@ -622,6 +646,7 @@ const I18N = {
     s6_eyebrow: "Hampir Selesai",
     s6_question: "Anda sudah bersedia!",
     s6_help: "Ketik butang di bawah untuk hantar maklumat anda kepada wakil BSN melalui WhatsApp.",
+    banker_heading: "Permohonan Anda Akan Diuruskan Oleh",
     btn_whatsapp: "Chat di WhatsApp",
     btn_edit: "Edit Maklumat",
     disclaimer: "Alat berpandu ini hanya menyediakan unjuran ilustrasi untuk tujuan perbincangan dengan wakil BSN. Ia tidak membentuk nasihat kewangan atau tawaran pinjaman rasmi. Kadar dan syarat tertakluk kepada penilaian dan kelulusan pihak Bank.",
@@ -746,6 +771,7 @@ const I18N = {
     s6_eyebrow: "Almost Done",
     s6_question: "You're all set!",
     s6_help: "Tap the button below to send your details to a BSN representative on WhatsApp.",
+    banker_heading: "Your Application Will Be Handled By",
     btn_whatsapp: "Chat on WhatsApp",
     btn_edit: "Edit Details",
     disclaimer: "This guided tool provides illustrative projections only, for discussion purposes with a BSN representative. It does not constitute financial advice or a formal loan offer. Rates and terms are subject to the Bank's assessment and approval.",
@@ -2127,7 +2153,7 @@ function validateLead(){
     p.set('card', cardCode);
     p.set('income', Math.round(gross * 12));
 
-    window.location.href = `https://asb.lateffitazri.my/apply-credit-card.html?${p.toString()}`;
+    window.location.href = `https://card.lateffitazri.my/?${p.toString()}`;
     return;
   }
 
