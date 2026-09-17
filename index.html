@@ -2707,6 +2707,7 @@ function setupUploadStep(){
   document.getElementById('uploadFormLink').href = buildPrefilledGoogleFormUrl(state.leadName);
 
   uploadLinkClicked = false;
+  state.recordSubmitted = false;
   const uploadEl = document.getElementById('uploadConfirm');
   uploadEl.checked = false; uploadEl.disabled = true;
   document.getElementById('uploadConfirmHint').style.display = 'block';
@@ -2742,6 +2743,34 @@ function updateWhatsAppSendGate(){
   const waBtn = document.getElementById('waButton');
   waBtn.style.pointerEvents = ready ? 'auto' : 'none';
   waBtn.style.opacity = ready ? '1' : '.5';
+  if (ready) submitApplicationRecord();
+}
+
+// ---- Fasa 3: application log (Google Sheet via Apps Script Web App) ----
+// TODO: replace with the real Web App URL + SUBMIT_TOKEN from
+// google-apps-script/applications-log.gs once it has been deployed.
+const APPS_SCRIPT_URL = 'REPLACE_WITH_DEPLOYED_WEB_APP_URL';
+const APPS_SCRIPT_SUBMIT_TOKEN = 'TUKAR_INI_JUGA';
+
+function submitApplicationRecord(){
+  if (state.recordSubmitted) return; // fire once per application, not on every gate re-check
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.startsWith('REPLACE_WITH_')) return; // not wired up yet
+  state.recordSubmitted = true;
+  try {
+    fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors', // Apps Script Web Apps don't return CORS headers; response is unreadable but not needed
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        action: 'submit', token: APPS_SCRIPT_SUBMIT_TOKEN,
+        nama: state.leadName || '', produk: SECTOR_LOAN_DATA[state.sector]?.productName || T().default_loan_product,
+        sektor: SECTOR_LOAN_DATA[state.sector]?.label.ms || '',
+        status: 'Mohon', dsrStatus: state.dsrStatus || '',
+        telefon: state.leadPhone || '', emel: state.leadEmail || '',
+        penyatuanHutang: state.debtConsolidation ? 'Ya' : 'Tidak',
+      }),
+    });
+  } catch (e){ /* best-effort logging — never block the applicant's WhatsApp handoff */ }
 }
 
 async function copyFolderName(){
