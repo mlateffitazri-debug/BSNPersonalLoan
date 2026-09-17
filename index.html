@@ -2766,7 +2766,6 @@ function submitApplicationRecord(){
         nama: state.leadName || '', produk: SECTOR_LOAN_DATA[state.sector]?.productName || T().default_loan_product,
         sektor: SECTOR_LOAN_DATA[state.sector]?.label.ms || '',
         status: 'Mohon', dsrStatus: state.dsrStatus || '',
-        telefon: state.leadPhone || '', emel: state.leadEmail || '',
         penyatuanHutang: state.debtConsolidation ? 'Ya' : 'Tidak',
       }),
     });
