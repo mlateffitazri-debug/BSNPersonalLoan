@@ -68,6 +68,12 @@
   .question{font-size:1.35rem;font-weight:800;line-height:1.3;margin:0 0 8px;color:var(--accent);}
   .helptext{color:var(--muted);font-size:.9rem;line-height:1.5;margin:0 0 22px;}
   .field-label{display:block;font-weight:700;font-size:.85rem;margin-bottom:8px;}
+  .subsection-title{color:var(--accent-dark);font-weight:800;font-size:.95rem;margin:22px 0 12px;padding-top:16px;border-top:1px solid var(--border);}
+  .subsection-title:first-child{margin-top:0;padding-top:0;border-top:none;}
+  .input-big textarea{width:100%;padding:11px 14px;font-size:1rem;font-weight:600;border:1.5px solid var(--border);border-radius:10px;background:var(--input-bg);color:var(--text);resize:vertical;min-height:70px;font-family:inherit;}
+  .input-big textarea:focus{outline:none;border-color:var(--accent);}
+  .input-big select{width:100%;padding:11px 14px;font-size:1rem;font-weight:600;border:1.5px solid var(--border);border-radius:10px;background:var(--input-bg);color:var(--text);}
+  .input-big select:focus{outline:none;border-color:var(--accent);}
 
   .input-big{position:relative;margin-bottom:18px;}
   .input-big .prefix{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:600;}
@@ -224,6 +230,14 @@
     <p class="notice-title" data-i18n="notice_title">PEMBERITAHUAN</p>
     <div class="notice-body" data-i18n="notice_body"></div>
     <button type="button" class="notice-btn" data-i18n="notice_btn" onclick="dismissNotice()">Saya Faham</button>
+  </div>
+</div>
+
+<div class="notice-overlay" id="applyDisclaimerOverlay" hidden>
+  <div class="notice-card">
+    <p class="notice-title" data-i18n="apply_notice_title">PERMOHONAN SELAMAT</p>
+    <div class="notice-body" data-i18n="apply_notice_body"></div>
+    <button type="button" class="notice-btn" data-i18n="apply_notice_btn" onclick="dismissApplyDisclaimer()">Faham</button>
   </div>
 </div>
 
@@ -389,27 +403,63 @@
     </div>
   </div>
 
-  <!-- Step 3: DSR Calculator -->
+  <!-- Step 3: DSR/NDI Calculator -->
   <div class="step" data-step="3">
     <div class="card">
       <div class="eyebrow" data-i18n="s3_eyebrow">Soalan 3 daripada 4</div>
-      <p class="question" data-i18n="s3_question">Semakan Debt Service Ratio (DSR)</p>
-      <p class="helptext" data-i18n="s3_help">Masukkan pendapatan dan komitmen bulanan anda untuk semakan pra-kelayakan pantas.</p>
+      <p class="question" data-i18n="s3_question">Semakan Net Disposable Income (NDI) &amp; DSR</p>
+      <p class="helptext" data-i18n="s3_help">Masukkan gaji, pendapatan sampingan (jika ada bukti) dan komitmen bulanan anda untuk semakan pra-kelayakan.</p>
 
-      <label class="field-label" data-i18n="lbl_grossIncome">Pendapatan kasar bulanan (RM)</label>
-      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_grossIncome" min="0" step="100" placeholder="0.00"></div>
+      <div class="info-box" data-i18n="ccris_ctos_disclaimer">Ini adalah <strong>forecast (unjuran)</strong> sahaja. Keputusan sebenar adalah berdasarkan rekod CCRIS dan CTOS, dan ianya bergantung sepenuhnya pada keputusan pegawai bank.</div>
 
-      <label class="field-label" data-i18n="lbl_netIncome">Gaji bersih dalam payslip selepas potongan (RM)</label>
-      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_netIncome" min="0" step="100" placeholder="0.00"></div>
+      <label class="field-label" data-i18n="lbl_dependents">Bilangan Tanggungan</label>
+      <div class="input-big"><input type="number" id="q_dependents" min="0" max="12" step="1" placeholder="0"></div>
 
-      <label class="field-label" data-i18n="lbl_commitments">Jumlah komitmen bulanan sedia ada (RM)</label>
-      <p class="helptext" style="margin-bottom:10px;" data-i18n="lbl_commitments_help">Contoh: bayaran pinjaman kereta, pinjaman peribadi lain, minimum kad kredit, PTPTN, dll.</p>
-      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_commitment1" min="0" step="50" data-i18n-ph="ph_commitment1" placeholder="Komitmen 1"></div>
-      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_commitment2" min="0" step="50" data-i18n-ph="ph_commitment2" placeholder="Komitmen 2"></div>
-      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_commitment3" min="0" step="50" data-i18n-ph="ph_commitment3" placeholder="Komitmen 3"></div>
-      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_commitment4" min="0" step="50" data-i18n-ph="ph_commitment4" placeholder="Komitmen 4"></div>
+      <label class="field-label" data-i18n="lbl_area">Kawasan Tempat Tinggal</label>
+      <select id="q_area" class="panel-state-select" style="width:100%;margin-bottom:18px;padding:11px 14px;">
+        <option value="urban" data-i18n="opt_area_urban">Bandar</option>
+        <option value="sub" data-i18n="opt_area_sub">Luar Bandar</option>
+      </select>
 
-      <label class="field-label" data-i18n="lbl_loanAmount">Jumlah pinjaman yang dipohon (RM)</label>
+      <label class="field-label" data-i18n="lbl_basicSalary">Gaji Pokok Bulanan (RM)</label>
+      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_basicSalary" min="0" step="50" placeholder="0.00"></div>
+
+      <label class="field-label" data-i18n="lbl_fixedAllowance">Elaun Tetap Bulanan (RM)</label>
+      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_fixedAllowance" min="0" step="50" placeholder="0.00"></div>
+
+      <label class="field-label" data-i18n="lbl_otherIncome">Pendapatan Sampingan Bulanan (RM)</label>
+      <p class="helptext" style="margin-bottom:10px;" data-i18n="lbl_otherIncome_help">Hanya isi jika anda mempunyai BUKTI (cth. penyata bank, resit komisen). Jangan masukkan pendapatan tanpa bukti.</p>
+      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_otherIncome" min="0" step="50" placeholder="0.00"></div>
+
+      <label class="field-label" data-i18n="lbl_epf">Potongan Statutori — EPF/SOCSO/PCB/Zakat (RM)</label>
+      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_epf" min="0" step="10" placeholder="0.00"></div>
+
+      <label class="field-label" data-i18n="lbl_payslipDeduction">Jumlah Keseluruhan Potongan Dalam Payslip (RM)</label>
+      <p class="helptext" style="margin-bottom:10px;" data-i18n="lbl_payslipDeduction_help">Termasuk potongan statutori di atas + potongan lain dalam slip gaji (cth. potongan pinjaman sedia ada melalui gaji).</p>
+      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_payslipDeduction" min="0" step="10" placeholder="0.00"></div>
+
+      <label class="field-label" data-i18n="lbl_ccrisExternal">Jumlah Komitmen Luar Payslip (RM)</label>
+      <p class="helptext" style="margin-bottom:10px;" id="ccrisExternalHelp" data-i18n="lbl_ccrisExternal_help_normal">Contoh: bayaran pinjaman kereta, pinjaman peribadi lain, minimum kad kredit, PTPTN, dll. (rekod CCRIS anda).</p>
+      <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_ccrisExternal" min="0" step="10" placeholder="0.00"></div>
+
+      <div id="debtConsolBlock" style="display:none;">
+        <label class="field-label" data-i18n="lbl_debtConsolTitle">Senarai Hutang Untuk Disatukan (maks. 4)</label>
+        <div id="debtRows"></div>
+        <label class="field-label" data-i18n="lbl_topUp">Tambahan Tunai (Top-Up) (RM)</label>
+        <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_topUp" min="0" step="500" placeholder="0.00" oninput="updateDebtConsolSummary()"></div>
+        <div class="info-box"><span data-i18n="lbl_consolPrincipal">Jumlah Prinsipal Pinjaman Disatukan</span>: <strong id="consolPrincipalDisplay">RM 0.00</strong></div>
+      </div>
+
+      <details style="margin-bottom:18px;">
+        <summary data-i18n="lbl_advancedToggle">Butiran Tambahan (Pilihan)</summary>
+        <label class="field-label" style="margin-top:14px;" data-i18n="lbl_overlapBSN">Potongan Pinjaman BSN Sedia Ada Dalam Payslip (RM)</label>
+        <p class="helptext" style="margin-bottom:10px;" data-i18n="lbl_overlapBSN_help">Jika ada, jumlah ini sudah termasuk dalam "Jumlah Keseluruhan Potongan Payslip" di atas.</p>
+        <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_overlapBSN" min="0" step="10" placeholder="0.00" value="0"></div>
+        <label class="field-label" data-i18n="lbl_tabungHaji">Simpanan Tabung Haji Bulanan (RM)</label>
+        <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_tabungHaji" min="0" step="10" placeholder="0.00" value="0"></div>
+      </details>
+
+      <label class="field-label" id="loanAmountLabel" data-i18n="lbl_loanAmount">Jumlah pinjaman yang dipohon (RM)</label>
       <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_loanAmount" min="0" step="1000" placeholder="0.00"></div>
 
       <label class="field-label" data-i18n="lbl_loanTenure">Tempoh pinjaman dipohon (tahun)</label>
@@ -419,13 +469,13 @@
 
       <div class="nav-row">
         <button class="btn-back" data-i18n="btn_back" onclick="goTo(2)">Kembali</button>
-        <button class="btn-primary" data-i18n="btn_check" onclick="checkDSR()">SEMAK</button>
+        <button class="btn-primary" data-i18n="btn_check" onclick="checkDSRNDI()">SEMAK</button>
       </div>
       <p class="note" data-i18n="s3_note">*Kalkulator ini adalah anggaran sahaja untuk tujuan ilustrasi. Keputusan sebenar tertakluk kepada penilaian pihak Bank.</p>
     </div>
   </div>
 
-  <!-- Step 3b: DSR Fallout -->
+  <!-- Step 3b: Credit Card alternative (reached only via an explicit link from a PreFail result) -->
   <div class="step" data-step="3b">
     <div class="card">
       <div class="fallout-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></div>
@@ -435,7 +485,7 @@
       <div class="nav-row" style="flex-direction:column;">
         <button class="btn-primary" data-i18n="btn_yes_creditcard" onclick="proceedToCreditCardFallback()">Ya, Kad Kredit Al-Aiman</button>
         <button class="btn-back" data-i18n="btn_recheck" onclick="goTo(3)">Semak Semula</button>
-        <button class="btn-back" data-i18n="btn_not_interested" onclick="restart()">Saya tidak berminat</button>
+        <button class="btn-back" data-i18n="btn_not_interested" onclick="goTo(4)">Kembali ke Keputusan Pinjaman</button>
       </div>
     </div>
   </div>
@@ -449,6 +499,9 @@
         <div class="value" id="resultValue">-</div>
         <div class="sub" id="resultSub"></div>
       </div>
+
+      <div id="ndiPanel"></div>
+      <div id="debtConsolPanel"></div>
 
       <div class="stat-grid" id="resultStatGrid"></div>
 
@@ -482,31 +535,144 @@
     </div>
   </div>
 
-  <!-- Step 5: Lead capture -->
+  <!-- Step 5: Full application form -->
   <div class="step" data-step="5">
     <div class="card">
       <div class="eyebrow" data-i18n="s5_eyebrow">Mohon Sekarang</div>
       <p class="question" data-i18n="s5_question">Mari kita mulakan.</p>
-      <p class="helptext" data-i18n="s5_help">Kongsikan maklumat anda dan wakil BSN akan menghubungi anda untuk bantu proses permohonan.</p>
-
-      <label class="field-label" data-i18n="lbl_leadName">Nama Penuh</label>
-      <div class="input-big no-center"><input type="text" id="q_leadName" data-i18n-ph="ph_leadName" placeholder="cth. Ahmad bin Ali" autocomplete="name"></div>
-
-      <label class="field-label" data-i18n="lbl_leadProfession">Jenis Pekerjaan / Profesion</label>
-      <div class="input-big no-center"><input type="text" id="q_leadProfession" data-i18n-ph="ph_leadProfession" placeholder="cth. Jururawat, Peniaga, Jurutera" autocomplete="organization-title"></div>
-
-      <label class="field-label" data-i18n="lbl_leadPhone">Nombor Telefon Bimbit</label>
-      <div class="input-big no-center"><input type="tel" id="q_leadPhone" data-i18n-ph="ph_leadPhone" placeholder="cth. 012-3456789" autocomplete="tel"></div>
-
-      <label class="field-label" data-i18n="lbl_leadEmail">Emel</label>
-      <div class="input-big no-center"><input type="email" id="q_leadEmail" data-i18n-ph="ph_leadEmail" placeholder="cth. ahmad@email.com" autocomplete="email"></div>
-
+      <p class="helptext" data-i18n="s5_help">Lengkapkan maklumat di bawah. Medan bertanda * wajib diisi.</p>
       <label class="consent-row" style="opacity:.8;">
         <input type="checkbox" checked disabled>
         <span id="leadSectorConfirm"></span>
       </label>
 
+      <div class="subsection-title" data-i18n="s5_sec_personal">Maklumat Peribadi</div>
+
+      <label class="field-label" data-i18n="lbl_appName">Nama *</label>
+      <div class="input-big no-center"><input type="text" id="q_appName" autocomplete="name"></div>
+
+      <label class="field-label" data-i18n="lbl_appIc">No. Kad Pengenalan *</label>
+      <div class="input-big no-center"><input type="text" id="q_appIc" placeholder="900815-14-1234"></div>
+
+      <label class="field-label" data-i18n="lbl_appEmail">Emel *</label>
+      <div class="input-big no-center"><input type="email" id="q_appEmail" autocomplete="email"></div>
+
+      <label class="field-label" data-i18n="lbl_appPhone">No. Telefon *</label>
+      <div class="input-big no-center"><input type="tel" id="q_appPhone" placeholder="012-3456789" autocomplete="tel"></div>
+
+      <label class="field-label" data-i18n="lbl_appEducation">Pendidikan Tertinggi</label>
+      <div class="input-big no-center">
+        <select id="q_appEducation">
+          <option value="">-</option>
+          <option value="spm" data-i18n="opt_edu_spm">SPM</option>
+          <option value="stpm" data-i18n="opt_edu_stpm">STPM</option>
+          <option value="sijil" data-i18n="opt_edu_sijil">Sijil</option>
+          <option value="diploma" data-i18n="opt_edu_diploma">Diploma</option>
+          <option value="ijazah" data-i18n="opt_edu_ijazah">Ijazah Sarjana Muda</option>
+          <option value="sarjana" data-i18n="opt_edu_sarjana">Sarjana</option>
+          <option value="lain" data-i18n="opt_edu_lain">Lain-lain</option>
+        </select>
+      </div>
+
+      <label class="field-label" data-i18n="lbl_appAddress">Alamat *</label>
+      <div class="input-big no-center"><textarea id="q_appAddress" rows="3"></textarea></div>
+
+      <label class="field-label" data-i18n="lbl_appAddressStatus">Status Alamat Kediaman</label>
+      <div class="input-big no-center">
+        <select id="q_appAddressStatus">
+          <option value="">-</option>
+          <option value="sendiri" data-i18n="opt_addr_sendiri">Rumah Sendiri</option>
+          <option value="sewa" data-i18n="opt_addr_sewa">Sewa</option>
+          <option value="gadaijanji" data-i18n="opt_addr_gadaijanji">Gadai Janji</option>
+          <option value="saudara" data-i18n="opt_addr_saudara">Ibu Bapa / Saudara</option>
+          <option value="lain" data-i18n="opt_edu_lain">Lain-lain</option>
+        </select>
+      </div>
+
+      <label class="field-label" data-i18n="lbl_appMaritalStatus">Status Perkahwinan</label>
+      <div class="input-big no-center">
+        <select id="q_appMaritalStatus" onchange="onMaritalStatusChange()">
+          <option value="">-</option>
+          <option value="bujang" data-i18n="opt_marital_bujang">Bujang</option>
+          <option value="berkahwin" data-i18n="opt_marital_berkahwin">Berkahwin</option>
+          <option value="lain" data-i18n="opt_edu_lain">Lain-lain</option>
+        </select>
+      </div>
+
+      <label class="field-label" data-i18n="lbl_appChildren">Tanggungan Anak</label>
+      <div class="input-big no-center"><input type="number" id="q_appChildren" min="0" max="20" step="1"></div>
+
+      <div class="subsection-title" data-i18n="s5_sec_employer">Maklumat Majikan</div>
+
+      <label class="field-label" data-i18n="lbl_empName">Nama Majikan *</label>
+      <div class="input-big no-center"><input type="text" id="q_empName"></div>
+
+      <label class="field-label" data-i18n="lbl_empAddress">Alamat Majikan</label>
+      <div class="input-big no-center"><textarea id="q_empAddress" rows="2"></textarea></div>
+
+      <label class="field-label" data-i18n="lbl_empPosition">Jawatan *</label>
+      <div class="input-big no-center"><input type="text" id="q_empPosition"></div>
+
+      <label class="field-label" data-i18n="lbl_empStatus">Status Perkhidmatan</label>
+      <div class="input-big no-center">
+        <select id="q_empStatus">
+          <option value="">-</option>
+          <option value="tetap" data-i18n="opt_emp_tetap">Tetap</option>
+          <option value="kontrak" data-i18n="opt_emp_kontrak">Kontrak</option>
+        </select>
+      </div>
+
+      <label class="field-label" data-i18n="lbl_empStartDate">Tarikh Mula Berkhidmat</label>
+      <div class="input-big no-center"><input type="date" id="q_empStartDate"></div>
+
+      <label class="field-label" data-i18n="lbl_empPhone">No. Tel Majikan Untuk Pengesahan (Office Number)</label>
+      <div class="input-big no-center"><input type="tel" id="q_empPhone" placeholder="03-12345678"></div>
+
+      <label class="field-label" data-i18n="lbl_empEmailHr">Email Address HR</label>
+      <div class="input-big no-center"><input type="email" id="q_empEmailHr"></div>
+
+      <div class="subsection-title" data-i18n="s5_sec_ref">Rujukan (Duduk Berasingan)</div>
+
+      <label class="field-label" data-i18n="lbl_refName">Nama Rujukan</label>
+      <div class="input-big no-center"><input type="text" id="q_refName"></div>
+
+      <label class="field-label" data-i18n="lbl_refRelationship">Hubungan dengan Pemohon</label>
+      <div class="input-big no-center"><input type="text" id="q_refRelationship"></div>
+
+      <label class="field-label" data-i18n="lbl_refPhone">No. Tel</label>
+      <div class="input-big no-center"><input type="tel" id="q_refPhone" placeholder="012-3456789"></div>
+
+      <label class="field-label" data-i18n="lbl_refOccupation">Pekerjaan</label>
+      <div class="input-big no-center"><input type="text" id="q_refOccupation"></div>
+
+      <div class="subsection-title" data-i18n="s5_sec_security">Pengesahan Keselamatan</div>
+
+      <label class="field-label" data-i18n="lbl_motherName">Nama Ibu *</label>
+      <div class="input-big no-center"><input type="text" id="q_motherName"></div>
+
+      <div class="subsection-title" data-i18n="s5_sec_spouse">Butiran Pasangan</div>
       <label class="consent-row">
+        <input type="checkbox" id="q_hasSpouse" onchange="toggleSpouseFields()">
+        <span data-i18n="lbl_hasSpouse">Ada Pasangan?</span>
+      </label>
+      <div id="spouseFields" style="display:none;">
+        <label class="field-label" data-i18n="lbl_spouseName">Nama Pasangan</label>
+        <div class="input-big no-center"><input type="text" id="q_spouseName"></div>
+        <label class="field-label" data-i18n="lbl_spouseIc">No. Kad Pengenalan</label>
+        <div class="input-big no-center"><input type="text" id="q_spouseIc"></div>
+        <label class="field-label" data-i18n="lbl_spousePhone">No. Tel</label>
+        <div class="input-big no-center"><input type="tel" id="q_spousePhone" placeholder="012-3456789"></div>
+        <label class="field-label" data-i18n="lbl_spouseCompany">Nama Syarikat</label>
+        <div class="input-big no-center"><input type="text" id="q_spouseCompany"></div>
+        <label class="field-label" data-i18n="lbl_spousePosition">Jawatan</label>
+        <div class="input-big no-center"><input type="text" id="q_spousePosition"></div>
+        <label class="field-label" data-i18n="lbl_spouseSalary">Gaji (RM)</label>
+        <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_spouseSalary" min="0" step="50"></div>
+        <label class="field-label" data-i18n="lbl_spouseStartDate">Tarikh Mula Kerja</label>
+        <div class="input-big no-center"><input type="date" id="q_spouseStartDate"></div>
+      </div>
+
+      <label class="consent-row" style="margin-top:8px;">
         <input type="checkbox" id="q_leadConsent">
         <span data-i18n="lead_consent">Saya bersetuju untuk data saya digunakan untuk membuat permohonan ini.</span>
       </label>
@@ -515,21 +681,45 @@
 
       <div class="nav-row">
         <button class="btn-back" data-i18n="btn_back" onclick="goTo(4)">Kembali</button>
-        <button class="btn-primary" data-i18n="btn_continue" onclick="validateLead()">Teruskan</button>
+        <button class="btn-primary" data-i18n="btn_continue" onclick="validateApplication()">Teruskan</button>
       </div>
     </div>
   </div>
 
-  <!-- Step 6: WhatsApp handoff -->
+  <!-- Step 6: Document upload + WhatsApp handoff -->
   <div class="step" data-step="6">
     <div class="card">
       <div class="eyebrow" data-i18n="s6_eyebrow">Hampir Selesai</div>
-      <p class="question" data-i18n="s6_question">Anda sudah bersedia!</p>
-      <p class="helptext" data-i18n="s6_help">Ketik butang di bawah untuk hantar maklumat anda kepada wakil BSN melalui WhatsApp.</p>
+      <p class="question" data-i18n="s6_question">Muat Naik Dokumen &amp; Hantar Permohonan</p>
+      <p class="helptext" data-i18n="s6_help">Muat naik dokumen sokongan, kemudian hantar permohonan anda kepada wakil BSN melalui WhatsApp.</p>
 
       <div id="leadSummaryBox" class="info-box" style="background:var(--panel2);color:var(--text);border-color:var(--border);"></div>
 
-      <p class="helptext" data-i18n="banker_heading" style="text-align:center;margin:0 0 8px;font-weight:700;">Permohonan Anda Akan Diuruskan Oleh</p>
+      <div class="subsection-title" data-i18n="s6_sec_docs">Dokumen Diperlukan</div>
+      <div id="uploadDocsBox"></div>
+
+      <div class="info-box">
+        <span data-i18n="lbl_folderNameHint">Nama pemohon (guna dalam borang muat naik):</span>
+        <code id="uploadFolderName" style="display:block;margin:6px 0;font-weight:800;"></code>
+        <button type="button" class="btn-back btn-sm" id="btnCopyFolderName" onclick="copyFolderName()" data-i18n="btn_copy">Salin</button>
+      </div>
+
+      <a href="#" id="uploadFormLink" class="btn-cta" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;text-decoration:none;" onclick="onUploadFormLinkClick()">
+        <span data-i18n="btn_open_upload_form">Buka Borang Muat Naik Dokumen</span>
+      </a>
+
+      <label class="consent-row" style="margin-top:16px;">
+        <input type="checkbox" id="uploadConfirm" disabled onchange="onUploadConfirmChange()">
+        <span data-i18n="lbl_uploadConfirm">Saya sahkan telah memuat naik semua dokumen di atas.</span>
+      </label>
+      <p class="note" id="uploadConfirmHint" data-i18n="hint_uploadConfirm" style="text-align:left;">Sila klik "Buka Borang Muat Naik Dokumen" di atas dahulu sebelum boleh tandakan ini.</p>
+
+      <label class="consent-row">
+        <input type="checkbox" id="finalConsent" disabled onchange="updateWhatsAppSendGate()">
+        <span data-i18n="lbl_finalConsent">Saya bersetuju untuk memohon produk ini.</span>
+      </label>
+
+      <p class="helptext" data-i18n="banker_heading" style="text-align:center;margin:20px 0 8px;font-weight:700;">Permohonan Anda Akan Diuruskan Oleh</p>
       <div class="banker-card">
         <p class="banker-name">NORLIDA BINTI MOHD AZMAN</p>
         <p class="banker-title">Financial Executive</p>
@@ -547,7 +737,7 @@
         <div class="banker-row"><span class="banker-label">W</span><span>www.bsn.com.my</span></div>
       </div>
 
-      <a id="waButton" class="btn-whatsapp" href="#" target="_blank" rel="noopener noreferrer">
+      <a id="waButton" class="btn-whatsapp" href="#" target="_blank" rel="noopener noreferrer" style="pointer-events:none;opacity:.5;">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4C7.14 4 3.13 8 3.13 12.9c0 1.6.42 3.14 1.2 4.5L3 21l3.7-1.3a8.9 8.9 0 0 0 4.35 1.14h.01c4.91 0 8.92-4 8.92-8.9a8.84 8.84 0 0 0-2.38-6.62zM12.06 19.4h-.01a7.4 7.4 0 0 1-3.77-1.03l-.27-.16-2.8.97.94-2.72-.18-.28a7.36 7.36 0 0 1-1.14-3.94c0-4.08 3.33-7.4 7.44-7.4a7.4 7.4 0 0 1 5.26 2.17 7.32 7.32 0 0 1 2.17 5.23c0 4.08-3.33 7.4-7.44 7.4zm4.08-5.54c-.22-.11-1.32-.65-1.53-.72-.2-.08-.35-.11-.5.11-.15.22-.58.72-.7.87-.13.15-.26.16-.48.05-.22-.11-.94-.35-1.79-1.11-.66-.59-1.11-1.32-1.24-1.54-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.38.11-.13.15-.22.22-.37.07-.15.04-.28-.02-.39-.06-.11-.5-1.2-.68-1.65-.18-.43-.36-.37-.5-.38h-.43c-.15 0-.39.06-.59.28-.2.22-.77.75-.77 1.84s.79 2.13.9 2.28c.11.15 1.55 2.36 3.75 3.31.52.22.93.36 1.25.46.53.17 1.01.14 1.39.09.42-.06 1.32-.54 1.51-1.06.19-.52.19-.96.13-1.06-.06-.09-.2-.15-.42-.26z"/></svg>
         <span data-i18n="btn_whatsapp">Chat di WhatsApp</span>
       </a>
@@ -607,22 +797,50 @@ const I18N = {
     s2b_help: "Jika anda memilih untuk buat penyatuan hutang, semakan DSR tidak diperlukan dan anda akan terus ke keputusan awal — wakil BSN akan menyemak butiran hutang sedia ada secara terperinci semasa permohonan.",
     s2b_yes_desc: "Selesaikan hutang sedia ada",
     s2b_no_desc: "Permohonan pinjaman baharu",
-    debt_consol_wa_line: `\nPenyatuan Hutang: Ya`,
     cta_debt_remark: "Nota: Anda telah memilih untuk membuat penyatuan hutang. Wakil BSN akan berbincang butiran lanjut semasa proses permohonan.",
     result_sub_debt_consol: "Anggaran pra-kelayakan awal — wakil BSN akan menyemak butiran hutang sedia ada dan kelayakan sebenar semasa permohonan.",
     s3_eyebrow: "Soalan 3 daripada 4",
-    s3_question: "Semakan Debt Service Ratio (DSR)",
-    s3_help: "Masukkan pendapatan dan komitmen bulanan anda untuk semakan pra-kelayakan pantas.",
-    lbl_grossIncome: "Pendapatan kasar bulanan (RM)",
-    lbl_netIncome: "Gaji bersih dalam payslip selepas potongan (RM)",
-    lbl_commitments: "Jumlah komitmen bulanan sedia ada (RM)",
-    lbl_commitments_help: "Contoh: bayaran pinjaman kereta, pinjaman peribadi lain, minimum kad kredit, PTPTN, dll.",
-    ph_commitment1: "Komitmen 1", ph_commitment2: "Komitmen 2", ph_commitment3: "Komitmen 3", ph_commitment4: "Komitmen 4",
+    s3_question: "Semakan Net Disposable Income (NDI) & DSR",
+    s3_help: "Masukkan gaji, pendapatan sampingan (jika ada bukti) dan komitmen bulanan anda untuk semakan pra-kelayakan.",
+    ccris_ctos_disclaimer: "Ini adalah <strong>forecast (unjuran)</strong> sahaja. Keputusan sebenar adalah berdasarkan rekod CCRIS dan CTOS, dan ianya bergantung sepenuhnya pada keputusan pegawai bank.",
+    lbl_dependents: "Bilangan Tanggungan",
+    lbl_area: "Kawasan Tempat Tinggal", opt_area_urban: "Bandar", opt_area_sub: "Luar Bandar",
+    lbl_basicSalary: "Gaji Pokok Bulanan (RM)",
+    lbl_fixedAllowance: "Elaun Tetap Bulanan (RM)",
+    lbl_otherIncome: "Pendapatan Sampingan Bulanan (RM)",
+    lbl_otherIncome_help: "Hanya isi jika anda mempunyai BUKTI (cth. penyata bank, resit komisen). Jangan masukkan pendapatan tanpa bukti.",
+    lbl_epf: "Potongan Statutori — EPF/SOCSO/PCB/Zakat (RM)",
+    lbl_payslipDeduction: "Jumlah Keseluruhan Potongan Dalam Payslip (RM)",
+    lbl_payslipDeduction_help: "Termasuk potongan statutori di atas + potongan lain dalam slip gaji (cth. potongan pinjaman sedia ada melalui gaji).",
+    lbl_ccrisExternal: "Jumlah Komitmen Luar Payslip (RM)",
+    lbl_ccrisExternal_help_normal: "Contoh: bayaran pinjaman kereta, pinjaman peribadi lain, minimum kad kredit, PTPTN, dll. (rekod CCRIS anda).",
+    lbl_ccrisExternal_help_consol: "Untuk hutang LAIN yang KEKAL selepas penyatuan sahaja — jangan ulang hutang yang disenaraikan di bawah.",
+    lbl_debtConsolTitle: "Senarai Hutang Untuk Disatukan (maks. 4)",
+    ph_debtName: "Nama Hutang",
+    lbl_topUp: "Tambahan Tunai (Top-Up) (RM)",
+    lbl_consolPrincipal: "Jumlah Prinsipal Pinjaman Disatukan",
+    lbl_advancedToggle: "Butiran Tambahan (Pilihan)",
+    lbl_overlapBSN: "Potongan Pinjaman BSN Sedia Ada Dalam Payslip (RM)",
+    lbl_overlapBSN_help: "Jika ada, jumlah ini sudah termasuk dalam \"Jumlah Keseluruhan Potongan Payslip\" di atas.",
+    lbl_tabungHaji: "Simpanan Tabung Haji Bulanan (RM)",
     lbl_loanAmount: "Jumlah pinjaman yang dipohon (RM)",
+    lbl_loanAmount_consol: "Jumlah Pinjaman (Dikira Automatik Daripada Penyatuan Hutang)",
     lbl_loanTenure: "Tempoh pinjaman dipohon (tahun)",
     unit_years: "tahun",
     btn_check: "SEMAK",
     s3_note: "*Kalkulator ini adalah anggaran sahaja untuk tujuan ilustrasi. Keputusan sebenar tertakluk kepada penilaian pihak Bank.",
+    dsr_status_prepass: "PrePass — Layak Untuk Semakan Lanjut",
+    dsr_status_prefail: "PreFail — Anda Masih Boleh Teruskan Permohonan",
+    stat_ndi: "Net Disposable Income (NDI)",
+    stat_dsr_pct: "DSR",
+    dsr_reason_ndi_low: (floor)=>`NDI Bawah Minimum (Had: ${floor})`,
+    dsr_reason_dsr_high: (cap)=>`DSR Melebihi Had Anggaran (${cap}%)`,
+    dsr_reason_ndi_negative: "Pendapatan Bersih Negatif",
+    dsr_reason_stress_fail: (year)=>`Anggaran Tidak Stabil Pada Tahun ${year} Tempoh Pinjaman`,
+    btn_explore_cc_alt: "Berminat dengan Kad Kredit Al-Aiman sebagai alternatif?",
+    lbl_debtConsolCompareTitle: "Perbandingan Sebelum / Selepas Penyatuan Hutang",
+    debt_consol_before: "Sebelum", debt_consol_after: "Selepas",
+    debt_consol_saving: "Penjimatan Ansuran Bulanan",
     s3b_question: "Maafkan Saya",
     s3b_help2: "Adakah anda berminat untuk memohon Kad Kredit Al-Aiman sebagai alternatif?",
     btn_yes_creditcard: "Ya, Kad Kredit Al-Aiman",
@@ -634,18 +852,49 @@ const I18N = {
     btn_apply_now: "Mohon Sekarang",
     btn_restart: "Mula Semula",
     btn_edit_dsr: "Semak Semula DSR",
+    apply_notice_title: "PERMOHONAN SELAMAT",
+    apply_notice_body: "<p>Permohonan ini diuruskan secara selamat. Data yang lulus atau tidak lulus akan dipadamkan.</p><p>Pada halaman seterusnya anda akan mengisi maklumat diri dan dokumen yang diperlukan — tiada data akan disimpan di dalam laman web ini.</p><p>Anda dinasihatkan agar membuat tanda palang <strong>\"UNTUK KEGUNAAN BSN SAHAJA\"</strong> pada setiap dokumen sebelum memuat naik.</p>",
+    apply_notice_btn: "Faham",
     s5_eyebrow: "Mohon Sekarang",
     s5_question: "Mari kita mulakan.",
-    s5_help: "Kongsikan maklumat anda dan wakil BSN akan menghubungi anda untuk bantu proses permohonan.",
-    lbl_leadName: "Nama Penuh", ph_leadName: "cth. Ahmad bin Ali",
-    lbl_leadProfession: "Jenis Pekerjaan / Profesion", ph_leadProfession: "cth. Jururawat, Peniaga, Jurutera",
-    lbl_leadPhone: "Nombor Telefon Bimbit", ph_leadPhone: "cth. 012-3456789",
-    lbl_leadEmail: "Emel", ph_leadEmail: "cth. ahmad@email.com",
+    s5_help: "Lengkapkan maklumat di bawah. Medan bertanda * wajib diisi.",
+    s5_sec_personal: "Maklumat Peribadi",
+    lbl_appName: "Nama *", lbl_appIc: "No. Kad Pengenalan *", lbl_appEmail: "Emel *", lbl_appPhone: "No. Telefon *",
+    lbl_appEducation: "Pendidikan Tertinggi",
+    opt_edu_spm: "SPM", opt_edu_stpm: "STPM", opt_edu_sijil: "Sijil", opt_edu_diploma: "Diploma",
+    opt_edu_ijazah: "Ijazah Sarjana Muda", opt_edu_sarjana: "Sarjana", opt_edu_lain: "Lain-lain",
+    lbl_appAddress: "Alamat *",
+    lbl_appAddressStatus: "Status Alamat Kediaman",
+    opt_addr_sendiri: "Rumah Sendiri", opt_addr_sewa: "Sewa", opt_addr_gadaijanji: "Gadai Janji", opt_addr_saudara: "Ibu Bapa / Saudara",
+    lbl_appMaritalStatus: "Status Perkahwinan",
+    opt_marital_bujang: "Bujang", opt_marital_berkahwin: "Berkahwin",
+    lbl_appChildren: "Tanggungan Anak",
+    s5_sec_employer: "Maklumat Majikan",
+    lbl_empName: "Nama Majikan *", lbl_empAddress: "Alamat Majikan", lbl_empPosition: "Jawatan *",
+    lbl_empStatus: "Status Perkhidmatan", opt_emp_tetap: "Tetap", opt_emp_kontrak: "Kontrak",
+    lbl_empStartDate: "Tarikh Mula Berkhidmat",
+    lbl_empPhone: "No. Tel Majikan Untuk Pengesahan (Office Number)",
+    lbl_empEmailHr: "Email Address HR",
+    s5_sec_ref: "Rujukan (Duduk Berasingan)",
+    lbl_refName: "Nama Rujukan", lbl_refRelationship: "Hubungan dengan Pemohon", lbl_refPhone: "No. Tel", lbl_refOccupation: "Pekerjaan",
+    s5_sec_security: "Pengesahan Keselamatan",
+    lbl_motherName: "Nama Ibu *",
+    s5_sec_spouse: "Butiran Pasangan",
+    lbl_hasSpouse: "Ada Pasangan?",
+    lbl_spouseName: "Nama Pasangan", lbl_spouseIc: "No. Kad Pengenalan", lbl_spousePhone: "No. Tel",
+    lbl_spouseCompany: "Nama Syarikat", lbl_spousePosition: "Jawatan", lbl_spouseSalary: "Gaji (RM)", lbl_spouseStartDate: "Tarikh Mula Kerja",
     lead_consent: "Saya bersetuju untuk data saya digunakan untuk membuat permohonan ini.",
     btn_continue: "Teruskan",
     s6_eyebrow: "Hampir Selesai",
-    s6_question: "Anda sudah bersedia!",
-    s6_help: "Ketik butang di bawah untuk hantar maklumat anda kepada wakil BSN melalui WhatsApp.",
+    s6_question: "Muat Naik Dokumen & Hantar Permohonan",
+    s6_help: "Muat naik dokumen sokongan, kemudian hantar permohonan anda kepada wakil BSN melalui WhatsApp.",
+    s6_sec_docs: "Dokumen Diperlukan",
+    lbl_folderNameHint: "Nama pemohon (guna dalam borang muat naik):",
+    btn_copy: "Salin", btn_copied: "Disalin!",
+    btn_open_upload_form: "Buka Borang Muat Naik Dokumen",
+    lbl_uploadConfirm: "Saya sahkan telah memuat naik semua dokumen di atas.",
+    hint_uploadConfirm: "Sila klik \"Buka Borang Muat Naik Dokumen\" di atas dahulu sebelum boleh tandakan ini.",
+    lbl_finalConsent: "Saya bersetuju untuk memohon produk ini.",
     banker_heading: "Permohonan Anda Akan Diuruskan Oleh",
     btn_whatsapp: "Chat di WhatsApp",
     btn_edit: "Edit Maklumat",
@@ -682,8 +931,8 @@ const I18N = {
     stat_annual_fee: "Fi Tahunan",
     stat_none: "Tiada",
     result_note_cc: "Kadar keuntungan rendah (11%/13.5%) tertakluk pembayaran minimum tepat pada masa selama 12 bulan berturut-turut. *Tertakluk sekurang-kurangnya 1 transaksi dalam 6 bulan dari tarikh kad diluluskan.",
-    wa_message: (product,name,profession,phone,email,sector)=>
-      `Assalamualaikum/Salam, saya berminat memohon ${product}.\n\nNama: ${name}\nProfesion: ${profession}\nNo. Telefon: ${phone}\nEmel: ${email}\nSektor: ${sector}`,
+    wa_message: (product,name,profession,phone,email,sector,debtConsolLabel)=>
+      `Assalamualaikum/Salam, saya berminat memohon *${product}*.\nDengan ini saya bersetuju pihak BSN untuk proses permohonan saya.\n\nNama: ${name}\nProfesion: ${profession}\nNo. Telefon: ${phone}\nEmel: ${email}\nSektor: ${sector}\nPenyatuan Hutang: ${debtConsolLabel}`,
     lead_summary_name: "Nama", lead_summary_profession: "Profesion", lead_summary_phone: "No. Telefon",
     lead_summary_email: "Emel", lead_summary_product: "Produk", lead_summary_sector: "Sektor",
     lead_sector_confirm: (sector)=>`Sektor: ${sector}`,
@@ -732,22 +981,50 @@ const I18N = {
     s2b_help: "If you choose debt consolidation, the DSR check is skipped and you'll go straight to the preliminary result — a BSN representative will review your existing debt details during the application.",
     s2b_yes_desc: "Settle existing debts",
     s2b_no_desc: "New loan application",
-    debt_consol_wa_line: `\nDebt Consolidation: Yes`,
     cta_debt_remark: "Note: You've chosen debt consolidation. A BSN representative will discuss further details during the application process.",
     result_sub_debt_consol: "Preliminary pre-qualification estimate — a BSN representative will review your existing debt details and actual eligibility during the application.",
     s3_eyebrow: "Question 3 of 4",
-    s3_question: "Debt Service Ratio (DSR) Check",
-    s3_help: "Enter your income and monthly commitments for a quick pre-qualification check.",
-    lbl_grossIncome: "Monthly gross income (RM)",
-    lbl_netIncome: "Net salary on payslip after deductions (RM)",
-    lbl_commitments: "Total existing monthly commitments (RM)",
-    lbl_commitments_help: "e.g. car loan payment, other personal loans, credit card minimum, PTPTN, etc.",
-    ph_commitment1: "Commitment 1", ph_commitment2: "Commitment 2", ph_commitment3: "Commitment 3", ph_commitment4: "Commitment 4",
+    s3_question: "Net Disposable Income (NDI) & DSR Check",
+    s3_help: "Enter your salary, side income (if you have proof) and monthly commitments for a pre-qualification check.",
+    ccris_ctos_disclaimer: "This is a <strong>forecast</strong> only. The actual decision is based on your CCRIS and CTOS records, and depends entirely on the bank officer's decision.",
+    lbl_dependents: "Number of Dependents",
+    lbl_area: "Area of Residence", opt_area_urban: "Urban", opt_area_sub: "Sub-urban / Rural",
+    lbl_basicSalary: "Monthly Basic Salary (RM)",
+    lbl_fixedAllowance: "Monthly Fixed Allowance (RM)",
+    lbl_otherIncome: "Monthly Side Income (RM)",
+    lbl_otherIncome_help: "Only fill this in if you have PROOF (e.g. bank statement, commission receipt). Do not include income without proof.",
+    lbl_epf: "Statutory Deductions — EPF/SOCSO/PCB/Zakat (RM)",
+    lbl_payslipDeduction: "Total Deductions on Payslip (RM)",
+    lbl_payslipDeduction_help: "Includes the statutory deductions above + any other payslip deductions (e.g. an existing loan deducted via salary).",
+    lbl_ccrisExternal: "Total Commitments Outside Payslip (RM)",
+    lbl_ccrisExternal_help_normal: "e.g. car loan payment, other personal loans, credit card minimum, PTPTN, etc. (your CCRIS record).",
+    lbl_ccrisExternal_help_consol: "For OTHER debts that REMAIN after consolidation only — don't repeat the debts listed below.",
+    lbl_debtConsolTitle: "Debts to Consolidate (max 4)",
+    ph_debtName: "Debt Name",
+    lbl_topUp: "Cash Top-Up (RM)",
+    lbl_consolPrincipal: "Total Consolidated Loan Principal",
+    lbl_advancedToggle: "Additional Details (Optional)",
+    lbl_overlapBSN: "Existing BSN Loan Deduction on Payslip (RM)",
+    lbl_overlapBSN_help: "If any, this amount is already included in \"Total Deductions on Payslip\" above.",
+    lbl_tabungHaji: "Monthly Tabung Haji Savings (RM)",
     lbl_loanAmount: "Loan amount applied for (RM)",
+    lbl_loanAmount_consol: "Loan Amount (Auto-Calculated From Debt Consolidation)",
     lbl_loanTenure: "Loan tenure applied for (years)",
     unit_years: "years",
     btn_check: "CHECK",
     s3_note: "*This calculator is an estimate only, for illustration purposes. The actual decision is subject to the Bank's assessment.",
+    dsr_status_prepass: "PrePass — Eligible for Further Review",
+    dsr_status_prefail: "PreFail — You May Still Continue Your Application",
+    stat_ndi: "Net Disposable Income (NDI)",
+    stat_dsr_pct: "DSR",
+    dsr_reason_ndi_low: (floor)=>`NDI Below Minimum (Floor: ${floor})`,
+    dsr_reason_dsr_high: (cap)=>`DSR Exceeds Estimated Limit (${cap}%)`,
+    dsr_reason_ndi_negative: "Negative Net Income",
+    dsr_reason_stress_fail: (year)=>`Projection Unstable in Year ${year} of the Loan Tenure`,
+    btn_explore_cc_alt: "Interested in the Al-Aiman Credit Card as an alternative?",
+    lbl_debtConsolCompareTitle: "Before / After Debt Consolidation Comparison",
+    debt_consol_before: "Before", debt_consol_after: "After",
+    debt_consol_saving: "Monthly Instalment Savings",
     s3b_question: "I'm Sorry",
     s3b_help2: "Would you be interested in applying for an Al-Aiman Credit Card as an alternative?",
     btn_yes_creditcard: "Yes, Al-Aiman Credit Card",
@@ -759,18 +1036,49 @@ const I18N = {
     btn_apply_now: "Apply Now",
     btn_restart: "Start Over",
     btn_edit_dsr: "Recheck DSR",
+    apply_notice_title: "SECURE APPLICATION",
+    apply_notice_body: "<p>This application is handled securely. Data is deleted whether the application is approved or not.</p><p>On the next page you'll fill in your personal details and required documents — no data is stored on this website.</p><p>You're advised to stamp <strong>\"FOR BSN USE ONLY\"</strong> on every document before uploading.</p>",
+    apply_notice_btn: "I Understand",
     s5_eyebrow: "Apply Now",
     s5_question: "Let's get started.",
-    s5_help: "Share your details and a BSN representative will contact you to help with your application.",
-    lbl_leadName: "Full Name", ph_leadName: "e.g. Ahmad bin Ali",
-    lbl_leadProfession: "Occupation / Profession", ph_leadProfession: "e.g. Nurse, Business Owner, Engineer",
-    lbl_leadPhone: "Mobile Number", ph_leadPhone: "e.g. 012-3456789",
-    lbl_leadEmail: "Email", ph_leadEmail: "e.g. ahmad@email.com",
+    s5_help: "Fill in the details below. Fields marked * are required.",
+    s5_sec_personal: "Personal Information",
+    lbl_appName: "Name *", lbl_appIc: "NRIC No. *", lbl_appEmail: "Email *", lbl_appPhone: "Phone No. *",
+    lbl_appEducation: "Highest Education",
+    opt_edu_spm: "SPM", opt_edu_stpm: "STPM", opt_edu_sijil: "Certificate", opt_edu_diploma: "Diploma",
+    opt_edu_ijazah: "Bachelor's Degree", opt_edu_sarjana: "Master's Degree", opt_edu_lain: "Other",
+    lbl_appAddress: "Address *",
+    lbl_appAddressStatus: "Residential Status",
+    opt_addr_sendiri: "Own Home", opt_addr_sewa: "Rented", opt_addr_gadaijanji: "Mortgaged", opt_addr_saudara: "Parents / Relatives",
+    lbl_appMaritalStatus: "Marital Status",
+    opt_marital_bujang: "Single", opt_marital_berkahwin: "Married",
+    lbl_appChildren: "Number of Children",
+    s5_sec_employer: "Employer Information",
+    lbl_empName: "Employer Name *", lbl_empAddress: "Employer Address", lbl_empPosition: "Position *",
+    lbl_empStatus: "Employment Status", opt_emp_tetap: "Permanent", opt_emp_kontrak: "Contract",
+    lbl_empStartDate: "Employment Start Date",
+    lbl_empPhone: "Employer Phone For Verification (Office Number)",
+    lbl_empEmailHr: "HR Email Address",
+    s5_sec_ref: "Reference (Not Living Together)",
+    lbl_refName: "Reference Name", lbl_refRelationship: "Relationship to Applicant", lbl_refPhone: "Phone No.", lbl_refOccupation: "Occupation",
+    s5_sec_security: "Security Verification",
+    lbl_motherName: "Mother's Name *",
+    s5_sec_spouse: "Spouse Details",
+    lbl_hasSpouse: "Have a Spouse?",
+    lbl_spouseName: "Spouse's Name", lbl_spouseIc: "NRIC No.", lbl_spousePhone: "Phone No.",
+    lbl_spouseCompany: "Company Name", lbl_spousePosition: "Position", lbl_spouseSalary: "Salary (RM)", lbl_spouseStartDate: "Employment Start Date",
     lead_consent: "I agree for my data to be used to process this application.",
     btn_continue: "Continue",
     s6_eyebrow: "Almost Done",
-    s6_question: "You're all set!",
-    s6_help: "Tap the button below to send your details to a BSN representative on WhatsApp.",
+    s6_question: "Upload Documents & Submit Application",
+    s6_help: "Upload your supporting documents, then submit your application to a BSN representative on WhatsApp.",
+    s6_sec_docs: "Documents Required",
+    lbl_folderNameHint: "Applicant name (use in the upload form):",
+    btn_copy: "Copy", btn_copied: "Copied!",
+    btn_open_upload_form: "Open Document Upload Form",
+    lbl_uploadConfirm: "I confirm I have uploaded all documents above.",
+    hint_uploadConfirm: "Please click \"Open Document Upload Form\" above first before you can tick this.",
+    lbl_finalConsent: "I agree to apply for this product.",
     banker_heading: "Your Application Will Be Handled By",
     btn_whatsapp: "Chat on WhatsApp",
     btn_edit: "Edit Details",
@@ -807,8 +1115,8 @@ const I18N = {
     stat_annual_fee: "Annual Fee",
     stat_none: "None",
     result_note_cc: "Low profit rate (11%/13.5%) is subject to timely minimum payments for 12 consecutive months. *Subject to at least 1 transaction within 6 months from card approval date.",
-    wa_message: (product,name,profession,phone,email,sector)=>
-      `Hi, I'm interested in applying for ${product}.\n\nName: ${name}\nProfession: ${profession}\nMobile: ${phone}\nEmail: ${email}\nSector: ${sector}`,
+    wa_message: (product,name,profession,phone,email,sector,debtConsolLabel)=>
+      `Hi, I'm interested in applying for *${product}*.\nWith this, I agree for BSN to process my application.\n\nName: ${name}\nProfession: ${profession}\nMobile: ${phone}\nEmail: ${email}\nSector: ${sector}\nDebt Consolidation: ${debtConsolLabel}`,
     lead_summary_name: "Name", lead_summary_profession: "Profession", lead_summary_phone: "Mobile",
     lead_summary_email: "Email", lead_summary_product: "Product", lead_summary_sector: "Sector",
     lead_sector_confirm: (sector)=>`Sector: ${sector}`,
@@ -840,12 +1148,27 @@ function setLanguage(l){
     if (state.resultMode === 'pinjaman') renderLoanResult();
     else renderCreditCardResult();
   }
-  if (currentStep === 5 && state.sector){
+  if ((currentStep === 5 || currentStep === 6) && state.sector){
     document.getElementById('leadSectorConfirm').textContent = T().lead_sector_confirm(SECTOR_LOAN_DATA[state.sector]?.label[lang] || '-');
+  }
+  if (currentStep === 6 && state.sector){
+    const docs = SECTOR_LOAN_DATA[state.sector]?.docs?.[lang] || [];
+    document.getElementById('uploadDocsBox').innerHTML = renderDocList(docs);
   }
 }
 
-const WA_NUMBER = '601154160187';
+const WA_NUMBER = '601154531809'; // loan-specific banker WhatsApp number (card/asb sites keep their own)
+// Same document-upload Google Form + Apps Script (organize-uploads.gs) already used
+// by card.lateffitazri.my — shared "BOT-B" Drive folder, one subfolder per applicant
+// name. See CREDITCARD/index.html:1592-1593 (source of truth for these values).
+const GOOGLE_FORM_BASE = 'https://docs.google.com/forms/d/e/1FAIpQLSd0ikQZ0wmEZ_vZAAnlg7EdJuha7N1jmmijQCt7gfazkA73kA/viewform';
+const GOOGLE_FORM_NAME_ENTRY_ID = '1001686238';
+function buildPrefilledGoogleFormUrl(fullName){
+  const p = new URLSearchParams();
+  p.set('usp', 'pp_url');
+  if (fullName) p.set(`entry.${GOOGLE_FORM_NAME_ENTRY_ID}`, fullName);
+  return `${GOOGLE_FORM_BASE}?${p.toString()}`;
+}
 const round2 = n => Math.round((n + Number.EPSILON) * 100) / 100;
 const fmtRM = n => 'RM ' + n.toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
 
@@ -854,6 +1177,7 @@ let state = {
   debtConsolidation: false,
   grossIncome: 0, netIncome: 0, commitments: [0,0,0,0],
   dsrPercent: null, dsrPass: null,
+  ndi: null, dsrStatus: null, dsrReasons: [], debtConsol: null,
   resultMode: null // 'pinjaman' | 'kredit' | 'kredit-fallback'
 };
 let currentStep = 0;
@@ -1000,6 +1324,30 @@ const SECTOR_LOAN_DATA = {
     },
   },
 };
+
+// ---- NDI/DSR stress-test reference tables — ported from calculation.lateffitazri.my's
+// internal engine (BSN NDI/DSR replica). Only the generic math is reused here; the
+// internal tool's product-code-specific eligibility rules are intentionally NOT
+// ported since they don't correspond to this site's 3 public sectors. See plan doc
+// for full derivation notes.
+const NDI_BUFFER = {
+  1:{urban:0.061316818577076181, sub:0.063746159746275968},
+  2:{urban:0.39010356731875717,  sub:0.45303867403314918},
+  3:{urban:0.53854748603351954,  sub:0.70883054892601427},
+  4:{urban:0.66193707587908701,  sub:0.8412887828162291},
+  5:{urban:0.71067242442936462,  sub:0.93677555321390937},
+  6:{urban:0.77051202961135101,  sub:1.0526870389884089},
+  7:{urban:0.78161628624305979,  sub:1.1053740779768177},
+  8:{urban:0.80937692782233195,  sub:1.2523020257826887},
+};
+function ndiBufferFactor(hh, area){
+  const idx = Math.min(Math.max(Math.round(hh),1),8);
+  return area==='urban' ? NDI_BUFFER[idx].urban : NDI_BUFFER[idx].sub;
+}
+const NDI_INCOME_GROWTH = {urban:0.03389831, sub:0.03810541};
+const NDI_CAGR_1HH       = {urban:0.06131682, sub:0.06374616};
+const NDI_FLOOR = {urban:1400, sub:1000};
+const DSR_CAP_PCT = 70; // % — matches the internal engine's default DSR cap
 
 const CREDIT_CARD_TIERS = [
   {name:'BSN Al-Aiman Klasik', minIncome:24000},
@@ -1895,35 +2243,32 @@ function backFromDebtConsol(){
 }
 
 function confirmDebtConsolidation(){
-  if (state.debtConsolidation){
-    state.resultMode = 'pinjaman';
-    renderLoanResult();
-    goTo(4);
-  } else {
-    goTo(3);
-  }
+  // Both paths now go through the same Step 3 NDI/DSR form — debt consolidation
+  // just reveals the debt-list sub-section and auto-computes the loan amount from
+  // it, instead of skipping the calculation entirely (BSN's internal engine always
+  // runs NDI/DSR for a before/after comparison, even for consolidation cases).
+  renderDebtRows();
+  document.getElementById('debtConsolBlock').style.display = state.debtConsolidation ? 'block' : 'none';
+  const loanAmountInput = document.getElementById('q_loanAmount');
+  const loanAmountLabel = document.getElementById('loanAmountLabel');
+  loanAmountInput.readOnly = state.debtConsolidation;
+  loanAmountInput.style.background = state.debtConsolidation ? 'var(--panel2)' : '#fff';
+  loanAmountLabel.textContent = state.debtConsolidation ? T().lbl_loanAmount_consol : T().lbl_loanAmount;
+  document.getElementById('ccrisExternalHelp').textContent = state.debtConsolidation
+    ? T().lbl_ccrisExternal_help_consol
+    : T().lbl_ccrisExternal_help_normal;
+  if (state.debtConsolidation) updateDebtConsolSummary();
+  goTo(3);
 }
 
-// ---- Step 3: DSR (Debt Service Ratio) check ----
+// ---- Step 3: NDI (Net Disposable Income) & DSR check ----
 //
-// BSN's actual internal underwriting (per the bank's SPD master workbook) assesses
-// affordability using a full Net Disposable Income (NDI) model per Bank Negara
-// Malaysia's Responsible Financing framework: it stress-tests NDI against a minimum
-// expenditure floor that varies by household size, area (urban/sub-urban), and even
-// projects household growth (marriage/dependents) across the loan tenure. That model
-// depends on internal reference tables and is not something a public pre-qualification
-// tool can (or should) reproduce exactly — the real decision is always made by the Bank.
-//
-// This calculator instead uses the simpler, standard industry DSR ratio as an
-// ILLUSTRATIVE pre-qualification estimate, matching the base ratio structure seen in
-// that same internal workbook (total monthly commitments, including the new loan's
-// own instalment, divided by gross monthly income):
-//
-//   DSR % = (existing monthly commitments + new loan's monthly instalment) / gross monthly income * 100
-//
-// Threshold: 60% (confirmed with user) — approximates the boundary illustrated by the
-// reference case in the internal workbook. Actual approval always depends on the
-// Bank's full assessment.
+// Ported from calculation.lateffitazri.my's internal engine (formulas + 1-year-ahead
+// stress test against a household/area-based minimum expenditure floor). The
+// internal tool's product-code-specific eligibility gate rules are NOT ported here
+// since they belong to different internal products, not this site's 3 public
+// sectors — only the generic NDI/DSR/stress-test math is reused. See the plan doc
+// (Fasa 1) for the full mapping notes.
 function monthlyPayment(P, annualRatePct, tenureYears){
   const r = (annualRatePct/100)/12;
   const n = tenureYears*12;
@@ -1931,8 +2276,12 @@ function monthlyPayment(P, annualRatePct, tenureYears){
   const M = P*r*Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
   return round2(M);
 }
-
-const DSR_THRESHOLD = 60; // % — see note above
+function pmtInstalmentCeil(P, annualRatePct, tenureYears){
+  if (tenureYears<=0) return 0;
+  const r = (annualRatePct/100)/12, n = tenureYears*12;
+  if (r === 0) return Math.ceil(P/n);
+  return Math.ceil(P * r / (1-Math.pow(1+r,-n)));
+}
 
 // Resolves the float rate to use for a given tenure — sectors with a stepped
 // rate (e.g. Kerajaan's floatRateTiers) use the margin for the tier the tenure
@@ -1946,17 +2295,56 @@ function resolveFloatRate(sectorData, tenure){
   return { num: sectorData.floatRateNum, label: sectorData.floatRate };
 }
 
-function checkDSR(){
-  const gross = parseFloat(document.getElementById('q_grossIncome').value) || 0;
-  const net = parseFloat(document.getElementById('q_netIncome').value) || 0;
-  const c1 = parseFloat(document.getElementById('q_commitment1').value) || 0;
-  const c2 = parseFloat(document.getElementById('q_commitment2').value) || 0;
-  const c3 = parseFloat(document.getElementById('q_commitment3').value) || 0;
-  const c4 = parseFloat(document.getElementById('q_commitment4').value) || 0;
+// ---- Debt consolidation mini-list (up to 4 debts) ----
+function renderDebtRows(){
+  const wrap = document.getElementById('debtRows');
+  if (wrap.childElementCount) return; // already rendered
+  let html = '';
+  for (let i=1;i<=4;i++){
+    html += `
+      <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:8px;margin-bottom:10px;">
+        <input type="text" id="debt${i}_name" data-i18n-ph="ph_debtName" placeholder="Hutang ${i}" style="padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem;">
+        <input type="number" id="debt${i}_balance" min="0" step="100" placeholder="Baki (RM)" oninput="updateDebtConsolSummary()" style="padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem;">
+        <input type="number" id="debt${i}_instalment" min="0" step="10" placeholder="Ansuran (RM)" oninput="updateDebtConsolSummary()" style="padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem;">
+      </div>`;
+  }
+  wrap.innerHTML = html;
+}
+function getDebts(){
+  const debts = [];
+  for (let i=1;i<=4;i++){
+    const balance = parseFloat(document.getElementById(`debt${i}_balance`).value) || 0;
+    const instalment = parseFloat(document.getElementById(`debt${i}_instalment`).value) || 0;
+    const name = document.getElementById(`debt${i}_name`).value || `Hutang ${i}`;
+    if (balance>0 || instalment>0) debts.push({name, balance, instalment});
+  }
+  return debts;
+}
+function updateDebtConsolSummary(){
+  const debts = getDebts();
+  const totalOutstanding = debts.reduce((s,d)=>s+d.balance,0);
+  const topUp = parseFloat(document.getElementById('q_topUp').value) || 0;
+  const principal = totalOutstanding + topUp;
+  document.getElementById('consolPrincipalDisplay').textContent = fmtRM(principal);
+  document.getElementById('q_loanAmount').value = principal || '';
+}
+
+function checkDSRNDI(){
+  const dependents = parseFloat(document.getElementById('q_dependents').value) || 0;
+  const area = document.getElementById('q_area').value;
+  const basicSalary = parseFloat(document.getElementById('q_basicSalary').value) || 0;
+  const fixedAllowance = parseFloat(document.getElementById('q_fixedAllowance').value) || 0;
+  const otherIncome = parseFloat(document.getElementById('q_otherIncome').value) || 0;
+  const epf = parseFloat(document.getElementById('q_epf').value) || 0;
+  const payslipDeduction = parseFloat(document.getElementById('q_payslipDeduction').value) || 0;
+  const ccrisExternal = parseFloat(document.getElementById('q_ccrisExternal').value) || 0;
+  const overlapBSN = parseFloat(document.getElementById('q_overlapBSN').value) || 0;
+  const tabungHaji = parseFloat(document.getElementById('q_tabungHaji').value) || 0;
   const loanAmount = parseFloat(document.getElementById('q_loanAmount').value) || 0;
   const loanTenure = parseFloat(document.getElementById('q_loanTenure').value) || 0;
 
-  if (gross<=0 || net<=0){
+  const grossBase = basicSalary + fixedAllowance + otherIncome;
+  if (grossBase<=0){
     document.getElementById('dsrWarning').innerHTML = `<div class="warn-box">${T().warn_fill_income}</div>`;
     return;
   }
@@ -1969,29 +2357,75 @@ function checkDSR(){
   const sectorData = SECTOR_LOAN_DATA[state.sector];
   const clampedTenure = Math.min(Math.max(loanTenure, sectorData.minTenure), sectorData.maxTenure);
   const usedRate = resolveFloatRate(sectorData, clampedTenure);
-  const newInstalment = monthlyPayment(loanAmount, usedRate.num, clampedTenure);
+  const thisLoanInstalment = pmtInstalmentCeil(loanAmount, usedRate.num, clampedTenure);
 
-  state.grossIncome = gross;
-  state.netIncome = net;
-  state.commitments = [c1,c2,c3,c4];
+  const ndi = grossBase + overlapBSN + tabungHaji - thisLoanInstalment - ccrisExternal - payslipDeduction;
+  const dsr = ((payslipDeduction + thisLoanInstalment + ccrisExternal) - epf - overlapBSN - tabungHaji) / (grossBase - epf);
+
+  const effectiveHousehold = dependents + 2; // self + spouse-placeholder + dependents
+  const thr = NDI_FLOOR[area];
+
+  const years = [];
+  const P1 = ndi, Q1 = P1*NDI_CAGR_1HH[area], R1 = Q1*ndiBufferFactor(effectiveHousehold, area), S1 = P1-Q1-R1;
+  years.push({year:1, S:S1, pass: S1>=thr});
+
+  const stressedInstalment = monthlyPayment(loanAmount, usedRate.num+0.25, clampedTenure);
+  const M = overlapBSN + tabungHaji;
+  const O = ccrisExternal * 1.0111;
+  let Jprev = basicSalary, Kprev = fixedAllowance+otherIncome, Lprev = payslipDeduction;
+  let failed = !years[0].pass;
+  for (let n=2; n<=clampedTenure && !failed; n++){
+    const J = Jprev*(1+NDI_INCOME_GROWTH[area]);
+    const K = Kprev;
+    const L = (Lprev/(Jprev+Kprev)) * (J+K);
+    const P = J+K-(stressedInstalment+O)-L+M;
+    const Q = P*NDI_CAGR_1HH[area];
+    const R = Q*ndiBufferFactor(effectiveHousehold, area);
+    const S = P-Q-R;
+    const pass = S>=thr;
+    years.push({year:n, S, pass});
+    if (!pass) failed = true;
+    Jprev=J; Kprev=K; Lprev=L;
+  }
+  const failYear = years.find(y=>!y.pass);
+
+  // Stored as codes (not translated strings) so the language toggle can re-render
+  // these correctly later — see renderReasonCodes() in renderLoanResult().
+  const reasons = [];
+  if (ndi < thr) reasons.push({code:'ndi_low', floor: thr});
+  if (dsr*100 > DSR_CAP_PCT) reasons.push({code:'dsr_high'});
+  if (ndi < 0) reasons.push({code:'ndi_negative'});
+  if (failYear) reasons.push({code:'stress_fail', year: failYear.year});
+
+  state.grossIncome = grossBase;
   state.loanAmount = loanAmount;
   state.loanTenure = clampedTenure;
-  state.newInstalment = newInstalment;
+  state.newInstalment = thisLoanInstalment;
   state.floatRateLabelUsed = usedRate.label;
+  state.ndi = round2(ndi);
+  state.dsrPercent = round2(dsr*100);
+  state.dsrStatus = reasons.length ? 'PreFail' : 'PrePass';
+  state.dsrReasons = reasons;
+  state.dsrPass = reasons.length === 0;
 
-  const totalCommitment = c1+c2+c3+c4+newInstalment;
-  const dsr = (totalCommitment/gross)*100;
-  state.dsrPercent = round2(dsr);
-  state.dsrPass = dsr <= DSR_THRESHOLD;
-
-  if (state.dsrPass){
-    state.resultMode = 'pinjaman';
-    renderLoanResult();
-    goTo(4);
+  if (state.debtConsolidation){
+    const debts = getDebts();
+    const totalDebtInstalment = debts.reduce((s,d)=>s+d.instalment,0);
+    const beforeNdi = grossBase + overlapBSN + tabungHaji - totalDebtInstalment - ccrisExternal - payslipDeduction;
+    const beforeDsr = ((payslipDeduction + totalDebtInstalment + ccrisExternal) - epf - overlapBSN - tabungHaji) / (grossBase - epf);
+    state.debtConsol = {
+      debts, totalDebtInstalment,
+      beforeNdi: round2(beforeNdi), beforeDsr: round2(beforeDsr*100),
+      afterNdi: state.ndi, afterDsr: state.dsrPercent,
+      monthlySaving: round2(totalDebtInstalment - thisLoanInstalment),
+    };
   } else {
-    document.getElementById('falloutHelpText').innerHTML = T().fallout_help(state.dsrPercent);
-    goTo('3b');
+    state.debtConsol = null;
   }
+
+  state.resultMode = 'pinjaman';
+  renderLoanResult();
+  goTo(4);
 }
 
 function proceedToCreditCardFallback(){
@@ -2010,6 +2444,16 @@ function renderDocList(items){
   return `<ul class="doc-list">${items.map(d=>`<li>${d}</li>`).join('')}</ul>`;
 }
 
+function renderReasonCodes(reasons){
+  return reasons.map(r=>{
+    if (r.code==='ndi_low') return T().dsr_reason_ndi_low(fmtRM(r.floor));
+    if (r.code==='dsr_high') return T().dsr_reason_dsr_high(DSR_CAP_PCT);
+    if (r.code==='ndi_negative') return T().dsr_reason_ndi_negative;
+    if (r.code==='stress_fail') return T().dsr_reason_stress_fail(r.year);
+    return '';
+  });
+}
+
 function renderLoanResult(){
   const data = SECTOR_LOAN_DATA[state.sector];
   document.getElementById('resultEyebrow').textContent = T().result_eyebrow_loan(data.label[lang]);
@@ -2024,23 +2468,50 @@ function renderLoanResult(){
     ? `<div class="stat"><div class="stat-label">${T().lead_summary_panel}</div><div class="stat-value">${escapeHtmlIndex(state.panelCompany)}</div></div>`
     : '';
 
-  if (state.debtConsolidation){
-    document.getElementById('resultSub').textContent = T().result_sub_debt_consol;
-    document.getElementById('resultStatGrid').innerHTML = `
-      <div class="stat"><div class="stat-label">${T().stat_floatrate_used}</div><div class="stat-value">${data.floatRate}</div></div>
-      <div class="stat"><div class="stat-label">${T().stat_amount_range}</div><div class="stat-value">${amountText}</div></div>
-      ${panelStat}
+  document.getElementById('resultSub').textContent = state.debtConsolidation
+    ? T().result_sub_debt_consol
+    : T().result_sub_loan(state.dsrPercent, DSR_CAP_PCT);
+  document.getElementById('resultStatGrid').innerHTML = `
+    <div class="stat"><div class="stat-label">${T().stat_instalment}</div><div class="stat-value">${fmtRM(state.newInstalment)}</div></div>
+    <div class="stat"><div class="stat-label">${T().stat_floatrate_used}</div><div class="stat-value">${state.floatRateLabelUsed || data.floatRate}</div></div>
+    <div class="stat"><div class="stat-label">${T().stat_amount_tenure}</div><div class="stat-value">${fmtRM(state.loanAmount)} · ${state.loanTenure} ${T().unit_years}</div></div>
+    <div class="stat"><div class="stat-label">${T().stat_amount_range}</div><div class="stat-value">${amountText}</div></div>
+    ${panelStat}
+  `;
+
+  // ---- NDI/DSR panel: PrePass/PreFail badge + CCRIS/CTOS disclaimer (item 2 — user
+  // should understand their financial status before the product-specific details below) ----
+  const isPass = state.dsrStatus === 'PrePass';
+  document.getElementById('ndiPanel').innerHTML = `
+    <div class="info-box" style="background:${isPass ? '#eef7f6' : 'var(--warnbg)'};border-color:${isPass ? '#c9e9e6' : '#eccdb4'};">
+      <div style="font-weight:800;font-size:.95rem;margin-bottom:6px;color:${isPass ? 'var(--accent-dark)' : 'var(--danger)'};">
+        ${isPass ? T().dsr_status_prepass : T().dsr_status_prefail}
+      </div>
+      <div class="result-item"><span class="result-label">${T().stat_ndi}</span><span class="result-value">${fmtRM(state.ndi)}</span></div>
+      <div class="result-item"><span class="result-label">${T().stat_dsr_pct}</span><span class="result-value">${state.dsrPercent}%</span></div>
+      ${state.dsrReasons.length ? `<ul class="doc-list" style="margin-top:10px;">${renderReasonCodes(state.dsrReasons).map(r=>`<li>${r}</li>`).join('')}</ul>` : ''}
+      ${!isPass ? `<p class="note" style="margin-top:10px;text-align:left;"><a href="#" class="terms-link" onclick="document.getElementById('falloutHelpText').innerHTML=T().fallout_help(state.dsrPercent);goTo('3b');return false;">${T().btn_explore_cc_alt}</a></p>` : ''}
+      <p class="note" style="margin-top:10px;text-align:left;">${T().ccris_ctos_disclaimer}</p>
+    </div>
+  `;
+
+  // ---- Debt consolidation before/after comparison (only when applicable) ----
+  if (state.debtConsolidation && state.debtConsol){
+    const dc = state.debtConsol;
+    document.getElementById('debtConsolPanel').innerHTML = `
+      <div class="info-box">
+        <div style="font-weight:800;font-size:.9rem;margin-bottom:8px;">${T().lbl_debtConsolCompareTitle}</div>
+        <div class="result-item"><span class="result-label">${T().debt_consol_before} — NDI</span><span class="result-value">${fmtRM(dc.beforeNdi)}</span></div>
+        <div class="result-item"><span class="result-label">${T().debt_consol_after} — NDI</span><span class="result-value">${fmtRM(dc.afterNdi)}</span></div>
+        <div class="result-item"><span class="result-label">${T().debt_consol_before} — DSR</span><span class="result-value">${dc.beforeDsr}%</span></div>
+        <div class="result-item"><span class="result-label">${T().debt_consol_after} — DSR</span><span class="result-value">${dc.afterDsr}%</span></div>
+        <div class="result-item"><span class="result-label">${T().debt_consol_saving}</span><span class="result-value ${dc.monthlySaving>=0?'positive':'negative'}">${fmtRM(dc.monthlySaving)}/${T().unit_years==='years'?'mo':'bln'}</span></div>
+      </div>
     `;
   } else {
-    document.getElementById('resultSub').textContent = T().result_sub_loan(state.dsrPercent, DSR_THRESHOLD);
-    document.getElementById('resultStatGrid').innerHTML = `
-      <div class="stat"><div class="stat-label">${T().stat_instalment}</div><div class="stat-value">${fmtRM(state.newInstalment)}</div></div>
-      <div class="stat"><div class="stat-label">${T().stat_floatrate_used}</div><div class="stat-value">${state.floatRateLabelUsed || data.floatRate}</div></div>
-      <div class="stat"><div class="stat-label">${T().stat_amount_tenure}</div><div class="stat-value">${fmtRM(state.loanAmount)} · ${state.loanTenure} ${T().unit_years}</div></div>
-      <div class="stat"><div class="stat-label">${T().stat_amount_range}</div><div class="stat-value">${amountText}</div></div>
-      ${panelStat}
-    `;
+    document.getElementById('debtConsolPanel').innerHTML = '';
   }
+
   document.getElementById('eligibilityBox').innerHTML = renderDocList(data.eligibility[lang]);
   document.getElementById('docsBox').innerHTML = renderDocList(data.docs[lang]);
   document.getElementById('benefitsDetails').style.display = 'none';
@@ -2068,12 +2539,11 @@ function buildScheduleHref(base){
   p.set('sector', state.sector);
   p.set('debt', state.debtConsolidation ? '1' : '0');
   if (!state.debtConsolidation){
-    p.set('gi', state.grossIncome);
-    p.set('ni', state.netIncome);
-    p.set('c1', state.commitments[0]);
-    p.set('c2', state.commitments[1]);
-    p.set('c3', state.commitments[2]);
-    p.set('c4', state.commitments[3]);
+    const g = id => document.getElementById(id)?.value || '';
+    p.set('dp', g('q_dependents')); p.set('ar', g('q_area'));
+    p.set('bs', g('q_basicSalary')); p.set('fa', g('q_fixedAllowance')); p.set('oi', g('q_otherIncome'));
+    p.set('ep', g('q_epf')); p.set('pd', g('q_payslipDeduction')); p.set('cc', g('q_ccrisExternal'));
+    p.set('ob', g('q_overlapBSN')); p.set('th', g('q_tabungHaji'));
     p.set('la', state.loanAmount);
     p.set('lt', state.loanTenure);
   }
@@ -2083,6 +2553,8 @@ function buildScheduleHref(base){
 }
 
 function renderCreditCardResult(){
+  document.getElementById('ndiPanel').innerHTML = '';
+  document.getElementById('debtConsolPanel').innerHTML = '';
   const gross = state.grossIncome || 0;
   let tier = CREDIT_CARD_TIERS[0];
   for (const t of CREDIT_CARD_TIERS){ if (gross >= t.minIncome/12 || gross === 0) tier = t; }
@@ -2110,14 +2582,29 @@ function renderCreditCardResult(){
 }
 
 // ---- Step 5: Lead capture (loan only — credit card skips straight to card.lateffitazri.my) ----
+// The disclaimer popup is shown once per session on the first "Mohon Sekarang"
+// click — its button only closes the popup so the user can read the result screen
+// behind it. Clicking "Mohon Sekarang" again (now acknowledged) actually proceeds
+// to the application form.
+let applyDisclaimerAcknowledged = false;
+
 function goToLeadForm(){
   if (state.resultMode === 'kredit' || state.resultMode === 'kredit-fallback'){
     redirectToCreditCardSite();
     return;
   }
+  if (!applyDisclaimerAcknowledged){
+    document.getElementById('applyDisclaimerOverlay').hidden = false;
+    return;
+  }
   const sectorLabel = SECTOR_LOAN_DATA[state.sector]?.label[lang] || '-';
   document.getElementById('leadSectorConfirm').textContent = T().lead_sector_confirm(sectorLabel);
   goTo(5);
+}
+
+function dismissApplyDisclaimer(){
+  document.getElementById('applyDisclaimerOverlay').hidden = true;
+  applyDisclaimerAcknowledged = true;
 }
 
 function redirectToCreditCardSite(){
@@ -2135,11 +2622,22 @@ function redirectToCreditCardSite(){
   window.location.href = `https://card.lateffitazri.my/?${p.toString()}`;
 }
 
-function validateLead(){
-  const name = document.getElementById('q_leadName').value.trim();
-  const profession = document.getElementById('q_leadProfession').value.trim();
-  const phoneRaw = document.getElementById('q_leadPhone').value.trim();
-  const email = document.getElementById('q_leadEmail').value.trim();
+function onMaritalStatusChange(){
+  const married = document.getElementById('q_appMaritalStatus').value === 'berkahwin';
+  document.getElementById('q_hasSpouse').checked = married;
+  toggleSpouseFields();
+}
+function toggleSpouseFields(){
+  document.getElementById('spouseFields').style.display = document.getElementById('q_hasSpouse').checked ? 'block' : 'none';
+}
+
+// goToLeadForm()/dismissApplyDisclaimer() only ever reach this for state.resultMode
+// === 'pinjaman' — the 'kredit'/'kredit-fallback' modes redirect straight to
+// card.lateffitazri.my before Step 5 is ever shown (see redirectToCreditCardSite()).
+function validateApplication(){
+  const g = id => document.getElementById(id).value.trim();
+  const name = g('q_appName'), ic = g('q_appIc'), email = g('q_appEmail'), phoneRaw = g('q_appPhone');
+  const employerName = g('q_empName'), position = g('q_empPosition'), motherName = g('q_motherName');
   const consent = document.getElementById('q_leadConsent').checked;
   const phoneDigits = phoneRaw.replace(/\D/g,'');
 
@@ -2148,80 +2646,147 @@ function validateLead(){
     warnBox.innerHTML = `<div class="warn-box">${T().warn_consent_required}</div>`;
     return;
   }
-  if (!name || !profession || phoneDigits.length<9 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+  if (!name || !ic || !employerName || !position || !motherName ||
+      phoneDigits.length<9 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
     warnBox.innerHTML = `<div class="warn-box">${T().warn_fill_lead}</div>`;
     return;
   }
   warnBox.innerHTML = '';
 
-  state.leadName = name; state.leadProfession = profession; state.leadPhone = phoneRaw; state.leadEmail = email;
+  state.leadName = name; state.leadProfession = position; state.leadPhone = phoneRaw; state.leadEmail = email;
+  state.applicationData = {
+    name, ic, email, phone: phoneRaw,
+    education: g('q_appEducation'), address: g('q_appAddress'), addressStatus: g('q_appAddressStatus'),
+    maritalStatus: g('q_appMaritalStatus'), children: g('q_appChildren'),
+    employerName, employerAddress: g('q_empAddress'), position,
+    employmentStatus: g('q_empStatus'), employmentStartDate: g('q_empStartDate'),
+    employerPhone: g('q_empPhone'), employerEmailHr: g('q_empEmailHr'),
+    refName: g('q_refName'), refRelationship: g('q_refRelationship'), refPhone: g('q_refPhone'), refOccupation: g('q_refOccupation'),
+    motherName,
+    hasSpouse: document.getElementById('q_hasSpouse').checked,
+    spouseName: g('q_spouseName'), spouseIc: g('q_spouseIc'), spousePhone: g('q_spousePhone'),
+    spouseCompany: g('q_spouseCompany'), spousePosition: g('q_spousePosition'),
+    spouseSalary: g('q_spouseSalary'), spouseStartDate: g('q_spouseStartDate'),
+  };
 
-  if (state.resultMode === 'kredit' || state.resultMode === 'kredit-fallback'){
-    const gross = state.grossIncome || 0;
-    let tier = CREDIT_CARD_TIERS[0];
-    for (const t of CREDIT_CARD_TIERS){ if (gross >= t.minIncome/12 || gross === 0) tier = t; }
-    if (gross === 0) tier = CREDIT_CARD_TIERS[0];
-    const cardCode = tier.name.split(' ').pop().toLowerCase();
-
-    const p = new URLSearchParams();
-    p.set('sector', state.sector || '');
-    p.set('name', name);
-    p.set('phone', phoneRaw);
-    p.set('email', email);
-    p.set('profession', profession);
-    p.set('card', cardCode);
-    p.set('income', Math.round(gross * 12));
-
-    window.location.href = `https://card.lateffitazri.my/?${p.toString()}`;
-    return;
-  }
-
-  const productLabel = state.resultMode === 'pinjaman'
-    ? (SECTOR_LOAN_DATA[state.sector]?.productName || T().default_loan_product)
-    : T().credit_card_product;
-
-  let message = T().wa_message(productLabel, name, profession, phoneRaw, email, SECTOR_LOAN_DATA[state.sector]?.label[lang] || '-');
-  if (state.resultMode === 'pinjaman' && state.debtConsolidation){
-    message += T().debt_consol_wa_line;
-  }
-  if (state.resultMode === 'pinjaman' && state.sector === 'swasta' && state.panelCompany){
+  const productLabel = SECTOR_LOAN_DATA[state.sector]?.productName || T().default_loan_product;
+  const debtConsolLabel = state.debtConsolidation ? T().chip_yes : T().chip_no;
+  let message = T().wa_message(productLabel, name, position, phoneRaw, email, SECTOR_LOAN_DATA[state.sector]?.label[lang] || '-', debtConsolLabel);
+  if (state.sector === 'swasta' && state.panelCompany){
     message += T().wa_panel_line(state.panelCompany);
   }
-  document.getElementById('waButton').href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;
+  state.waMessage = message;
 
   const summaryRows = [
     [T().lead_summary_name, name],
-    [T().lead_summary_profession, profession],
+    [T().lead_summary_profession, position],
     [T().lead_summary_phone, phoneRaw],
     [T().lead_summary_email, email],
     [T().lead_summary_sector, SECTOR_LOAN_DATA[state.sector]?.label[lang] || '-'],
     [T().lead_summary_product, productLabel],
   ];
-  if (state.resultMode === 'pinjaman' && state.sector === 'swasta' && state.panelCompany){
+  if (state.sector === 'swasta' && state.panelCompany){
     summaryRows.push([T().lead_summary_panel, state.panelCompany]);
   }
   document.getElementById('leadSummaryBox').innerHTML = renderRows(summaryRows);
 
+  setupUploadStep();
   goTo(6);
 }
 
+// ---- Step 6: document upload gate (mirrors card.lateffitazri.my's docsLinkClicked
+// -> uploadConfirm -> finalConsent -> WhatsApp-button gating pattern) ----
+let uploadLinkClicked = false;
+
+function setupUploadStep(){
+  const docs = SECTOR_LOAN_DATA[state.sector]?.docs?.[lang] || [];
+  document.getElementById('uploadDocsBox').innerHTML = renderDocList(docs);
+
+  const folderName = (state.leadName || 'Applicant').trim().replace(/\s+/g,'_').replace(/[^A-Za-z0-9_]/g,'');
+  document.getElementById('uploadFolderName').textContent = folderName || 'Applicant';
+  document.getElementById('uploadFormLink').href = buildPrefilledGoogleFormUrl(state.leadName);
+
+  uploadLinkClicked = false;
+  const uploadEl = document.getElementById('uploadConfirm');
+  uploadEl.checked = false; uploadEl.disabled = true;
+  document.getElementById('uploadConfirmHint').style.display = 'block';
+  const consentEl = document.getElementById('finalConsent');
+  consentEl.checked = false; consentEl.disabled = true;
+
+  document.getElementById('waButton').href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(state.waMessage || '')}`;
+  updateWhatsAppSendGate();
+}
+
+function onUploadFormLinkClick(){
+  uploadLinkClicked = true;
+  const uploadEl = document.getElementById('uploadConfirm');
+  uploadEl.disabled = false;
+  document.getElementById('uploadConfirmHint').style.display = 'none';
+}
+
+function onUploadConfirmChange(){
+  const uploadEl = document.getElementById('uploadConfirm');
+  const consentEl = document.getElementById('finalConsent');
+  if (uploadEl.checked && !uploadLinkClicked){
+    // Guards against ticking via keyboard/devtools without ever opening the link.
+    uploadEl.checked = false;
+    return;
+  }
+  consentEl.disabled = !uploadEl.checked;
+  if (!uploadEl.checked) consentEl.checked = false;
+  updateWhatsAppSendGate();
+}
+
+function updateWhatsAppSendGate(){
+  const ready = document.getElementById('uploadConfirm').checked && document.getElementById('finalConsent').checked;
+  const waBtn = document.getElementById('waButton');
+  waBtn.style.pointerEvents = ready ? 'auto' : 'none';
+  waBtn.style.opacity = ready ? '1' : '.5';
+}
+
+async function copyFolderName(){
+  const name = document.getElementById('uploadFolderName').textContent;
+  try {
+    await navigator.clipboard.writeText(name);
+    const btn = document.getElementById('btnCopyFolderName');
+    const original = btn.textContent;
+    btn.textContent = T().btn_copied;
+    setTimeout(()=>{ btn.textContent = original; }, 1500);
+  } catch (e){ /* clipboard unavailable, ignore */ }
+}
+
 function restart(){
+  applyDisclaimerAcknowledged = false;
   state = {
     sector: null, product: null,
     debtConsolidation: false,
     grossIncome: 0, netIncome: 0, commitments: [0,0,0,0],
     dsrPercent: null, dsrPass: null,
+    ndi: null, dsrStatus: null, dsrReasons: [], debtConsol: null,
     resultMode: null, panelCompany: null,
   };
   selectedPanelCompany = null;
   document.querySelectorAll('.option-card, .photo-card').forEach(c=>c.classList.remove('selected'));
   document.querySelector('#debtConsolCards .option-card[data-val="no"]').classList.add('selected');
-  ['q_grossIncome','q_netIncome','q_commitment1','q_commitment2','q_commitment3','q_commitment4',
+  document.getElementById('debtConsolBlock').style.display = 'none';
+  ['q_dependents','q_basicSalary','q_fixedAllowance','q_otherIncome','q_epf','q_payslipDeduction',
+   'q_ccrisExternal','q_overlapBSN','q_tabungHaji','q_topUp',
    'q_loanAmount','q_loanTenure',
-   'q_leadName','q_leadProfession','q_leadPhone','q_leadEmail'].forEach(id=>{
+   'q_appName','q_appIc','q_appEmail','q_appPhone','q_appEducation','q_appAddress','q_appAddressStatus',
+   'q_appMaritalStatus','q_appChildren',
+   'q_empName','q_empAddress','q_empPosition','q_empStatus','q_empStartDate','q_empPhone','q_empEmailHr',
+   'q_refName','q_refRelationship','q_refPhone','q_refOccupation','q_motherName',
+   'q_spouseName','q_spouseIc','q_spousePhone','q_spouseCompany','q_spousePosition','q_spouseSalary','q_spouseStartDate'
+  ].forEach(id=>{
     const el = document.getElementById(id); if (el) el.value = '';
   });
+  document.getElementById('q_area').value = 'urban';
+  const loanAmountInput = document.getElementById('q_loanAmount');
+  loanAmountInput.readOnly = false;
+  loanAmountInput.style.background = '#fff';
   document.getElementById('q_leadConsent').checked = false;
+  document.getElementById('q_hasSpouse').checked = false;
+  document.getElementById('spouseFields').style.display = 'none';
   document.getElementById('dsrWarning').innerHTML = '';
   document.getElementById('leadWarning').innerHTML = '';
   document.getElementById('panelSearch').value = '';
@@ -2260,21 +2825,25 @@ function restoreFromQuery(){
     return true;
   }
 
-  const gross = parseFloat(params.get('gi')) || 0;
   const loanAmount = parseFloat(params.get('la')) || 0;
   const loanTenure = parseFloat(params.get('lt')) || 0;
-  if (!gross || !loanAmount || !loanTenure) return false;
+  const basicSalary = parseFloat(params.get('bs')) || 0;
+  if (!basicSalary || !loanAmount || !loanTenure) return false;
 
-  document.getElementById('q_grossIncome').value = gross;
-  document.getElementById('q_netIncome').value = parseFloat(params.get('ni')) || 0;
-  document.getElementById('q_commitment1').value = params.get('c1') || '';
-  document.getElementById('q_commitment2').value = params.get('c2') || '';
-  document.getElementById('q_commitment3').value = params.get('c3') || '';
-  document.getElementById('q_commitment4').value = params.get('c4') || '';
+  document.getElementById('q_dependents').value = params.get('dp') || 0;
+  document.getElementById('q_area').value = params.get('ar') || 'urban';
+  document.getElementById('q_basicSalary').value = basicSalary;
+  document.getElementById('q_fixedAllowance').value = parseFloat(params.get('fa')) || 0;
+  document.getElementById('q_otherIncome').value = parseFloat(params.get('oi')) || 0;
+  document.getElementById('q_epf').value = parseFloat(params.get('ep')) || 0;
+  document.getElementById('q_payslipDeduction').value = parseFloat(params.get('pd')) || 0;
+  document.getElementById('q_ccrisExternal').value = parseFloat(params.get('cc')) || 0;
+  document.getElementById('q_overlapBSN').value = parseFloat(params.get('ob')) || 0;
+  document.getElementById('q_tabungHaji').value = parseFloat(params.get('th')) || 0;
   document.getElementById('q_loanAmount').value = loanAmount;
   document.getElementById('q_loanTenure').value = loanTenure;
 
-  checkDSR();
+  checkDSRNDI();
   return true;
 }
 
