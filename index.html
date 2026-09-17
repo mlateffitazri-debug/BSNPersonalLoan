@@ -625,10 +625,10 @@
       <label class="field-label" data-i18n="lbl_empStartDate">Tarikh Mula Berkhidmat</label>
       <div class="input-big no-center"><input type="date" id="q_empStartDate"></div>
 
-      <label class="field-label" data-i18n="lbl_empPhone">No. Tel Majikan Untuk Pengesahan (Office Number)</label>
+      <label class="field-label" data-i18n="lbl_empPhone">No. Tel Majikan Untuk Pengesahan (Nombor Pejabat)</label>
       <div class="input-big no-center"><input type="tel" id="q_empPhone" placeholder="03-12345678"></div>
 
-      <label class="field-label" data-i18n="lbl_empEmailHr">Email Address HR</label>
+      <label class="field-label" data-i18n="lbl_empEmailHr">Alamat Emel HR</label>
       <div class="input-big no-center"><input type="email" id="q_empEmailHr"></div>
 
       <div class="subsection-title" data-i18n="s5_sec_ref">Rujukan (Duduk Berasingan)</div>
@@ -873,8 +873,8 @@ const I18N = {
     lbl_empName: "Nama Majikan *", lbl_empAddress: "Alamat Majikan", lbl_empPosition: "Jawatan *",
     lbl_empStatus: "Status Perkhidmatan", opt_emp_tetap: "Tetap", opt_emp_kontrak: "Kontrak",
     lbl_empStartDate: "Tarikh Mula Berkhidmat",
-    lbl_empPhone: "No. Tel Majikan Untuk Pengesahan (Office Number)",
-    lbl_empEmailHr: "Email Address HR",
+    lbl_empPhone: "No. Tel Majikan Untuk Pengesahan (Nombor Pejabat)",
+    lbl_empEmailHr: "Alamat Emel HR",
     s5_sec_ref: "Rujukan (Duduk Berasingan)",
     lbl_refName: "Nama Rujukan", lbl_refRelationship: "Hubungan dengan Pemohon", lbl_refPhone: "No. Tel", lbl_refOccupation: "Pekerjaan",
     s5_sec_security: "Pengesahan Keselamatan",
@@ -2505,7 +2505,7 @@ function renderLoanResult(){
         <div class="result-item"><span class="result-label">${T().debt_consol_after} — NDI</span><span class="result-value">${fmtRM(dc.afterNdi)}</span></div>
         <div class="result-item"><span class="result-label">${T().debt_consol_before} — DSR</span><span class="result-value">${dc.beforeDsr}%</span></div>
         <div class="result-item"><span class="result-label">${T().debt_consol_after} — DSR</span><span class="result-value">${dc.afterDsr}%</span></div>
-        <div class="result-item"><span class="result-label">${T().debt_consol_saving}</span><span class="result-value ${dc.monthlySaving>=0?'positive':'negative'}">${fmtRM(dc.monthlySaving)}/${T().unit_years==='years'?'mo':'bln'}</span></div>
+        <div class="result-item"><span class="result-label">${T().debt_consol_saving}</span><span class="result-value ${dc.monthlySaving>=0?'positive':'negative'}">${fmtRM(dc.monthlySaving)}</span></div>
       </div>
     `;
   } else {
