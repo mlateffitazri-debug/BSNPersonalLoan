@@ -2765,8 +2765,7 @@ function submitApplicationRecord(){
         action: 'submit', token: APPS_SCRIPT_SUBMIT_TOKEN,
         nama: state.leadName || '', produk: SECTOR_LOAN_DATA[state.sector]?.productName || T().default_loan_product,
         sektor: SECTOR_LOAN_DATA[state.sector]?.label.ms || '',
-        status: 'Mohon', dsrStatus: state.dsrStatus || '',
-        penyatuanHutang: state.debtConsolidation ? 'Ya' : 'Tidak',
+        status: 'Mohon',
       }),
     });
   } catch (e){ /* best-effort logging — never block the applicant's WhatsApp handoff */ }

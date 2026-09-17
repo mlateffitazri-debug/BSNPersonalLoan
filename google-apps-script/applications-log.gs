@@ -33,7 +33,7 @@ const STATUS_ADMIN_PASSWORD = 'TUKAR_INI'; // used by status.lateffitazri.my to 
 const SUBMIT_TOKEN = 'TUKAR_INI_JUGA';      // embedded in loan.lateffitazri.my's public source
 
 const SHEET_NAME = 'Applications';
-const COLUMNS = ['id', 'timestamp', 'nama', 'produk', 'sektor', 'tarikhMohon', 'status', 'dsrStatus', 'penyatuanHutang'];
+const COLUMNS = ['id', 'timestamp', 'nama', 'produk', 'sektor', 'status'];
 
 // ── One-time setup ──────────────────────────────────────────────────────
 
@@ -62,7 +62,7 @@ function doGet(e) {
       return jsonResponse_(handleUpdateStatus_(e.parameter));
     }
     const rows = readAllRows_();
-    rows.sort((a, b) => (b.tarikhMohon || '').localeCompare(a.tarikhMohon || ''));
+    rows.sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''));
     return jsonResponse_({ ok: true, rows });
   } catch (err) {
     return jsonResponse_({ ok: false, error: String(err) });
@@ -99,10 +99,7 @@ function handleSubmit_(p) {
     p.nama || '',
     p.produk || '',
     p.sektor || '',
-    Utilities.formatDate(now, 'GMT+8', 'yyyy-MM-dd'),
     p.status || 'Mohon',
-    p.dsrStatus || '',
-    p.penyatuanHutang || '',
   ]);
   return { ok: true, id };
 }
