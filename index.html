@@ -78,6 +78,27 @@
   .schedule-modal-close{background:none;border:none;font-size:1.3rem;line-height:1;cursor:pointer;color:var(--muted);padding:4px 8px;}
   .schedule-modal-close:hover{color:var(--text);}
   .schedule-modal iframe{flex:1;width:100%;border:none;min-height:60vh;}
+
+  /* ---- ASB (ported from CALCULATOR/index.html) ---- */
+  .label-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .label-row .field-label{margin-bottom:0;}
+  .info-icon{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;color:var(--accent);cursor:pointer;flex-shrink:0;}
+  .info-icon svg{width:100%;height:100%;}
+  .info-icon:hover{color:var(--accent-dark);}
+  .range-labels{display:flex;justify-content:space-between;color:var(--muted);font-size:.75rem;}
+  .history-toggle{display:flex;align-items:center;gap:8px;color:var(--accent);font-weight:700;font-size:.85rem;cursor:pointer;margin-bottom:14px;}
+  .history-toggle svg{width:18px;height:18px;flex-shrink:0;}
+  .history-toggle:hover{color:var(--accent-dark);}
+  .history-box{background:var(--panel2);border-radius:10px;padding:14px;margin-bottom:18px;}
+  .history-table-wrap{overflow-x:auto;}
+  .history-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+  .history-table th{text-align:left;color:var(--muted);font-weight:700;padding:4px 8px;border-bottom:1px solid var(--border);}
+  .history-table td{padding:4px 8px;border-bottom:1px dashed #ded6c4;}
+  .history-table tr:last-child td{border-bottom:none;}
+  .history-avg-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:.85rem;}
+  .history-avg-row strong{color:var(--accent);}
+  .btn-use-avg{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:.8rem;font-weight:700;cursor:pointer;}
+  .btn-use-avg:hover{background:var(--accent-dark);}
   .subsection-title{color:var(--accent-dark);font-weight:800;font-size:.95rem;margin:22px 0 12px;padding-top:16px;border-top:1px solid var(--border);}
   .subsection-title:first-child{margin-top:0;padding-top:0;border-top:none;}
   .input-big textarea{width:100%;padding:11px 14px;font-size:1rem;font-weight:600;border:1.5px solid var(--border);border-radius:10px;background:var(--input-bg);color:var(--text);resize:vertical;min-height:70px;font-family:inherit;}
@@ -358,10 +379,244 @@
             <p data-i18n="product_card_desc">Al-Aiman — had kredit fleksibel untuk perbelanjaan</p>
           </div>
         </div>
+        <div class="photo-card" data-val="asb" onclick="selectProduct('asb')">
+          <div class="photo-card-overlay"></div>
+          <div class="photo-card-content">
+            <div class="oc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3v18h18v-2H5V3H3zm4 14h2v-6H7v6zm4 0h2V7h-2v10zm4 0h2v-4h-2v4z"/></svg></div>
+            <h3 data-i18n="product_asb_title">Pembiayaan ASB</h3>
+            <p data-i18n="product_asb_desc">Pembiayaan bertempoh untuk pelaburan ASB</p>
+          </div>
+        </div>
       </div>
 
       <div class="nav-row">
         <button class="btn-back" data-i18n="btn_back" onclick="goTo(1)">Kembali</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step ASB1: Kelayakan (ported from CALCULATOR/index.html step 2) -->
+  <div class="step" data-step="asb1">
+    <div class="card">
+      <div class="eyebrow" data-i18n="asb_s1_eyebrow">Soalan 1 daripada 7</div>
+      <p class="question" data-i18n="asb_s1_question">Semakan kelayakan pantas</p>
+      <p class="helptext" data-i18n="asb_s1_help">Pembiayaan Bertempoh ASB BSN terbuka kepada semua pelabur ASB yang layak di bawah garis panduan ASNB, berumur 18–70 tahun pada akhir tempoh pinjaman.</p>
+
+      <div class="label-row">
+        <label class="field-label" data-i18n="asb_s1_label1">Adakah anda pelabur ASB yang layak (Bumiputera) di bawah garis panduan ASNB?</label>
+        <span class="info-icon" onclick="toggleAsbGuidelineInfo()" title="Garis Panduan ASNB">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
+        </span>
+      </div>
+      <div id="asbGuidelineInfoBox" class="info-box" style="display:none;" data-i18n="asb_guideline_info">ASB adalah amanah saham yang khusus untuk individu Bumiputera Malaysia seperti yang ditakrifkan di bawah Perlembagaan Persekutuan, dan terbuka kepada warganegara Malaysia yang memiliki MyKad yang sah. Akaun ASB boleh dibuka pada sebarang umur (akaun kanak-kanak dipegang secara amanah oleh ibu bapa/penjaga) — tetapi produk pembiayaan BSN ini sendiri memerlukan pemohon berumur 18–70 tahun pada akhir tempoh pinjaman.</div>
+      <div class="chips" id="chips_asbBumiputera" style="margin-bottom:20px;">
+        <div class="chip" data-val="yes" onclick="pickAsbChip('asbBumiputera','yes')" data-i18n="chip_yes">Ya</div>
+        <div class="chip" data-val="no" onclick="pickAsbChip('asbBumiputera','no')" data-i18n="chip_no">Tidak</div>
+      </div>
+
+      <label class="field-label" data-i18n="asb_s1_label2">Berapakah umur anda sekarang?</label>
+      <div class="input-big has-suffix"><input type="number" id="q_asbAge" min="1" max="100" value="30"><span class="suffix" data-i18n="unit_yrs">tahun</span></div>
+
+      <div id="asbEligibilityWarning"></div>
+
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo(2)">Kembali</button>
+        <button class="btn-primary" data-i18n="btn_next" onclick="validateAsbEligibility()">Seterusnya</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step ASB2: Jenis Pekerjaan -->
+  <div class="step" data-step="asb2">
+    <div class="card">
+      <div class="eyebrow" data-i18n="asb_s2_eyebrow">Soalan 2 daripada 7</div>
+      <p class="question" data-i18n="asb_s2_question">Apakah jenis pekerjaan anda?</p>
+      <p class="helptext" data-i18n="asb_s2_help">Ini menentukan dokumen yang perlu anda sediakan untuk permohonan.</p>
+      <div class="option-cards" id="asbEmploymentCards">
+        <div class="option-card selected" data-val="employee" onclick="selectAsbEmployment('employee')">
+          <h3 data-i18n="asb_emp1_title">Pekerja Tetap / Kontrak</h3>
+          <p data-i18n="asb_emp1_desc">Pekerjaan bergaji dengan majikan.</p>
+        </div>
+        <div class="option-card" data-val="self" onclick="selectAsbEmployment('self')">
+          <h3 data-i18n="asb_emp2_title">Bekerja Sendiri</h3>
+          <p data-i18n="asb_emp2_desc">Pemilik perniagaan, bebas (freelance), atau penerima komisen.</p>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo('asb1')">Kembali</button>
+        <button class="btn-primary" data-i18n="btn_next" onclick="goTo('asb3')">Seterusnya</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step ASB3: Jumlah Pembiayaan -->
+  <div class="step" data-step="asb3">
+    <div class="card">
+      <div class="eyebrow" data-i18n="asb_s3_eyebrow">Soalan 3 daripada 7</div>
+      <p class="question" data-i18n="asb_s3_question">Berapakah jumlah pembiayaan yang ingin anda mohon?</p>
+      <p class="helptext" data-i18n="asb_s3_help">Pembiayaan Bertempoh ASB BSN adalah dari RM10,000 sehingga RM200,000, dalam gandaan RM1,000.</p>
+      <div class="input-big has-prefix">
+        <span class="prefix">RM</span>
+        <input type="number" id="q_asbAmount" min="10000" max="200000" step="1000" value="100000" oninput="syncAsbChips()">
+      </div>
+      <div class="chips" id="chips_asbAmount"></div>
+      <div id="asbAmountWarning"></div>
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo('asb2')">Kembali</button>
+        <button class="btn-primary" data-i18n="btn_next" onclick="validateAsbAmount()">Seterusnya</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step ASB4: Tempoh -->
+  <div class="step" data-step="asb4">
+    <div class="card">
+      <div class="eyebrow" data-i18n="asb_s4_eyebrow">Soalan 4 daripada 7</div>
+      <p class="question" data-i18n="asb_s4_question">Berapa lamakah tempoh pembiayaan yang anda mahukan?</p>
+      <p class="helptext" id="asbTenureHelp" data-i18n="asb_s4_help">BSN menawarkan tempoh pembiayaan dari 5 sehingga 40 tahun, tertakluk kepada had umur 70 tahun, mana-mana yang lebih awal. Tempoh yang lebih panjang bermakna bayaran bulanan yang lebih kecil, tetapi jumlah faedah keseluruhan yang lebih tinggi.</p>
+      <div class="input-big"><input type="number" id="q_asbTenure" min="5" max="40" value="20" oninput="syncAsbSlider('asbTenure')"><span class="suffix" data-i18n="unit_yrs">tahun</span></div>
+      <input type="range" id="s_asbTenure" min="5" max="40" value="20" oninput="syncAsbInput('asbTenure')">
+      <div class="range-labels"><span id="asbTenureMinLabel">5 tahun</span><span id="asbTenureMaxLabel">40 tahun</span></div>
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo('asb3')">Kembali</button>
+        <button class="btn-primary" data-i18n="btn_next" onclick="validateAndNextAsb('asbTenure','asb5')">Seterusnya</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step ASB5: Takaful -->
+  <div class="step" data-step="asb5">
+    <div class="card">
+      <div class="eyebrow" data-i18n="asb_s5_eyebrow">Soalan 5 daripada 7</div>
+      <p class="question" data-i18n="asb_s5_question">Adakah anda mahukan perlindungan Takaful (Insurans)?</p>
+      <p class="helptext" data-i18n="asb_s5_help">Takaful melindungi keluarga anda dengan menyelesaikan baki pembiayaan sekiranya berlaku kematian atau hilang upaya kekal menyeluruh. Ia juga disertakan dengan kadar keuntungan yang sedikit lebih rendah.</p>
+      <div class="option-cards" id="asbTakafulCards">
+        <div class="option-card selected" data-val="with" onclick="selectAsbTakaful('with')">
+          <h3 data-i18n="asb_tak1_title">Dengan Takaful</h3>
+          <p data-i18n="asb_tak1_desc">Pembiayaan dilindungi daripada risiko kematian / hilang upaya kekal.</p>
+          <span class="rate-tag">KAS + 1.40% = 4.15% setahun</span>
+        </div>
+        <div class="option-card" data-val="without" onclick="selectAsbTakaful('without')">
+          <h3 data-i18n="asb_tak2_title">Tanpa Takaful</h3>
+          <p data-i18n="asb_tak2_desc">Tiada perlindungan insurans ke atas pembiayaan.</p>
+          <span class="rate-tag">KAS + 1.50% = 4.25% setahun</span>
+        </div>
+      </div>
+      <p class="note" style="text-align:left;margin-top:0;" data-i18n="asb_s5_note">Berdasarkan Kadar Asas Standard (KAS) semasa 2.75% setahun.</p>
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo('asb4')">Kembali</button>
+        <button class="btn-primary" data-i18n="btn_next" onclick="goTo('asb6')">Seterusnya</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step ASB6: Kadar Dividen -->
+  <div class="step" data-step="asb6">
+    <div class="card">
+      <div class="eyebrow" data-i18n="asb_s6_eyebrow">Soalan 6 daripada 7</div>
+      <p class="question" data-i18n="asb_s6_question">Apakah kadar dividen ASB yang perlu kita anggarkan?</p>
+      <p class="helptext" data-i18n="asb_s6_help">Dividen ASB berubah dari tahun ke tahun. Anggaran perancangan biasa adalah 5.0% – 6.0% setahun, berdasarkan sejarah terkini. Ini hanyalah anggaran, bukan jaminan.</p>
+
+      <div class="history-toggle" onclick="toggleAsbDividendHistory()">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3v18h18v-2H5V3H3zm4 14h2v-6H7v6zm4 0h2V7h-2v10zm4 0h2v-4h-2v4z"/></svg>
+        <span data-i18n="asb_div_history_toggle">Lihat Sejarah Dividen ASB (2015–2025)</span>
+      </div>
+      <div id="asbDividendHistoryBox" class="history-box" style="display:none;">
+        <div class="history-table-wrap">
+          <table class="history-table">
+            <thead><tr><th data-i18n="asb_div_history_year">Tahun</th><th>ASB</th><th>ASB2</th></tr></thead>
+            <tbody>
+              <tr><td>2025</td><td>5.75%</td><td>5.50%</td></tr>
+              <tr><td>2024</td><td>5.75%</td><td>5.25%</td></tr>
+              <tr><td>2023</td><td>5.25%</td><td>5.00%</td></tr>
+              <tr><td>2022</td><td>5.10%</td><td>4.30%</td></tr>
+              <tr><td>2021</td><td>5.00%</td><td>4.25%</td></tr>
+              <tr><td>2020</td><td>5.00%</td><td>4.75%</td></tr>
+              <tr><td>2019</td><td>5.50%</td><td>6.00%</td></tr>
+              <tr><td>2018</td><td>7.00%</td><td>6.75%</td></tr>
+              <tr><td>2017</td><td>8.25%</td><td>6.50%</td></tr>
+              <tr><td>2016</td><td>7.25%</td><td>7.05%</td></tr>
+              <tr><td>2015</td><td>7.75%</td><td>7.75%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="history-avg-row">
+          <span data-i18n="asb_div_history_avg_label">Purata ASB 2015–2025: <strong>6.15%</strong></span>
+          <button type="button" class="btn-use-avg" onclick="useAsbAverageDividend()" data-i18n="asb_div_history_use">Guna kadar ini</button>
+        </div>
+        <p class="note" style="text-align:left;margin-top:8px;" data-i18n="asb_div_history_note">Sumber: ASNB. Prestasi lepas tidak menggambarkan hasil masa hadapan.</p>
+      </div>
+
+      <div class="input-big has-suffix"><input type="number" id="q_asbDividendRate" min="0" step="0.01" value="5.75" oninput="syncAsbSlider('asbDividendRate')"><span class="suffix">%</span></div>
+      <input type="range" id="s_asbDividendRate" min="1" max="10" step="0.05" value="5.75" oninput="syncAsbInput('asbDividendRate')">
+      <div class="range-labels"><span>1%</span><span>10%</span></div>
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo('asb5')">Kembali</button>
+        <button class="btn-primary" data-i18n="btn_next" onclick="validateAndNextAsb('asbDividendRate','asb7')">Seterusnya</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step ASB7: Strategi + Tempoh Keluar -->
+  <div class="step" data-step="asb7">
+    <div class="card">
+      <div class="eyebrow" data-i18n="asb_s7_eyebrow">Soalan 7 daripada 7</div>
+      <p class="question" data-i18n="asb_s7_question">Pilih strategi, dan bila anda mungkin keluar.</p>
+      <p class="helptext" data-i18n="asb_s7_help"><strong>Compounding</strong> membiarkan dividen ASB anda berkembang tanpa diganggu. <strong>Rolling</strong> menggunakan dividen setiap tahun untuk membantu bayar ansuran anda, hanya memerlukan wang tunai anda sendiri pada Tahun 1.</p>
+      <div class="option-cards" id="asbStrategyCards">
+        <div class="option-card selected" data-val="compounding" onclick="selectAsbStrategy('compounding')">
+          <h3>Compounding</h3>
+          <p data-i18n="asb_strat1_desc">Dividen kekal dilaburkan dan berkembang dari tahun ke tahun.</p>
+        </div>
+        <div class="option-card" data-val="rolling" onclick="selectAsbStrategy('rolling')">
+          <h3>Rolling</h3>
+          <p data-i18n="asb_strat2_desc">Dividen membantu menampung ansuran tahunan anda.</p>
+        </div>
+      </div>
+      <p class="helptext" style="margin-top:18px;" data-i18n="asb_s7_help2">Tamatkan / keluar selepas berapa tahun?</p>
+      <div class="input-big"><input type="number" id="q_asbEarlyTerminate" min="1" value="10" oninput="syncAsbSlider('asbEarlyTerminate')"><span class="suffix" data-i18n="unit_yrs">tahun</span></div>
+      <input type="range" id="s_asbEarlyTerminate" min="1" max="40" value="10" oninput="syncAsbInput('asbEarlyTerminate')">
+      <div class="range-labels"><span id="asbTerminateMin">1 tahun</span><span id="asbTerminateMax">40 tahun</span></div>
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo('asb6')">Kembali</button>
+        <button class="btn-primary" data-i18n="btn_seeresults" onclick="showAsbResults()">Lihat Keputusan Saya</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step ASB Result -->
+  <div class="step" data-step="asbResult">
+    <div class="card">
+      <div class="eyebrow" id="asbResultStrategyLabel">Strategi Compounding</div>
+      <div class="headline">
+        <div class="label" data-i18n="asb_res_headline">Anggaran Jumlah Pulangan</div>
+        <div class="value" id="asbHlReturns">RM 0.00</div>
+        <div class="sub" id="asbHlSub">selepas keluar</div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label" data-i18n="asb_res_profit">Jumlah Keuntungan</div><div class="stat-value positive" id="asbStProfit">RM 0.00</div></div>
+        <div class="stat"><div class="stat-label" data-i18n="asb_res_roi">ROI</div><div class="stat-value positive" id="asbStRoi">0%</div></div>
+        <div class="stat"><div class="stat-label" data-i18n="asb_res_cashback">Tunai Dikembalikan</div><div class="stat-value" id="asbStCashback">RM 0.00</div></div>
+        <div class="stat"><div class="stat-label" data-i18n="asb_res_yearly">Purata Pulangan Tahunan</div><div class="stat-value" id="asbStYearly">0%</div></div>
+      </div>
+
+      <details>
+        <summary data-i18n="asb_res_breakdown">Lihat pecahan penuh</summary>
+        <div id="asbFullResultBox"></div>
+      </details>
+
+      <details>
+        <summary data-i18n="asb_res_compare">Bandingkan dengan Simpanan ASB Terus</summary>
+        <div id="asbDirectResultBox"></div>
+      </details>
+
+      <div class="note" data-i18n="asb_res_note">*Pengiraan dividen ASB berdasarkan Baki Minimum Bulanan. Caj Bayaran Lewat: 1% setahun ke atas baki tertunggak. Anggaran sahaja — dividen dan kadar sebenar mungkin berbeza.</div>
+
+      <button class="btn-cta" data-i18n="asb_btn_apply_now" onclick="goToLeadForm()">Mohon Pembiayaan ASB Sekarang</button>
+
+      <div class="restart-row">
+        <button class="btn-back btn-sm" data-i18n="btn_edit" onclick="goTo('asb7')">Edit Jawapan</button>
       </div>
     </div>
   </div>
@@ -799,7 +1054,84 @@ const I18N = {
     product_loan_desc: "MyRinggit-i — pembiayaan tunai sekali gus",
     product_card_title: "Kad Kredit",
     product_card_desc: "Al-Aiman — had kredit fleksibel untuk perbelanjaan",
+    product_asb_title: "Pembiayaan ASB",
+    product_asb_desc: "Pembiayaan bertempoh untuk pelaburan ASB",
     chip_yes: "Ya", chip_no: "Tidak",
+    unit_yrs: "tahun",
+    asb_product_name: "Pembiayaan ASB BSN",
+    asb_s1_eyebrow: "Soalan 1 daripada 7",
+    asb_s1_question: "Semakan kelayakan pantas",
+    asb_s1_help: "Pembiayaan Bertempoh ASB BSN terbuka kepada semua pelabur ASB yang layak di bawah garis panduan ASNB, berumur 18–70 tahun pada akhir tempoh pinjaman.",
+    asb_s1_label1: "Adakah anda pelabur ASB yang layak (Bumiputera) di bawah garis panduan ASNB?",
+    asb_guideline_info: "ASB adalah amanah saham yang khusus untuk individu Bumiputera Malaysia seperti yang ditakrifkan di bawah Perlembagaan Persekutuan, dan terbuka kepada warganegara Malaysia yang memiliki MyKad yang sah. Akaun ASB boleh dibuka pada sebarang umur (akaun kanak-kanak dipegang secara amanah oleh ibu bapa/penjaga) — tetapi produk pembiayaan BSN ini sendiri memerlukan pemohon berumur 18–70 tahun pada akhir tempoh pinjaman.",
+    asb_s1_label2: "Berapakah umur anda sekarang?",
+    asb_s2_eyebrow: "Soalan 2 daripada 7",
+    asb_s2_question: "Apakah jenis pekerjaan anda?",
+    asb_s2_help: "Ini menentukan dokumen yang perlu anda sediakan untuk permohonan.",
+    asb_emp1_title: "Pekerja Tetap / Kontrak",
+    asb_emp1_desc: "Pekerjaan bergaji dengan majikan.",
+    asb_emp2_title: "Bekerja Sendiri",
+    asb_emp2_desc: "Pemilik perniagaan, bebas (freelance), atau penerima komisen.",
+    asb_s3_eyebrow: "Soalan 3 daripada 7",
+    asb_s3_question: "Berapakah jumlah pembiayaan yang ingin anda mohon?",
+    asb_s3_help: "Pembiayaan Bertempoh ASB BSN adalah dari RM10,000 sehingga RM200,000, dalam gandaan RM1,000.",
+    asb_s4_eyebrow: "Soalan 4 daripada 7",
+    asb_s4_question: "Berapa lamakah tempoh pembiayaan yang anda mahukan?",
+    asb_s4_help: "BSN menawarkan tempoh pembiayaan dari 5 sehingga 40 tahun, tertakluk kepada had umur 70 tahun, mana-mana yang lebih awal. Tempoh yang lebih panjang bermakna bayaran bulanan yang lebih kecil, tetapi jumlah faedah keseluruhan yang lebih tinggi.",
+    asb_s5_eyebrow: "Soalan 5 daripada 7",
+    asb_s5_question: "Adakah anda mahukan perlindungan Takaful (Insurans)?",
+    asb_s5_help: "Takaful melindungi keluarga anda dengan menyelesaikan baki pembiayaan sekiranya berlaku kematian atau hilang upaya kekal menyeluruh. Ia juga disertakan dengan kadar keuntungan yang sedikit lebih rendah.",
+    asb_tak1_title: "Dengan Takaful", asb_tak1_desc: "Pembiayaan dilindungi daripada risiko kematian / hilang upaya kekal.",
+    asb_tak2_title: "Tanpa Takaful", asb_tak2_desc: "Tiada perlindungan insurans ke atas pembiayaan.",
+    asb_s5_note: "Berdasarkan Kadar Asas Standard (KAS) semasa 2.75% setahun.",
+    asb_s6_eyebrow: "Soalan 6 daripada 7",
+    asb_s6_question: "Apakah kadar dividen ASB yang perlu kita anggarkan?",
+    asb_s6_help: "Dividen ASB berubah dari tahun ke tahun. Anggaran perancangan biasa adalah 5.0% – 6.0% setahun, berdasarkan sejarah terkini. Ini hanyalah anggaran, bukan jaminan.",
+    asb_div_history_toggle: "Lihat Sejarah Dividen ASB (2015–2025)",
+    asb_div_history_year: "Tahun",
+    asb_div_history_avg_label: "Purata ASB 2015–2025: <strong>6.15%</strong>",
+    asb_div_history_use: "Guna kadar ini",
+    asb_div_history_note: "Sumber: ASNB. Prestasi lepas tidak menggambarkan hasil masa hadapan.",
+    asb_s7_eyebrow: "Soalan 7 daripada 7",
+    asb_s7_question: "Pilih strategi, dan bila anda mungkin keluar.",
+    asb_s7_help: "<strong>Compounding</strong> membiarkan dividen ASB anda berkembang tanpa diganggu. <strong>Rolling</strong> menggunakan dividen setiap tahun untuk membantu bayar ansuran anda, hanya memerlukan wang tunai anda sendiri pada Tahun 1.",
+    asb_strat1_desc: "Dividen kekal dilaburkan dan berkembang dari tahun ke tahun.",
+    asb_strat2_desc: "Dividen membantu menampung ansuran tahunan anda.",
+    asb_s7_help2: "Tamatkan / keluar selepas berapa tahun?",
+    asb_res_headline: "Anggaran Jumlah Pulangan",
+    asb_res_profit: "Jumlah Keuntungan", asb_res_roi: "ROI", asb_res_cashback: "Tunai Dikembalikan", asb_res_yearly: "Purata Pulangan Tahunan",
+    asb_res_breakdown: "Lihat pecahan penuh",
+    asb_res_compare: "Bandingkan dengan Simpanan ASB Terus",
+    asb_res_note: "*Pengiraan dividen ASB berdasarkan Baki Minimum Bulanan. Caj Bayaran Lewat: 1% setahun ke atas baki tertunggak. Anggaran sahaja — dividen dan kadar sebenar mungkin berbeza.",
+    asb_btn_apply_now: "Mohon Pembiayaan ASB Sekarang",
+    asb_err_select_option: "Sila pilih satu pilihan untuk teruskan.",
+    asb_warn_not_bumiputera: "ASB dan Pembiayaan ASB hanya disediakan untuk pelabur Bumiputera yang layak di bawah garis panduan ASNB. Anda mungkin tidak layak untuk memohon.",
+    asb_warn_under18: "Pemohon mestilah berumur sekurang-kurangnya 18 tahun.",
+    asb_warn_age_tenure: "Berdasarkan umur anda, anda tidak akan memenuhi keperluan tempoh minimum 5 tahun (mesti berumur 18–70 tahun pada akhir tempoh pinjaman).",
+    asb_warn_continue: "Anda masih boleh teruskan untuk melihat unjuran ilustrasi.",
+    asb_info_min_amount: "Diselaraskan kepada jumlah pembiayaan minimum RM10,000.",
+    asb_info_max_amount: "Diselaraskan kepada jumlah pembiayaan maksimum RM200,000.",
+    asb_tenure_help_dyn: (max)=>`BSN menawarkan tempoh pembiayaan dari 5 sehingga ${max} tahun, berdasarkan umur anda supaya anda kekal dalam had kelayakan 18–70 tahun. Tempoh yang lebih panjang bermakna bayaran bulanan yang lebih kecil, tetapi jumlah faedah keseluruhan yang lebih tinggi. Tempoh pembiayaan adalah sehingga maksimum 40 tahun atau sehingga umur 70 tahun, tertakluk kepada mana-mana yang lebih awal.`,
+    asb_strategy_compounding: "Strategi Compounding", asb_strategy_rolling: "Strategi Rolling",
+    asb_exit_after: (n)=>`Keluar selepas ${n} tahun`,
+    asb_financing_over: (amt,n)=>`untuk pembiayaan ${amt} sepanjang ${n} tahun`,
+    asb_row_monthlyPayment: "Bayaran Bulanan", asb_row_year1Payment: "Bayaran Tahun 1", asb_row_year1Dividend: "Dividen Tahun 1",
+    asb_row_totalPayment: "Jumlah Bayaran", asb_row_totalDividendEarned: "Jumlah Dividen Diperoleh", asb_row_cashBack: "Jumlah Tunai Dikembalikan",
+    asb_row_totalReturns: "Jumlah Pulangan", asb_row_totalProfitLoss: "Jumlah Untung / Rugi", asb_row_roi: "Peratusan Keuntungan (ROI)",
+    asb_row_yearlyAvg: "Purata Pulangan Tahunan (%)", asb_row_monthlyDeposit: "Simpanan Bulanan", asb_row_year1Deposit: "Simpanan Tahun 1",
+    asb_row_totalDeposited: "Jumlah Disimpan", asb_row_totalProfitLoss2: "Jumlah Untung/Rugi",
+    asb_surplus_note: (x)=>`Dividen menampung bayaran tahunan dengan lebihan ${x}`,
+    asb_deficit_note: (x)=>`Dividen tidak menampung bayaran tahunan, tambahan ${x} diperlukan setiap tahun`,
+    asb_topup_note: (x,n,y)=>`Tambahan tahunan sebanyak ${x} disimpan selama ${n} tahun, jumlah ${y}`,
+    asb_docs_employee: [
+      '1 salinan Kad Pengenalan (depan dan belakang)',
+      '1 salinan slip gaji bulan terkini, ATAU baucar bayaran (dengan cop/kepala surat syarikat) bagi 3 bulan terkini',
+      'Mana-mana 1 daripada: penyata KWSP terkini, Surat Pengesahan Majikan, atau borang EA/EC dan e-filing terkini',
+    ],
+    asb_docs_self: [
+      '1 salinan Kad Pengenalan (depan dan belakang)',
+      '1 salinan penyata bank 6 bulan terkini',
+    ],
     s2a_eyebrow: "Sektor Swasta",
     s2a_question: "Pilih syarikat panel anda",
     s2a_help: "MyRinggit-i Eksekutif-1 terhad kepada pekerja syarikat panel BSN terpilih. Cari dan pilih syarikat majikan anda untuk teruskan.",
@@ -984,7 +1316,84 @@ const I18N = {
     product_loan_desc: "MyRinggit-i — lump-sum cash financing",
     product_card_title: "Credit Card",
     product_card_desc: "Al-Aiman — flexible credit limit for spending",
+    product_asb_title: "ASB Financing",
+    product_asb_desc: "Term financing for ASB investment",
     chip_yes: "Yes", chip_no: "No",
+    unit_yrs: "yrs",
+    asb_product_name: "BSN ASB Term Financing",
+    asb_s1_eyebrow: "Question 1 of 7",
+    asb_s1_question: "Quick eligibility check",
+    asb_s1_help: "BSN ASB Term Financing is open to all qualified ASB investors under ASNB guidelines, aged 18–70 at the end of the loan tenure.",
+    asb_s1_label1: "Are you a qualified ASB investor (Bumiputera) under ASNB guidelines?",
+    asb_guideline_info: "ASB is a unit trust exclusively for Malaysian Bumiputera individuals as defined under the Federal Constitution, and open to Malaysian citizens holding a valid MyKad. An ASB account can be opened at any age (a minor's account is held in trust by a parent or guardian) — but this BSN financing product itself requires the applicant to be aged 18–70 at the end of the loan tenure.",
+    asb_s1_label2: "What is your current age?",
+    asb_s2_eyebrow: "Question 2 of 7",
+    asb_s2_question: "What's your employment type?",
+    asb_s2_help: "This determines which documents you'll need to prepare for your application.",
+    asb_emp1_title: "Permanent / Contract Employee",
+    asb_emp1_desc: "Salaried employment with an employer.",
+    asb_emp2_title: "Self-Employed",
+    asb_emp2_desc: "Business owner, freelancer, or commission earner.",
+    asb_s3_eyebrow: "Question 3 of 7",
+    asb_s3_question: "How much financing would you like to apply for?",
+    asb_s3_help: "BSN ASB Term Financing ranges from RM10,000 to RM200,000, in multiples of RM1,000.",
+    asb_s4_eyebrow: "Question 4 of 7",
+    asb_s4_question: "Over how many years would you like to finance this?",
+    asb_s4_help: "BSN offers financing tenures from 5 up to 40 years, capped at age 70, whichever comes first. Longer tenures mean smaller monthly payments, but a higher total interest paid.",
+    asb_s5_eyebrow: "Question 5 of 7",
+    asb_s5_question: "Would you like Takaful (Insurance) coverage?",
+    asb_s5_help: "Takaful protects your family by settling the outstanding financing in case of death or total permanent disability. It also comes with a slightly lower profit rate.",
+    asb_tak1_title: "With Takaful", asb_tak1_desc: "Financing protected against death / TPD.",
+    asb_tak2_title: "Without Takaful", asb_tak2_desc: "No insurance coverage on the financing.",
+    asb_s5_note: "Based on current Standardised Base Rate (SBR) of 2.75% p.a.",
+    asb_s6_eyebrow: "Question 6 of 7",
+    asb_s6_question: "What ASB dividend rate should we assume?",
+    asb_s6_help: "ASB dividends vary year to year. A common planning assumption is 5.0% – 6.0% p.a., based on recent history. This is only an estimate, not a guarantee.",
+    asb_div_history_toggle: "See ASB Dividend History (2015–2025)",
+    asb_div_history_year: "Year",
+    asb_div_history_avg_label: "2015–2025 ASB average: <strong>6.15%</strong>",
+    asb_div_history_use: "Use this rate",
+    asb_div_history_note: "Source: ASNB. Past performance is not indicative of future results.",
+    asb_s7_eyebrow: "Question 7 of 7",
+    asb_s7_question: "Choose a strategy, and when you might exit.",
+    asb_s7_help: "<strong>Compounding</strong> lets your ASB dividends grow untouched. <strong>Rolling</strong> uses each year's dividend to help pay your instalment, only needing your own cash upfront in Year 1.",
+    asb_strat1_desc: "Dividends stay invested and grow year on year.",
+    asb_strat2_desc: "Dividends help cover your yearly instalment.",
+    asb_s7_help2: "Terminate / exit after how many years?",
+    asb_res_headline: "Estimated Total Returns",
+    asb_res_profit: "Total Profit", asb_res_roi: "ROI", asb_res_cashback: "Cash Back", asb_res_yearly: "Yearly Avg Return",
+    asb_res_breakdown: "See full breakdown",
+    asb_res_compare: "Compare with Direct ASB Savings",
+    asb_res_note: "*ASB dividend calculation based on Monthly Minimum Balance. Late Payment Charge: 1% p.a. on outstanding amount. Estimates only — actual dividends and rates may vary.",
+    asb_btn_apply_now: "Apply for ASB Financing Now",
+    asb_err_select_option: "Please select an option to continue.",
+    asb_warn_not_bumiputera: "ASB and ASB Financing are only available to qualified Bumiputera investors under ASNB guidelines. You may not be eligible to apply.",
+    asb_warn_under18: "Applicants must be at least 18 years old.",
+    asb_warn_age_tenure: "Based on your age, you would not meet the minimum 5-year tenure requirement (must be 18–70 years old at the end of the loan tenure).",
+    asb_warn_continue: "You can still continue to see an illustrative projection.",
+    asb_info_min_amount: "Adjusted to the minimum financing amount of RM10,000.",
+    asb_info_max_amount: "Adjusted to the maximum financing amount of RM200,000.",
+    asb_tenure_help_dyn: (max)=>`BSN offers financing tenures from 5 up to ${max} years, based on your age, so you stay within the 18–70 eligibility window. Longer tenures mean smaller monthly payments, but a higher total interest paid. The financing tenure is capped at a maximum of 40 years or until age 70, whichever comes first.`,
+    asb_strategy_compounding: "Compounding Strategy", asb_strategy_rolling: "Rolling Strategy",
+    asb_exit_after: (n)=>`Exit after ${n} year${n>1?'s':''}`,
+    asb_financing_over: (amt,n)=>`on a ${amt} financing over ${n} year${n>1?'s':''}`,
+    asb_row_monthlyPayment: "Monthly Payment", asb_row_year1Payment: "Year 1 Payment", asb_row_year1Dividend: "Year 1 Dividend",
+    asb_row_totalPayment: "Total Payment", asb_row_totalDividendEarned: "Total Dividend Earned", asb_row_cashBack: "Cash Back Amount",
+    asb_row_totalReturns: "Total Returns", asb_row_totalProfitLoss: "Total Profit / Loss", asb_row_roi: "Profit Percentage (ROI)",
+    asb_row_yearlyAvg: "Yearly Average Return (%)", asb_row_monthlyDeposit: "Monthly Deposit", asb_row_year1Deposit: "Year 1 Deposit",
+    asb_row_totalDeposited: "Total Deposited", asb_row_totalProfitLoss2: "Total Profit/Loss",
+    asb_surplus_note: (x)=>`Dividend covers annual payment with ${x} surplus`,
+    asb_deficit_note: (x)=>`Dividend does not cover annual payment, ${x} top-up needed per year`,
+    asb_topup_note: (x,n,y)=>`Annual top-up of ${x} deposited for ${n} year${n>1?'s':''}, total ${y}`,
+    asb_docs_employee: [
+      '1 copy of NRIC (front and back)',
+      '1 copy of latest 1 month salary slip, OR payment voucher (with company stamp/letterhead) for the latest 3 months',
+      'Any 1 of: latest EPF statement, Employer Confirmation Letter, or latest EA/EC and e-filing form',
+    ],
+    asb_docs_self: [
+      '1 copy of NRIC (front and back)',
+      '1 copy of latest 6 months bank statement',
+    ],
     s2a_eyebrow: "Private Sector",
     s2a_question: "Choose your panel company",
     s2a_help: "MyRinggit-i Eksekutif-1 is limited to employees of selected BSN panel companies. Search and select your employer to continue.",
@@ -1201,7 +1610,10 @@ let state = {
   grossIncome: 0, netIncome: 0, commitments: [0,0,0,0],
   dsrPercent: null, dsrPass: null,
   ndi: null, dsrStatus: null, dsrReasons: [], debtConsol: null,
-  resultMode: null // 'pinjaman' | 'kredit' | 'kredit-fallback'
+  resultMode: null, // 'pinjaman' | 'kredit' | 'kredit-fallback' | 'asb'
+  asbBumiputera: null, asbAge: 30, asbEmployment: 'employee',
+  asbAmount: 100000, asbTenure: 20, asbTakaful: 'with', asbInterestRate: 4.15,
+  asbDividendRate: 5.75, asbEarlyTerminate: 10, asbStrategy: 'compounding',
 };
 let currentStep = 0;
 const TOTAL_STEPS = 4;
@@ -1455,6 +1867,15 @@ function goTo(step){
 }
 
 function updateProgress(){
+  const asbIdx = ASB_STEPS.indexOf(currentStep);
+  if (asbIdx !== -1 || currentStep === 'asbResult'){
+    const pct = currentStep === 'asbResult' ? 100 : Math.round(((asbIdx+1)/ASB_STEPS.length)*100);
+    document.getElementById('progressFill').style.width = pct+'%';
+    document.getElementById('progressPct').textContent = pct+'%';
+    document.getElementById('progressStepLabel').textContent =
+      currentStep === 'asbResult' ? T().progress_result : T().progress_step(asbIdx+1, ASB_STEPS.length);
+    return;
+  }
   const stepMap = {0:0, 1:1, 2:2, '2a':2, '2b':2, 3:3, '3b':3, 4:4, 5:4, 6:4};
   const shown = stepMap[currentStep] ?? 0;
   const pct = currentStep===0 ? 0 : Math.round((shown/TOTAL_STEPS)*100);
@@ -1482,6 +1903,9 @@ function selectProduct(val){
       } else {
         goTo('2b');
       }
+    } else if (val === 'asb'){
+      state.resultMode = 'asb';
+      goTo('asb1');
     } else {
       state.resultMode = 'kredit';
       renderCreditCardResult();
@@ -2711,7 +3135,9 @@ function validateApplication(){
     spouseSalary: g('q_spouseSalary'), spouseStartDate: g('q_spouseStartDate'),
   };
 
-  const productLabel = SECTOR_LOAN_DATA[state.sector]?.productName || T().default_loan_product;
+  const productLabel = state.resultMode === 'asb'
+    ? T().asb_product_name
+    : (SECTOR_LOAN_DATA[state.sector]?.productName || T().default_loan_product);
   const debtConsolLabel = state.debtConsolidation ? T().chip_yes : T().chip_no;
   let message = T().wa_message(productLabel, name, position, phoneRaw, email, SECTOR_LOAN_DATA[state.sector]?.label[lang] || '-', debtConsolLabel);
   if (state.sector === 'swasta' && state.panelCompany){
@@ -2741,7 +3167,9 @@ function validateApplication(){
 let uploadLinkClicked = false;
 
 function setupUploadStep(){
-  const docs = SECTOR_LOAN_DATA[state.sector]?.docs?.[lang] || [];
+  const docs = state.resultMode === 'asb'
+    ? (state.asbEmployment==='self' ? T().asb_docs_self : T().asb_docs_employee)
+    : (SECTOR_LOAN_DATA[state.sector]?.docs?.[lang] || []);
   document.getElementById('uploadDocsBox').innerHTML = renderDocList(docs);
 
   const folderName = (state.leadName || 'Applicant').trim().replace(/\s+/g,'_').replace(/[^A-Za-z0-9_]/g,'');
@@ -2805,7 +3233,8 @@ function submitApplicationRecord(){
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
         action: 'submit', token: APPS_SCRIPT_SUBMIT_TOKEN,
-        nama: state.leadName || '', produk: SECTOR_LOAN_DATA[state.sector]?.productName || T().default_loan_product,
+        nama: state.leadName || '',
+        produk: state.resultMode === 'asb' ? T().asb_product_name : (SECTOR_LOAN_DATA[state.sector]?.productName || T().default_loan_product),
         sektor: SECTOR_LOAN_DATA[state.sector]?.label.ms || '',
         status: 'Mohon',
       }),
@@ -2824,6 +3253,342 @@ async function copyFolderName(){
   } catch (e){ /* clipboard unavailable, ignore */ }
 }
 
+// ==== ASB Financing (ported verbatim from CALCULATOR/index.html) ====
+const ASB_STEPS = ['asb1','asb2','asb3','asb4','asb5','asb6','asb7'];
+const asbAmountChips = [10000,50000,100000,150000,200000];
+let asbLastResult = null, asbLastDirect = null, asbLastYears = null;
+const fmtPctAsb = n => n.toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2}) + '%';
+
+function renderAsbChips(){
+  const box = document.getElementById('chips_asbAmount');
+  box.innerHTML = asbAmountChips.map(v=>`<div class="chip" data-val="${v}" onclick="pickAsbAmount(${v})">RM ${v.toLocaleString('en-MY')}</div>`).join('');
+  syncAsbChips();
+}
+function pickAsbAmount(v){
+  document.getElementById('q_asbAmount').value = v;
+  syncAsbChips();
+}
+function syncAsbChips(){
+  const val = parseFloat(document.getElementById('q_asbAmount').value);
+  document.querySelectorAll('#chips_asbAmount .chip').forEach(c=>{
+    c.classList.toggle('selected', parseFloat(c.dataset.val)===val);
+  });
+}
+
+function pickAsbChip(group, val){
+  state[group] = val;
+  const box = document.getElementById(`chips_${group}`);
+  box.querySelectorAll('.chip').forEach(c=>{
+    c.classList.toggle('selected', c.dataset.val===val);
+  });
+  box.style.outline = '';
+  if (group==='asbBumiputera') document.getElementById('asbEligibilityWarning').innerHTML = '';
+}
+
+function toggleAsbGuidelineInfo(){
+  const box = document.getElementById('asbGuidelineInfoBox');
+  box.style.display = box.style.display==='none' ? 'block' : 'none';
+}
+function toggleAsbDividendHistory(){
+  const box = document.getElementById('asbDividendHistoryBox');
+  box.style.display = box.style.display==='none' ? 'block' : 'none';
+}
+function useAsbAverageDividend(){
+  document.getElementById('q_asbDividendRate').value = 6.15;
+  document.getElementById('s_asbDividendRate').value = 6.15;
+}
+
+function selectAsbEmployment(v){
+  state.asbEmployment = v;
+  document.querySelectorAll('#asbEmploymentCards .option-card').forEach(c=>c.classList.toggle('selected', c.dataset.val===v));
+}
+function selectAsbTakaful(v){
+  state.asbTakaful = v;
+  state.asbInterestRate = v==='with' ? 4.15 : 4.25;
+  document.querySelectorAll('#asbTakafulCards .option-card').forEach(c=>c.classList.toggle('selected', c.dataset.val===v));
+}
+function selectAsbStrategy(s){
+  state.asbStrategy = s;
+  document.querySelectorAll('#asbStrategyCards .option-card').forEach(c=>c.classList.toggle('selected', c.dataset.val===s));
+}
+
+function syncAsbSlider(key){
+  const input = document.getElementById('q_'+key);
+  const slider = document.getElementById('s_'+key);
+  if (slider) slider.value = input.value;
+  if (key==='asbTenure'){
+    const term = document.getElementById('q_asbEarlyTerminate');
+    const termSlider = document.getElementById('s_asbEarlyTerminate');
+    const maxV = parseFloat(input.value)||40;
+    termSlider.max = maxV;
+    document.getElementById('asbTerminateMax').textContent = maxV + ' ' + T().unit_yrs;
+    if (parseFloat(term.value) > maxV){ term.value = maxV; termSlider.value = maxV; }
+  }
+}
+function syncAsbInput(key){
+  const slider = document.getElementById('s_'+key);
+  const input = document.getElementById('q_'+key);
+  input.value = slider.value;
+  if (key==='asbTenure') syncAsbSlider(key);
+}
+
+// ---- ASB Step 1: eligibility ----
+function validateAsbEligibility(){
+  const chipsBox = document.getElementById('chips_asbBumiputera');
+  if (!state.asbBumiputera){
+    chipsBox.style.outline = '2px solid var(--danger)';
+    chipsBox.style.outlineOffset = '4px';
+    document.getElementById('asbEligibilityWarning').innerHTML = `<div class="warn-box">${T().asb_err_select_option}</div>`;
+    return;
+  }
+  chipsBox.style.outline = '';
+
+  const age = parseFloat(document.getElementById('q_asbAge').value);
+  if (isNaN(age) || age<=0){
+    document.getElementById('q_asbAge').style.borderColor = 'var(--danger)';
+    return;
+  }
+  document.getElementById('q_asbAge').style.borderColor = '';
+  state.asbAge = age;
+
+  const maxTenureByAge = Math.max(0, 70 - age);
+  const warnBox = document.getElementById('asbEligibilityWarning');
+  let warnings = [];
+  if (state.asbBumiputera==='no') warnings.push(T().asb_warn_not_bumiputera);
+  if (age < 18){
+    warnings.push(T().asb_warn_under18);
+  } else if (maxTenureByAge < 5){
+    warnings.push(T().asb_warn_age_tenure);
+  }
+  warnBox.innerHTML = warnings.length
+    ? `<div class="warn-box">${warnings.join('<br>')} ${T().asb_warn_continue}</div>`
+    : '';
+  goTo('asb2');
+}
+
+// ---- ASB Step 3: loan amount ----
+function validateAsbAmount(){
+  let val = parseFloat(document.getElementById('q_asbAmount').value);
+  const box = document.getElementById('asbAmountWarning');
+  if (isNaN(val) || val<=0){
+    document.getElementById('q_asbAmount').style.borderColor = 'var(--danger)';
+    return;
+  }
+  document.getElementById('q_asbAmount').style.borderColor = '';
+  let note = '';
+  if (val < 10000){ val = 10000; note = T().asb_info_min_amount; }
+  if (val > 200000){ val = 200000; note = T().asb_info_max_amount; }
+  val = Math.round(val/1000)*1000;
+  document.getElementById('q_asbAmount').value = val;
+  box.innerHTML = note ? `<div class="info-box">${note}</div>` : '';
+  state.asbAmount = val;
+
+  const maxTenureByAge = Math.max(5, Math.min(40, 70 - state.asbAge));
+  document.getElementById('q_asbTenure').max = maxTenureByAge;
+  document.getElementById('s_asbTenure').max = maxTenureByAge;
+  document.getElementById('asbTenureMaxLabel').textContent = maxTenureByAge + ' ' + T().unit_yrs;
+  document.getElementById('asbTenureMinLabel').textContent = '5 ' + T().unit_yrs;
+  document.getElementById('asbTenureHelp').textContent = T().asb_tenure_help_dyn(maxTenureByAge);
+  const curTenure = parseFloat(document.getElementById('q_asbTenure').value);
+  if (curTenure > maxTenureByAge){
+    document.getElementById('q_asbTenure').value = maxTenureByAge;
+    document.getElementById('s_asbTenure').value = maxTenureByAge;
+  }
+
+  goTo('asb4');
+}
+
+function validateAndNextAsb(key, toStep){
+  const el = document.getElementById('q_'+key);
+  const val = parseFloat(el.value);
+  if (isNaN(val) || val<=0){
+    el.style.borderColor = 'var(--danger)';
+    el.focus();
+    return;
+  }
+  el.style.borderColor = '';
+  state[key] = val;
+  goTo(toStep);
+}
+
+// ---- ASB calculation engine — verbatim port; monthlyPayment/round2/fmtRM reuse
+// the identical functions already defined above for the Pinjaman DSR engine. ----
+function asbOutstandingBalance(P, annualRatePct, M, monthsElapsed){
+  const r = (annualRatePct/100)/12;
+  let balance = P;
+  for (let i=0;i<monthsElapsed;i++){
+    const interest = round2(balance*r);
+    const principal = M - interest;
+    balance -= principal;
+  }
+  return balance;
+}
+function directASBMonthlyDeposits(depositAmount, dividendRatePct, years){
+  const monthlyRate = (dividendRatePct/100)/12;
+  let balance = 0, totalDividend = 0;
+  for (let y=0;y<years;y++){
+    let yearDiv = 0;
+    for (let m=0;m<12;m++){
+      balance += depositAmount;
+      yearDiv += balance*monthlyRate;
+    }
+    balance += yearDiv;
+    totalDividend += yearDiv;
+  }
+  return {balance, totalDividend};
+}
+
+function showAsbResults(){
+  const term = parseFloat(document.getElementById('q_asbEarlyTerminate').value);
+  if (isNaN(term) || term<=0){
+    document.getElementById('q_asbEarlyTerminate').style.borderColor='var(--danger)';
+    return;
+  }
+  state.asbEarlyTerminate = Math.min(term, state.asbTenure);
+
+  const P = state.asbAmount, tenure = state.asbTenure, interestRate = state.asbInterestRate,
+        dividendRate = state.asbDividendRate, years = state.asbEarlyTerminate;
+
+  const M = monthlyPayment(P, interestRate, tenure);
+  const monthsElapsed = years*12;
+  const outstanding = asbOutstandingBalance(P, interestRate, M, monthsElapsed);
+  const cashBack = round2(P - outstanding);
+
+  let result, direct;
+
+  if (state.asbStrategy === 'compounding'){
+    const totalPayment = round2(M*monthsElapsed);
+    const totalDividendEarned = round2(P*Math.pow(1+dividendRate/100, years) - P);
+    const totalReturns = round2(totalDividendEarned + cashBack);
+    const totalProfit = round2(totalReturns - totalPayment);
+    const roi = (totalProfit/totalPayment)*100;
+    const yearlyAvg = (Math.pow(totalReturns/totalPayment, 1/years)-1)*100;
+    result = {monthlyPayment:M, totalPayment, totalDividendEarned, cashBack, totalReturns, totalProfit, roi, yearlyAvg};
+
+    const d = directASBMonthlyDeposits(M, dividendRate, years);
+    const dTotalDeposited = round2(M*monthsElapsed);
+    const dTotalDividend = round2(d.totalDividend);
+    const dTotalReturns = round2(dTotalDeposited+dTotalDividend);
+    const dRoi = (dTotalDividend/dTotalDeposited)*100;
+    const dYearlyAvg = (Math.pow(dTotalReturns/dTotalDeposited,1/years)-1)*100;
+    direct = {monthlyDeposit:M, totalDeposited:dTotalDeposited, totalDividendEarned:dTotalDividend, totalReturns:dTotalReturns, profit:dTotalDividend, roi:dRoi, yearlyAvg:dYearlyAvg};
+
+  } else {
+    const annualPayment = round2(M*12);
+    const year1Dividend = round2(P*dividendRate/100);
+    const diff = round2(year1Dividend - annualPayment);
+    let totalDividend, totalPayment;
+
+    if (diff >= 0){
+      let balance = P;
+      totalDividend = year1Dividend;
+      balance += diff;
+      for (let y=2;y<=years;y++){
+        const div = balance*dividendRate/100;
+        const surplus = div - annualPayment;
+        totalDividend += surplus;
+        balance += surplus;
+      }
+      totalDividend = round2(totalDividend);
+      totalPayment = annualPayment;
+    } else {
+      const topup = round2(annualPayment - year1Dividend);
+      totalDividend = year1Dividend;
+      totalPayment = round2(annualPayment + topup*(years-1));
+    }
+
+    const totalReturns = round2(totalDividend + cashBack);
+    const totalProfit = round2(totalReturns - totalPayment);
+    const roi = (totalProfit/totalPayment)*100;
+    const yearlyAvg = (Math.pow(totalReturns/totalPayment, 1/years)-1)*100;
+
+    result = {monthlyPayment:M, year1Payment:annualPayment, year1Dividend, diff, totalPayment, totalDividendEarned:totalDividend, cashBack, totalReturns, totalProfit, roi, yearlyAvg};
+
+    const y1 = directASBMonthlyDeposits(M, dividendRate, 1);
+    let dTotalDeposited, dTotalReturns, dTopup = null;
+    if (diff >= 0){
+      dTotalDeposited = round2(M*12);
+      let dBalance = y1.balance;
+      for (let y=2;y<=years;y++){ dBalance = dBalance*(1+dividendRate/100); }
+      dTotalReturns = round2(dBalance);
+    } else {
+      const topup = round2(annualPayment - year1Dividend);
+      let dBalance = y1.balance;
+      for (let y=2;y<=years;y++){ dBalance += topup; dBalance += dBalance*dividendRate/100; }
+      dTotalReturns = round2(dBalance);
+      dTotalDeposited = totalPayment;
+      if (years>1) dTopup = topup;
+    }
+    const dTotalDividend = round2(dTotalReturns - dTotalDeposited);
+    const dRoi = (dTotalDividend/dTotalDeposited)*100;
+    const dYearlyAvg = (Math.pow(dTotalReturns/dTotalDeposited, 1/years)-1)*100;
+    direct = {monthlyDeposit:M, year1Deposit:round2(M*12), year1Dividend, dTopup, totalDeposited:dTotalDeposited, totalDividendEarned:dTotalDividend, totalReturns:dTotalReturns, profit:dTotalDividend, roi:dRoi, yearlyAvg:dYearlyAvg};
+  }
+
+  asbLastResult = result; asbLastDirect = direct; asbLastYears = years;
+  renderAsbResults(result, direct, years);
+  goTo('asbResult');
+}
+
+function renderAsbResults(r, d, years){
+  document.getElementById('asbResultStrategyLabel').textContent =
+    (state.asbStrategy==='compounding' ? T().asb_strategy_compounding : T().asb_strategy_rolling) + ' · ' + T().asb_exit_after(years);
+
+  document.getElementById('asbHlReturns').textContent = fmtRM(r.totalReturns);
+  document.getElementById('asbHlSub').textContent = T().asb_financing_over(fmtRM(state.asbAmount), years);
+
+  document.getElementById('asbStProfit').textContent = fmtRM(r.totalProfit);
+  document.getElementById('asbStProfit').className = 'stat-value ' + (r.totalProfit>=0?'positive':'negative');
+  document.getElementById('asbStRoi').textContent = fmtPctAsb(r.roi);
+  document.getElementById('asbStRoi').className = 'stat-value ' + (r.roi>=0?'positive':'negative');
+  document.getElementById('asbStCashback').textContent = fmtRM(r.cashBack);
+  document.getElementById('asbStYearly').textContent = fmtPctAsb(r.yearlyAvg);
+
+  let rows = [[T().asb_row_monthlyPayment, fmtRM(r.monthlyPayment)]];
+  if (state.asbStrategy==='rolling'){
+    rows.push([T().asb_row_year1Payment, fmtRM(r.year1Payment)]);
+    rows.push([T().asb_row_year1Dividend, fmtRM(r.year1Dividend)]);
+    const surplusNote = r.diff >= 0 ? T().asb_surplus_note(fmtRM(r.diff)) : T().asb_deficit_note(fmtRM(Math.abs(r.diff)));
+    rows.push([null, surplusNote]);
+  }
+  rows = rows.concat([
+    [T().asb_row_totalPayment, fmtRM(r.totalPayment)],
+    [T().asb_row_totalDividendEarned, fmtRM(r.totalDividendEarned)],
+    [T().asb_row_cashBack, fmtRM(r.cashBack)],
+    [T().asb_row_totalReturns, fmtRM(r.totalReturns)],
+    [T().asb_row_totalProfitLoss, fmtRM(r.totalProfit), r.totalProfit>=0],
+    [T().asb_row_roi, fmtPctAsb(r.roi), r.roi>=0],
+    [T().asb_row_yearlyAvg, fmtPctAsb(r.yearlyAvg), r.yearlyAvg>=0],
+  ]);
+  document.getElementById('asbFullResultBox').innerHTML = renderAsbRows(rows);
+
+  let drows = [[T().asb_row_monthlyDeposit, fmtRM(d.monthlyDeposit)]];
+  if (state.asbStrategy==='rolling'){
+    drows.push([T().asb_row_year1Deposit, fmtRM(d.year1Deposit)]);
+    drows.push([T().asb_row_year1Dividend, fmtRM(d.year1Dividend)]);
+    if (d.dTopup) drows.push([null, T().asb_topup_note(fmtRM(d.dTopup), years-1, fmtRM(round2(d.dTopup*(years-1))))]);
+  }
+  drows = drows.concat([
+    [T().asb_row_totalDeposited, fmtRM(d.totalDeposited)],
+    [T().asb_row_totalDividendEarned, fmtRM(d.totalDividendEarned)],
+    [T().asb_row_totalReturns, fmtRM(d.totalReturns)],
+    [T().asb_row_totalProfitLoss2, fmtRM(d.profit), d.profit>=0],
+    [T().asb_row_roi, fmtPctAsb(d.roi), d.roi>=0],
+    [T().asb_row_yearlyAvg, fmtPctAsb(d.yearlyAvg), d.yearlyAvg>=0],
+  ]);
+  document.getElementById('asbDirectResultBox').innerHTML = renderAsbRows(drows);
+}
+
+function renderAsbRows(rows){
+  return rows.map(([label,value,positive])=>{
+    if (label === null){
+      return `<div class="note" style="text-align:left;margin-top:4px;">${value}</div>`;
+    }
+    const cls = positive===undefined ? '' : (positive ? 'positive' : 'negative');
+    return `<div class="result-item"><span class="result-label">${label}</span><span class="result-value ${cls}">${value}</span></div>`;
+  }).join('');
+}
+
 function restart(){
   applyDisclaimerAcknowledged = false;
   state = {
@@ -2833,10 +3598,26 @@ function restart(){
     dsrPercent: null, dsrPass: null,
     ndi: null, dsrStatus: null, dsrReasons: [], debtConsol: null,
     resultMode: null, panelCompany: null,
+    asbBumiputera: null, asbAge: 30, asbEmployment: 'employee',
+    asbAmount: 100000, asbTenure: 20, asbTakaful: 'with', asbInterestRate: 4.15,
+    asbDividendRate: 5.75, asbEarlyTerminate: 10, asbStrategy: 'compounding',
   };
   selectedPanelCompany = null;
   document.querySelectorAll('.option-card, .photo-card').forEach(c=>c.classList.remove('selected'));
   document.querySelector('#debtConsolCards .option-card[data-val="no"]').classList.add('selected');
+  document.querySelectorAll('#chips_asbBumiputera .chip').forEach(c=>c.classList.remove('selected'));
+  document.querySelector('#asbEmploymentCards .option-card[data-val="employee"]').classList.add('selected');
+  document.querySelector('#asbTakafulCards .option-card[data-val="with"]').classList.add('selected');
+  document.querySelector('#asbStrategyCards .option-card[data-val="compounding"]').classList.add('selected');
+  document.getElementById('q_asbAge').value = 30;
+  document.getElementById('q_asbAmount').value = 100000;
+  document.getElementById('q_asbTenure').value = 20; document.getElementById('s_asbTenure').value = 20;
+  document.getElementById('q_asbDividendRate').value = 5.75; document.getElementById('s_asbDividendRate').value = 5.75;
+  document.getElementById('q_asbEarlyTerminate').value = 10; document.getElementById('s_asbEarlyTerminate').value = 10;
+  document.getElementById('asbEligibilityWarning').innerHTML = '';
+  document.getElementById('asbAmountWarning').innerHTML = '';
+  document.getElementById('asbGuidelineInfoBox').style.display = 'none';
+  document.getElementById('asbDividendHistoryBox').style.display = 'none';
   document.getElementById('debtConsolBlock').style.display = 'none';
   ['q_dependents','q_basicSalary','q_fixedAllowance','q_otherIncome','q_epf','q_payslipDeduction',
    'q_ccrisExternal','q_overlapBSN','q_tabungHaji','q_topUp',
@@ -2930,6 +3711,7 @@ function showNoticeIfNeeded(){
 setLanguage(lang);
 showNoticeIfNeeded();
 populatePanelStateFilter();
+renderAsbChips();
 restoreFromQuery();
 updateProgress();
 </script>
