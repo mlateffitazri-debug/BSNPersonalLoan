@@ -68,6 +68,16 @@
   .question{font-size:1.35rem;font-weight:800;line-height:1.3;margin:0 0 8px;color:var(--accent);}
   .helptext{color:var(--muted);font-size:.9rem;line-height:1.5;margin:0 0 22px;}
   .field-label{display:block;font-weight:700;font-size:.85rem;margin-bottom:8px;}
+  .info-icon-btn{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;margin:0 0 8px 6px;padding:0;border:none;border-radius:50%;background:var(--accent);color:#fff;font-size:.8rem;line-height:1;cursor:pointer;vertical-align:middle;}
+  .info-icon-btn:hover{background:var(--accent-dark);}
+  .schedule-overlay{position:fixed;inset:0;background:rgba(0,20,25,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:1000;}
+  .schedule-overlay[hidden]{display:none;}
+  .schedule-modal{background:var(--panel);border-radius:16px;max-width:680px;width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 12px 40px rgba(0,0,0,.25);overflow:hidden;}
+  .schedule-modal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);flex-shrink:0;}
+  .schedule-modal-head h3{margin:0;font-size:.95rem;color:var(--accent-dark);}
+  .schedule-modal-close{background:none;border:none;font-size:1.3rem;line-height:1;cursor:pointer;color:var(--muted);padding:4px 8px;}
+  .schedule-modal-close:hover{color:var(--text);}
+  .schedule-modal iframe{flex:1;width:100%;border:none;min-height:60vh;}
   .subsection-title{color:var(--accent-dark);font-weight:800;font-size:.95rem;margin:22px 0 12px;padding-top:16px;border-top:1px solid var(--border);}
   .subsection-title:first-child{margin-top:0;padding-top:0;border-top:none;}
   .input-big textarea{width:100%;padding:11px 14px;font-size:1rem;font-weight:600;border:1.5px solid var(--border);border-radius:10px;background:var(--input-bg);color:var(--text);resize:vertical;min-height:70px;font-family:inherit;}
@@ -238,6 +248,16 @@
     <p class="notice-title" data-i18n="apply_notice_title">PERMOHONAN SELAMAT</p>
     <div class="notice-body" data-i18n="apply_notice_body"></div>
     <button type="button" class="notice-btn" data-i18n="apply_notice_btn" onclick="dismissApplyDisclaimer()">Faham</button>
+  </div>
+</div>
+
+<div class="schedule-overlay" id="scheduleOverlay" hidden onclick="if(event.target===this) closeScheduleModal()">
+  <div class="schedule-modal">
+    <div class="schedule-modal-head">
+      <h3 data-i18n="schedule_modal_title">Jadual Pembayaran Bulanan</h3>
+      <button type="button" class="schedule-modal-close" onclick="closeScheduleModal()" aria-label="Tutup">&times;</button>
+    </div>
+    <iframe id="scheduleIframe" src="about:blank" title="Jadual Pembayaran"></iframe>
   </div>
 </div>
 
@@ -459,7 +479,8 @@
         <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_tabungHaji" min="0" step="10" placeholder="0.00" value="0"></div>
       </details>
 
-      <label class="field-label" id="loanAmountLabel" data-i18n="lbl_loanAmount">Jumlah pinjaman yang dipohon (RM)</label>
+      <label class="field-label" id="loanAmountLabel" data-i18n="lbl_loanAmount" style="display:inline;">Jumlah pinjaman yang dipohon (RM)</label>
+      <button type="button" class="info-icon-btn" onclick="openScheduleModal()" aria-label="Jadual Pembayaran" title="Jadual Pembayaran">ⓘ</button>
       <div class="input-big has-prefix"><span class="prefix">RM</span><input type="number" id="q_loanAmount" min="0" step="1000" placeholder="0.00"></div>
 
       <label class="field-label" data-i18n="lbl_loanTenure">Tempoh pinjaman dipohon (tahun)</label>
@@ -855,6 +876,7 @@ const I18N = {
     apply_notice_title: "PERMOHONAN SELAMAT",
     apply_notice_body: "<p>Permohonan ini diuruskan secara selamat. Data yang lulus atau tidak lulus akan dipadamkan.</p><p>Pada halaman seterusnya anda akan mengisi maklumat diri dan dokumen yang diperlukan — tiada data akan disimpan di dalam laman web ini.</p><p>Anda dinasihatkan agar membuat tanda palang <strong>\"UNTUK KEGUNAAN BSN SAHAJA\"</strong> pada setiap dokumen sebelum memuat naik.</p>",
     apply_notice_btn: "Faham",
+    schedule_modal_title: "Jadual Pembayaran Bulanan",
     s5_eyebrow: "Mohon Sekarang",
     s5_question: "Mari kita mulakan.",
     s5_help: "Lengkapkan maklumat di bawah. Medan bertanda * wajib diisi.",
@@ -1039,6 +1061,7 @@ const I18N = {
     apply_notice_title: "SECURE APPLICATION",
     apply_notice_body: "<p>This application is handled securely. Data is deleted whether the application is approved or not.</p><p>On the next page you'll fill in your personal details and required documents — no data is stored on this website.</p><p>You're advised to stamp <strong>\"FOR BSN USE ONLY\"</strong> on every document before uploading.</p>",
     apply_notice_btn: "I Understand",
+    schedule_modal_title: "Monthly Payment Schedule",
     s5_eyebrow: "Apply Now",
     s5_question: "Let's get started.",
     s5_help: "Fill in the details below. Fields marked * are required.",
@@ -2550,6 +2573,25 @@ function buildScheduleHref(base){
   if (state.sector === 'swasta' && state.panelCompany) p.set('pc', state.panelCompany);
   const returnUrl = 'index.html?' + p.toString();
   return `${base}?back=${encodeURIComponent(returnUrl)}`;
+}
+
+// ---- Step 3: payment schedule info popup ----
+const SCHEDULE_PAGE_BY_SECTOR = {
+  kerajaan: 'jadual-pembayaran-awam.html',
+  profesional: 'jadual-pembayaran.html',
+  swasta: 'jadual-pembayaran-swasta.html',
+};
+
+function openScheduleModal(){
+  const page = SCHEDULE_PAGE_BY_SECTOR[state.sector];
+  if (!page) return;
+  document.getElementById('scheduleIframe').src = page;
+  document.getElementById('scheduleOverlay').hidden = false;
+}
+
+function closeScheduleModal(){
+  document.getElementById('scheduleOverlay').hidden = true;
+  document.getElementById('scheduleIframe').src = 'about:blank';
 }
 
 function renderCreditCardResult(){
