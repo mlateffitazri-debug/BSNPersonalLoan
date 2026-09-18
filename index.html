@@ -375,6 +375,23 @@
   </div>
 </div>
 
+<!-- Shown instead of the application form when a Pinjaman Peribadi result is
+     PreFail — blocks continuing the loan application and offers Kad Kredit
+     Al-Aiman as the only path forward, per all 3 employment sectors. -->
+<div class="notice-overlay" id="dsrFailOverlay" hidden>
+  <div class="notice-card" id="dsrFailQuestionPanel">
+    <p class="notice-title" data-i18n="dsrfail_title">MAAF</p>
+    <div class="notice-body" data-i18n="dsrfail_body"></div>
+    <button type="button" class="notice-btn" data-i18n="dsrfail_btn_yes" onclick="confirmCreditCardFallback()">Ya, Mohon Kad Kredit Al-Aiman</button>
+    <button type="button" class="notice-btn" style="background:var(--panel2);color:var(--text);margin-top:10px;" data-i18n="dsrfail_btn_no" onclick="declineCreditCardFallback()">Tidak</button>
+  </div>
+  <div class="notice-card" id="dsrFailThanksPanel" hidden>
+    <p class="notice-title" data-i18n="dsrfail_thanks_title">TERIMA KASIH</p>
+    <div class="notice-body" data-i18n="dsrfail_thanks_body"></div>
+    <button type="button" class="notice-btn" data-i18n="dsrfail_btn_retry" onclick="retryDsrCalculation()">Cuba Lagi (Kira Semula)</button>
+  </div>
+</div>
+
 <div class="schedule-overlay" id="scheduleOverlay" hidden onclick="if(event.target===this) closeScheduleModal()">
   <div class="schedule-modal">
     <div class="schedule-modal-head">
@@ -2094,7 +2111,7 @@ const I18N = {
     btn_check: "SEMAK",
     s3_note: "*Kalkulator ini adalah anggaran sahaja untuk tujuan ilustrasi. Keputusan sebenar tertakluk kepada penilaian pihak Bank.",
     dsr_status_prepass: "PrePass — Layak Untuk Semakan Lanjut",
-    dsr_status_prefail: "PreFail — Anda Masih Boleh Teruskan Permohonan",
+    dsr_status_prefail: "PreFail — Tidak Melepasi Saringan Kredit untuk Pinjaman",
     stat_ndi: "Net Disposable Income (NDI)",
     stat_dsr_pct: "DSR",
     dsr_reason_ndi_low: (floor)=>`NDI Bawah Minimum (Had: ${floor})`,
@@ -2119,6 +2136,13 @@ const I18N = {
     apply_notice_title: "PERMOHONAN SELAMAT",
     apply_notice_body: "<p>Permohonan ini diuruskan secara selamat. Data yang lulus atau tidak lulus akan dipadamkan.</p><p>Pada halaman seterusnya anda akan mengisi maklumat diri dan dokumen yang diperlukan — tiada data akan disimpan di dalam laman web ini.</p><p>Anda dinasihatkan agar membuat tanda palang <strong>\"UNTUK KEGUNAAN BSN SAHAJA\"</strong> pada setiap dokumen sebelum memuat naik.</p>",
     apply_notice_btn: "Faham",
+    dsrfail_title: "MAAF",
+    dsrfail_body: "<p>Maaf, dengan maklumat kredit yang anda berikan, anda tidak melepasi saringan kredit bagi produk pinjaman daripada Bank Simpanan Nasional.</p><p>Adakah anda ingin mencuba untuk memohon Kad Kredit Al-Aiman sebagai alternatif?</p>",
+    dsrfail_btn_yes: "Ya, Mohon Kad Kredit Al-Aiman",
+    dsrfail_btn_no: "Tidak",
+    dsrfail_thanks_title: "TERIMA KASIH",
+    dsrfail_thanks_body: "<p>Terima kasih kerana berminat dengan produk-produk daripada Bank Simpanan Nasional (BSN).</p><p>Anda boleh cuba kira semula menggunakan kalkulator dengan maklumat kewangan yang berbeza.</p>",
+    dsrfail_btn_retry: "Cuba Lagi (Kira Semula)",
     schedule_modal_title: "Jadual Pembayaran Bulanan",
     s5_eyebrow: "Mohon Sekarang",
     s5_question: "Mari kita mulakan.",
@@ -2356,7 +2380,7 @@ const I18N = {
     btn_check: "CHECK",
     s3_note: "*This calculator is an estimate only, for illustration purposes. The actual decision is subject to the Bank's assessment.",
     dsr_status_prepass: "PrePass — Eligible for Further Review",
-    dsr_status_prefail: "PreFail — You May Still Continue Your Application",
+    dsr_status_prefail: "PreFail — Does Not Pass Credit Screening for Loan",
     stat_ndi: "Net Disposable Income (NDI)",
     stat_dsr_pct: "DSR",
     dsr_reason_ndi_low: (floor)=>`NDI Below Minimum (Floor: ${floor})`,
@@ -2381,6 +2405,13 @@ const I18N = {
     apply_notice_title: "SECURE APPLICATION",
     apply_notice_body: "<p>This application is handled securely. Data is deleted whether the application is approved or not.</p><p>On the next page you'll fill in your personal details and required documents — no data is stored on this website.</p><p>You're advised to stamp <strong>\"FOR BSN USE ONLY\"</strong> on every document before uploading.</p>",
     apply_notice_btn: "I Understand",
+    dsrfail_title: "SORRY",
+    dsrfail_body: "<p>Sorry, based on the credit information you provided, you do not pass the credit screening for loan products from Bank Simpanan Nasional.</p><p>Would you like to try applying for the Al-Aiman Credit Card as an alternative?</p>",
+    dsrfail_btn_yes: "Yes, Apply for Al-Aiman Credit Card",
+    dsrfail_btn_no: "No",
+    dsrfail_thanks_title: "THANK YOU",
+    dsrfail_thanks_body: "<p>Thank you for your interest in products from Bank Simpanan Nasional (BSN).</p><p>You may try recalculating using the calculator with different financial information.</p>",
+    dsrfail_btn_retry: "Try Again (Recalculate)",
     schedule_modal_title: "Monthly Payment Schedule",
     s5_eyebrow: "Apply Now",
     s5_question: "Let's get started.",
@@ -3798,6 +3829,27 @@ function proceedToCreditCardFallback(){
   goTo(4);
 }
 
+// ---- DSR PreFail gate: blocks "Mohon Sekarang" for a failed Pinjaman Peribadi
+// result (all 3 employment sectors) and offers Kad Kredit Al-Aiman as the only
+// way to continue — see goToLeadForm(). ----
+function showDsrFailOverlay(){
+  document.getElementById('dsrFailQuestionPanel').hidden = false;
+  document.getElementById('dsrFailThanksPanel').hidden = true;
+  document.getElementById('dsrFailOverlay').hidden = false;
+}
+function confirmCreditCardFallback(){
+  document.getElementById('dsrFailOverlay').hidden = true;
+  proceedToCreditCardFallback();
+}
+function declineCreditCardFallback(){
+  document.getElementById('dsrFailQuestionPanel').hidden = true;
+  document.getElementById('dsrFailThanksPanel').hidden = false;
+}
+function retryDsrCalculation(){
+  document.getElementById('dsrFailOverlay').hidden = true;
+  goTo(3);
+}
+
 // ---- Result rendering ----
 function renderRows(rows){
   return rows.map(([label,value])=>
@@ -3974,6 +4026,10 @@ let applyDisclaimerAcknowledged = false;
 function goToLeadForm(){
   if (state.resultMode === 'kredit' || state.resultMode === 'kredit-fallback'){
     goTo('kreditForm');
+    return;
+  }
+  if (state.resultMode === 'pinjaman' && !state.dsrPass){
+    showDsrFailOverlay();
     return;
   }
   if (!applyDisclaimerAcknowledged){
