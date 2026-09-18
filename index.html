@@ -248,6 +248,11 @@
   .notice-body p:last-child{margin-bottom:0;}
   .notice-btn{width:100%;background:var(--accent);color:#fff;padding:13px;font-size:.92rem;font-weight:800;border:none;border-radius:10px;cursor:pointer;margin-top:16px;}
   .notice-btn:hover{background:var(--accent-dark);}
+  .intro-card{padding:0;overflow:hidden;}
+  .intro-photo{height:190px;background-size:cover;background-position:center;position:relative;}
+  .intro-photo-overlay{position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,20,25,.05) 45%, rgba(0,20,25,.55) 100%);}
+  .intro-card-body{padding:22px 24px 26px;}
+  .intro-card-body .notice-title{text-align:left;}
 
   /* ==== Fasa 5: Kad Kredit form (ported verbatim from card.lateffitazri.my, scoped under #ccApp) ==== */
 
@@ -392,6 +397,21 @@
   </div>
 </div>
 
+<!-- Shown once, right after "Mulakan" on the welcome screen — introduces the
+     branch before the sector/product questions begin. -->
+<div class="notice-overlay" id="introOverlay" hidden>
+  <div class="notice-card intro-card">
+    <div class="intro-photo" style="background-image:url('intro-branch.png');">
+      <div class="intro-photo-overlay"></div>
+    </div>
+    <div class="intro-card-body">
+      <p class="notice-title" data-i18n="intro_title">SELAMAT DATANG</p>
+      <div class="notice-body" data-i18n="intro_body"></div>
+      <button type="button" class="notice-btn" data-i18n="intro_btn" onclick="dismissIntroOverlay()">Mulakan</button>
+    </div>
+  </div>
+</div>
+
 <div class="schedule-overlay" id="scheduleOverlay" hidden onclick="if(event.target===this) closeScheduleModal()">
   <div class="schedule-modal">
     <div class="schedule-modal-head">
@@ -430,7 +450,7 @@
         <div class="hero-eyebrow" data-i18n="s0_eyebrow">Selamat Datang</div>
         <p class="hero-title" data-i18n="s0_question">Cari produk kewangan yang sesuai untuk anda.</p>
         <p class="hero-help" data-i18n="s0_help">Kami akan bantu anda membuat semakan pra-kelayakan dan mohon Pinjaman Peribadi MyRinggit-i atau Kad Kredit Al-Aiman dengan pantas — kurang dari 10 minit, dan <strong>PERCUMA</strong>. Jika anda tidak memenuhi syarat pinjaman, kami akan cadangkan Kad Kredit sebagai alternatif.</p>
-        <button type="button" class="btn-primary" style="width:100%;padding:16px;font-size:1rem;border-radius:10px;" data-i18n="btn_start" onclick="goTo(1)">Mulakan</button>
+        <button type="button" class="btn-primary" style="width:100%;padding:16px;font-size:1rem;border-radius:10px;" data-i18n="btn_start" onclick="showIntroOverlay()">Mulakan</button>
       </div>
     </div>
   </div>
@@ -1965,6 +1985,9 @@ const I18N = {
     s0_question: "Cari produk kewangan yang sesuai untuk anda.",
     s0_help: "Kami akan bantu anda membuat semakan pra-kelayakan dan mohon Pinjaman Peribadi MyRinggit-i atau Kad Kredit Al-Aiman dengan pantas — kurang dari 10 minit, dan <strong>PERCUMA</strong>. Jika anda tidak memenuhi syarat pinjaman, kami akan cadangkan Kad Kredit sebagai alternatif.",
     btn_start: "Mulakan",
+    intro_title: "SELAMAT DATANG",
+    intro_body: "<p>Selamat datang ke Bahagian Perbankan Runcit, Bank Simpanan Nasional Cawangan Pandan Indah, Kuala Lumpur.</p>",
+    intro_btn: "Mulakan",
     s1_eyebrow: "Soalan 1 daripada 4",
     s1_question: "Pilih sektor pekerjaan anda",
     s1_help: "Ini membantu kami tentukan produk dan syarat yang paling sesuai untuk anda.",
@@ -2234,6 +2257,9 @@ const I18N = {
     s0_question: "Find the right financial product for you.",
     s0_help: "We'll help you check your pre-qualification and apply for a MyRinggit-i Personal Loan or Al-Aiman Credit Card quickly — under 10 minutes, and <strong>FREE</strong>. If you don't meet the loan requirements, we'll suggest a Credit Card as an alternative.",
     btn_start: "Get Started",
+    intro_title: "WELCOME",
+    intro_body: "<p>Welcome to the Retail Banking Division, Bank Simpanan Nasional Pandan Indah Branch, Kuala Lumpur.</p>",
+    intro_btn: "Get Started",
     s1_eyebrow: "Question 1 of 4",
     s1_question: "Choose your employment sector",
     s1_help: "This helps us determine the most suitable product and terms for you.",
@@ -4664,6 +4690,14 @@ function showNoticeIfNeeded(){
   if (localStorage.getItem(NOTICE_ACK_KEY) !== '1'){
     document.getElementById('noticeOverlay').hidden = false;
   }
+}
+
+function showIntroOverlay(){
+  document.getElementById('introOverlay').hidden = false;
+}
+function dismissIntroOverlay(){
+  document.getElementById('introOverlay').hidden = true;
+  goTo(1);
 }
 
 
