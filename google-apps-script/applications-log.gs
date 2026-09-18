@@ -96,10 +96,10 @@ function handleSubmit_(p) {
   sheet.appendRow([
     id,
     Utilities.formatDate(now, 'GMT+8', 'yyyy-MM-dd HH:mm:ss'),
-    p.nama || '',
-    p.produk || '',
-    p.sektor || '',
-    p.status || 'Mohon',
+    sanitizeForSheet_(p.nama || ''),
+    sanitizeForSheet_(p.produk || ''),
+    sanitizeForSheet_(p.sektor || ''),
+    sanitizeForSheet_(p.status || 'Mohon'),
   ]);
   return { ok: true, id };
 }
@@ -119,7 +119,7 @@ function handleUpdateStatus_(p) {
   const values = sheet.getRange(2, idCol, Math.max(sheet.getLastRow() - 1, 0), 1).getValues();
   for (let i = 0; i < values.length; i++) {
     if (values[i][0] === id) {
-      sheet.getRange(i + 2, statusCol).setValue(newStatus);
+      sheet.getRange(i + 2, statusCol).setValue(sanitizeForSheet_(newStatus));
       return { ok: true };
     }
   }
@@ -127,6 +127,18 @@ function handleUpdateStatus_(p) {
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────
+
+// Prevents Google Sheets "formula injection": a cell value that starts with
+// =, +, -, or @ is interpreted as a live formula the moment someone opens
+// this Sheet directly (the STATUS dashboard already escapes its own output,
+// but the raw Sheet does not). Since /exec + SUBMIT_TOKEN is public by
+// design, any field written here could in principle come from a hand-crafted
+// request, not just what an applicant typed into the name field — so every
+// string written to a cell goes through this first.
+function sanitizeForSheet_(value) {
+  const str = String(value == null ? '' : value);
+  return /^[=+\-@]/.test(str) ? "'" + str : str;
+}
 
 function getSheet_() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
