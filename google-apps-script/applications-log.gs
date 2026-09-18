@@ -62,7 +62,7 @@ function doGet(e) {
       return jsonResponse_(handleUpdateStatus_(e.parameter));
     }
     const rows = readAllRows_();
-    rows.sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''));
+    rows.sort((a, b) => timestampMs_(b.timestamp) - timestampMs_(a.timestamp));
     return jsonResponse_({ ok: true, rows });
   } catch (err) {
     return jsonResponse_({ ok: false, error: String(err) });
@@ -138,6 +138,18 @@ function handleUpdateStatus_(p) {
 function sanitizeForSheet_(value) {
   const str = String(value == null ? '' : value);
   return /^[=+\-@]/.test(str) ? "'" + str : str;
+}
+
+// Google Sheets auto-detects a date-looking string (like the timestamp
+// written in handleSubmit_) and silently stores the cell as a real Date
+// instead of text — so getValues() can hand back either a Date object or a
+// plain string depending on how that particular cell got typed. Normalizing
+// both to milliseconds-since-epoch here keeps the newest-first sort in
+// doGet() working regardless of which one it gets.
+function timestampMs_(value) {
+  if (value instanceof Date) return value.getTime();
+  const ms = new Date(String(value || '')).getTime();
+  return isNaN(ms) ? 0 : ms;
 }
 
 function getSheet_() {
